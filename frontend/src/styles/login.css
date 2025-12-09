@@ -1,0 +1,179 @@
+/* frontend/src/styles/login.css */
+
+
+.login-container {
+  background-size: 150%;  /* Zooms the background */
+  min-height: 94vh;
+  /* 1. Add the background image URL */
+  background-image: url('../../public/login_img.jpg'), 
+                    /* 2. Keep the linear gradient as the second layer */
+                    linear-gradient(135deg, #c7b2a2, #c3600e);
+  /* 3. Set blend mode to mix the image and the gradient */
+  background-blend-mode: multiply; 
+  /* 4. Ensure the image covers the container and is centered */
+  /* background-size: cover; */
+  background-position: center;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ===== Login Card ===== */
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+
+/* Center Role Switcher */
+/* .role-switcher-center {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+} */
+
+
+
+/* Center container */
+.role-switcher {
+  display: flex;
+  gap: 15px;
+  margin: 15px auto;
+  justify-content: center;
+}
+
+/* Buttons */
+.role-btn {
+  padding: 10px 22px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* Hover effect */
+.role-btn:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+/* Active selected */
+.role-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  box-shadow: 0px 3px 12px rgba(0,123,255,0.4);
+}
+
+
+
+
+/* Small entry animation */
+@keyframes fadeIn {
+  from { 
+    transform: translateY(10px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+/* ===== Inputs ===== */
+.login-field {
+  margin-bottom: 14px;
+}
+
+.login-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #1e293b;
+}
+
+.login-field input {
+  width: 90%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.login-field input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+/* ===== Buttons ===== */
+.login-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.login-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.login-btn.primary:hover {
+  background: #1d4ed8;
+}
+
+.login-btn.secondary {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.login-btn.secondary:hover {
+  background: #cbd5e1;
+}
+
+/* ===== Error text ===== */
+.error-text {
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* ===== Footer text ===== */
+.login-footer {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #475569;
+  text-align: center;
+}
+
+/* ===== Mobile view ===== */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 20px;
+    border-radius: 14px;
+  }
+}

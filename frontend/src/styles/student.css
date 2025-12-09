@@ -1,0 +1,354 @@
+/* ===============================
+   GLOBAL STUDENT PAGE LAYOUT
+================================= */
+
+.students-content-wrapper {
+  padding: 20px 25px;
+  background: #f6f9f7;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   HEADER + TOOLBAR
+================================= */
+
+.student-header-row {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.student-page-title {
+  font-size: 24px;
+  color: #1b3c2f;
+  font-weight: bold;
+}
+
+.student-search-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.student-search-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Buttons */
+.student-search-btn,
+.add-student-btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Search button */
+.student-search-btn {
+  /* background: #2e5f3e; */
+  background: #e99a3b;
+  color: white;
+}
+
+.student-search-btn:hover {
+  background: #1b3c2f;
+}
+
+/* Add button */
+.add-student-btn {
+  /* background: #1b3c2f; */
+    background:#d95b17;
+
+  color: white;
+}
+
+.add-student-btn:hover {
+  background: #2e5f3e;
+}
+
+/* ===============================
+   TABLE SECTION
+================================= */
+
+.student-table-section {
+  width: 100%;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.student-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.student-table thead {
+  /* background: linear-gradient(90deg, #1b3c2f, #2e5f3e); */
+    background: linear-gradient(90deg, #ba6600, #e2ab52e4);
+
+  color: white;
+}
+
+.student-table th,
+.student-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14.5px;
+  text-align: left;
+}
+
+.student-table tbody tr:nth-child(even) {
+  background: #f7faf8;
+}
+
+.student-table tbody tr:hover {
+  background-color: #f1f8f4;
+  transition: 0.2s ease;
+}
+
+/* Buttons in table */
+.student-edit-btn {
+  background-color: #f36f21;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.student-edit-btn:hover {
+  background-color: #d95b17;
+}
+
+.student-leave-btn {
+  background: #802020;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.student-leave-btn:hover {
+  background: #a31a1a;
+}
+
+/* ===============================
+   TABLET RESPONSIVE (≤1024px)
+================================= */
+
+@media (max-width: 1024px) {
+  .student-page-title {
+    font-size: 22px;
+  }
+
+  .student-table th,
+  .student-table td {
+    font-size: 13.5px;
+    padding: 12px 10px;
+  }
+
+  .students-content-wrapper {
+    padding: 15px;
+  }
+}
+
+/* ===============================
+   MOBILE RESPONSIVE (≤768px)
+================================= */
+
+@media (max-width: 768px) {
+
+  .students-content-wrapper {
+    padding: 10px;
+    width: 100%;
+  }
+
+  .student-search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* .student-search-input {
+    width: 100%;
+  } */
+
+  .student-search-btn,
+  .add-student-btn {
+    width: 100%;
+  }
+
+  /* MOBILE TABLE */
+  .student-table-section {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .student-table {
+    min-width: 100%;
+  }
+
+  .student-table thead {
+    display: none;
+  }
+
+
+
+  .student-table tr {
+    margin-bottom: 15px;
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* box-shadow:#e99a3 */
+    /* box-shadow:#f36f21; */
+  }
+
+  .student-table td {
+    text-align: right;
+    /* padding-left: 45%; */
+    position: relative;
+    border-bottom: 1px solid #eee;
+  }
+
+  .student-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    font-weight: bold;
+    color: #1b3c2f;
+  }
+
+  .student-edit-btn,
+  .student-leave-btn {
+    margin-top: 8px;
+    width: 100%;
+  }
+}
+
+/* ===============================
+   SMALL MOBILE (≤500px)
+================================= */
+
+@media (max-width: 500px) {
+
+  .student-page-title {
+    font-size: 20px;
+  }
+
+  .student-search-input {
+    font-size: 13px;
+  }
+
+  .student-edit-btn,
+  .student-leave-btn {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+}
+
+/* ===============================
+   REGISTER STUDENT PAGE
+================================= */
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.register-form {
+  background: white;
+  padding: 25px 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  /* display: grid; */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-row label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1b3c2f;
+}
+
+.form-row input,
+.form-row select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  border-color: #1b3c2f;
+  box-shadow: 0 0 0 1px #1b3c2f40;
+}
+
+.form-row.full {
+  grid-column: span 2;
+}
+
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* ===============================
+   REGISTER PAGE MOBILE
+================================= */
+
+@media (max-width: 768px) {
+
+  .register-form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .form-row.full {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}

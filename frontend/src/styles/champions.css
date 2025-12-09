@@ -1,0 +1,310 @@
+.champions-wrapper {
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ------------------------------
+    ADD FORM
+------------------------------ */
+.champion-form {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  /* max-width: 450px; */
+  margin-bottom: 25px;
+}
+
+.champion-form h3 {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.champion-form input {
+  width: 97%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.upload-box {
+  display: block;
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  border: 1px dashed #cbd5e1;
+  font-size: 14px;
+}
+
+.upload-box:hover {
+  background: #e2e8f0;
+}
+
+.upload-box input {
+  display: none;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+/* ------------------------------
+    CHAMPIONS GRID
+------------------------------ */
+.champion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+
+/* ------------------------------
+    CHAMPION CARD
+------------------------------ */
+.champion-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: 0.3s ease;
+  position: relative;
+}
+
+.champion-card:hover {
+  transform: translateY(-4px);
+}
+
+/* MEDIA (IMAGE/VIDEO) */
+.champion-media {
+  width: 100%;
+  height: 220px;
+  background: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.champion-media img,
+.champion-media video {
+  width: 100%;
+  height: 100%;
+  /* object-fit: cover; */
+}
+
+/* fallback text */
+.no-image {
+  height: 220px;
+  background: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #555;
+  font-size: 14px;
+}
+
+/* INFO SECTION */
+.champion-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.champion-info h3 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.exam-name {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+/* ------------------------------
+    ACTION BUTTONS (ADMIN/TEACHER)
+------------------------------ */
+.champion-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background: #0284c7;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #0369a1;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+/* ------------------------------
+    DELETE MODAL
+------------------------------ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.modal-box {
+  width: 95%;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ------------------------------
+    ANIMATIONS
+------------------------------ */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ------------------------------
+    ACTION BUTTONS ON CARD
+------------------------------ */
+.champion-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+/* EDIT BUTTON */
+.champion-actions .edit-btn {
+  background: #0284c7;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.champion-actions .edit-btn:hover {
+  background: #0369a1;
+  transform: translateY(-2px);
+}
+
+/* DELETE BUTTON */
+.champion-actions .delete-btn {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.champion-actions .delete-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+}
+
+/* Align actions to stay always at bottom */
+.champion-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.champion-info {
+  flex-grow: 1;
+}
+
+.year-section {
+  margin-bottom: 40px;
+}
+
+.year-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #1e3a8a;
+  padding-left: 4px;
+  border-left: 4px solid #2563eb;
+}
+
+.year-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+  font-size: 14px;
+  background: #f8fafc;
+}

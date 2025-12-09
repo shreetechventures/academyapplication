@@ -1,0 +1,47 @@
+/* frontend/src/styles/academyHeader.css */
+
+
+/* ===============================
+   ACADEMY HEADER
+================================= */
+
+.academy-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.academy-logo {
+  height: 70px;
+  margin-bottom: 10px;
+}
+
+.academy-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #2e5f3e;
+  text-transform: uppercase;
+  display: inline-block;
+  position: relative;
+}
+
+.academy-title::after {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 3px;
+  background: #f36f21;
+  margin: 6px auto 0;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .academy-title {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+  .academy-logo {
+    height: 55px;
+  }
+} 

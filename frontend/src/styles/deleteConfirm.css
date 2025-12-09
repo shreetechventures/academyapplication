@@ -1,0 +1,54 @@
+.dc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease;
+}
+
+.dc-box {
+  width: 350px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  animation: popIn 0.25s ease;
+  text-align: center;
+}
+
+.dc-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dc-cancel,
+.dc-delete {
+  width: 48%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dc-cancel {
+  background: #e5e7eb;
+}
+
+.dc-delete {
+  background: #ef4444;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}

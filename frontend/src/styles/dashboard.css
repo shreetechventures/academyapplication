@@ -1,0 +1,211 @@
+
+/* ===============================
+   GLOBAL
+================================= */
+
+.dashboard-container {
+  background: #f4f7f5;
+  font-family: "Poppins", sans-serif;
+  height: auto;
+}
+
+/* ===============================
+   SIDEBAR – DESKTOP
+================================= */
+.sidebar {
+  width: 240px;
+  /* background: #1f3b2c; */
+  /* background: #d1632f; */
+  background: #d1632f;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  padding-top: 25px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2000;
+  transition: 0.3s ease;
+}
+
+.sidebar h3 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.sidebar-item {
+  padding: 14px 20px;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+  transition: 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background: #d5f766;
+  color: black;
+}
+
+.sidebar-item.active {
+  /* background: #1b3c2f; */
+  background: #8d1a1a;
+  border-left: 4px solid #f36f21;
+}
+
+/* ===============================
+   HAMBURGER — MOBILE ONLY
+================================= */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  position: fixed;
+  top: 21px;
+  left: 15px;
+  z-index: 3000;
+  /* background: white; */
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===============================
+   SIDEBAR MOBILE ANIMATION
+================================= */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .sidebar {
+    left: -240px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}
+
+/* DARK OVERLAY */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+}
+
+/* ===============================
+   HEADER
+================================= */
+.dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 240px;
+  right: 0;
+  height: 70px;
+  background: white;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e6e6e6;
+  z-index: 1500;
+}
+
+
+
+/* MOBILE HEADER ADJUST */
+@media (max-width: 768px) {
+  .dashboard-header {
+    left: 0;
+  }
+  .dashboard-header-title{
+        margin-left: 40px;
+        font-size: 20px;
+  }
+  .span{
+    font-size: 20px;
+  }
+}
+
+/* ===============================
+   MAIN CONTENT
+================================= */
+.main-section {
+  margin-left: 240px;
+  padding-top: 80px;
+  min-height: 100vh;
+    display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .main-section {
+    margin-left: 0;
+  }
+}
+
+.dashboard-content {
+  padding: 20px;
+  min-height: calc(100vh - 80px); /* ensures the inner container has height */
+  /* width: 100%; */
+  display: block;
+}
+
+
+
+
+/* for header profile  */
+
+.profile-box {
+  position: relative;
+  cursor: pointer;
+  padding: 8px 7px 11px 14px;
+  /* background: #2e5f3e; */
+    /* background: #000000; */
+  background: #d45d1a;
+
+  color: white;
+  border-radius: 25px;
+}
+
+.profile-box:hover {
+  background: #1b3c2f;
+}
+
+.caret {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: white;
+  width: 230px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  z-index: 100;
+  padding: 10px 0;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #444;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.logout-red {
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+}
+

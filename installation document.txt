@@ -1,0 +1,26 @@
+For Front end Installation
+
+To install node
+
+winget install OpenJS.NodeJS
+
+To Check installation 
+node -v
+npm -v
+
+create react app
+
+npx create-react-app
+
+
+
+
+
+
+for backend
+
+npm init -y
+
+npm install express
+
+npx nodemon server.js

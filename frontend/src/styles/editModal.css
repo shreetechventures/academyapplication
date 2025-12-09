@@ -1,0 +1,152 @@
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.edit-modal-box {
+  width: 92%;
+  max-width: 420px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.20);
+  animation: fadeIn 0.3s ease;
+}
+
+.edit-modal-box h3 {
+  margin-bottom: 12px;
+}
+
+.edit-modal-box input,
+.edit-modal-box textarea {
+  /* width: 100%; */
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.edit-modal-box textarea {
+  min-height: 90px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.save-btn {
+  background: #2563eb;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
+  border: none;
+}
+
+.cancel-btn {
+  background: #ccc;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+}
+
+
+/* ------------------------------
+   EDIT MODAL INPUT FIELDS
+------------------------------ */
+
+/* Container styling (optional improvement) */
+.edit-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Input box styling */
+.edit-modal-content input[type="text"],
+.edit-modal-content input[type="file"],
+.edit-modal-content textarea {
+  width: 94%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+/* Hover effect */
+.edit-modal-content input:hover,
+.edit-modal-content textarea:hover {
+  background: #f1f5f9;
+}
+
+/* Focus effect */
+.edit-modal-content input:focus,
+.edit-modal-content textarea:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Label styling for file upload */
+.edit-modal-content label.upload-box {
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+  cursor: pointer;
+  transition: 0.2s ease;
+  color: #475569;
+  font-size: 14px;
+  text-align: center;
+}
+
+.edit-modal-content label.upload-box:hover {
+  background: #e2e8f0;
+  border-color: #2563eb;
+}
+
+/* Hidden file input */
+.edit-modal-content input[type="file"] {
+  display: none;
+}
+
+/* Action buttons inside modal */
+.modal-actions button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.modal-actions .btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #4b5563;
+}
+
+.modal-actions .btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.modal-actions .btn-primary:hover {
+  background: #1e3a8a;
+}

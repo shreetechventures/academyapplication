@@ -31,19 +31,28 @@ export default function Champions() {
   // --------------------------
   // LOAD CHAMPIONS
   // --------------------------
-  const loadChampions = async () => {
-    try {
-      const res = await axios.get(`/api/${academyCode}/champions`);
-      const response = res.data;
+const loadChampions = async () => {
+  try {
+    const res = await axios.get(`/${academyCode}/champions`);
+    const list = res.data;
 
-    //   console.log("Loaded grouped:", response);
+    // GROUP BY YEAR
+    const groupedData = list.reduce((acc, champ) => {
+      const y = champ.year || "Unknown";
 
-      setGrouped(response);
+      if (!acc[y]) acc[y] = []; // ensure array
+      acc[y].push(champ);
 
-    } catch (err) {
-      console.error("Load Champions Error:", err);
-    }
-  };
+      return acc;
+    }, {});
+
+    setGrouped(groupedData);
+
+  } catch (err) {
+    console.error("Load Champions Error:", err);
+  }
+};
+
 
   useEffect(() => {
     loadChampions();
@@ -71,7 +80,7 @@ export default function Champions() {
     if (video) form.append("video", video);
 
     try {
-      await axios.post(`/api/${academyCode}/champions`, form, {
+      await axios.post(`/${academyCode}/champions`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -91,7 +100,7 @@ export default function Champions() {
   // --------------------------
   const deleteChampion = async () => {
     try {
-      await axios.delete(`/api/${academyCode}/champions/${deleteModal.id}`);
+      await axios.delete(`/${academyCode}/champions/${deleteModal.id}`);
       setDeleteModal({ open: false, id: null });
       loadChampions();
     } catch (err) {
@@ -104,7 +113,7 @@ export default function Champions() {
   // --------------------------
   const updateChampion = async (id, formData) => {
     try {
-      await axios.put(`/api/${academyCode}/champions/${id}`, formData, {
+      await axios.put(`/${academyCode}/champions/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -171,38 +180,31 @@ export default function Champions() {
           </div>
         )}
 
-       {/* ------------------------------
-     DISPLAY — YEAR WISE
+{/* ------------------------------
+    DISPLAY — YEAR WISE
 ------------------------------- */}
-{Object.keys(grouped)
-  .sort((a, b) => Number(b) - Number(a))
-  .map((year) => (
-    <div key={year} className="year-section">
-      
-      <h2 className="year-title">📅 {year}</h2>
+{Object.entries(grouped).map(([year, list]) => (
+  <div key={year} className="year-section">
 
-      <div className="champion-grid">
-        {grouped[year].map((c) => (
-          <ChampionCard
-            key={c._id}
-            data={c}
-            isAdminOrTeacher={isAdminOrTeacher}
-            onDelete={
-              isAdminOrTeacher
-                ? () => setDeleteModal({ open: true, id: c._id })
-                : null
-            }
-            onEdit={
-              isAdminOrTeacher
-                ? () => setEditModal({ open: true, champion: c })
-                : null
-            }
-          />
-        ))}
-      </div>
+    <h3 className="year-title">{year}</h3>
 
+    <div className="champions-grid">
+      {list.map((champ) => (
+        <ChampionCard
+          key={champ._id}
+          data={champ}
+          onEdit={() =>
+            setEditModal({ open: true, champion: champ })
+          }
+          onDelete={() =>
+            setDeleteModal({ open: true, id: champ._id })
+          }
+        />
+      ))}
     </div>
+  </div>
 ))}
+
 
 
         {/* MODALS */}

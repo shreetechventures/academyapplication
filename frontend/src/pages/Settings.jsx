@@ -30,11 +30,11 @@ export default function Settings() {
     let endpoint = "";
 
     if (role === "academyAdmin") {
-      endpoint = `/api/${academyCode}/auth/change-password`;
+      endpoint = `/${academyCode}/auth/change-password`;
     } else if (role === "teacher") {
-      endpoint = `/api/${academyCode}/teachers/change-password`;
+      endpoint = `/${academyCode}/teachers/change-password`;
     } else if (role === "student") {
-      endpoint = `/api/${academyCode}/auth/change-password`;
+      endpoint = `/${academyCode}/auth/change-password`;
     }
 
     try {

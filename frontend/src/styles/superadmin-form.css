@@ -1,0 +1,78 @@
+/* ================================
+   FORM CONTAINER
+================================ */
+.superadmin-form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+.superadmin-form-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1f2937;
+}
+
+/* ================================
+   INPUTS
+================================ */
+.superadmin-form-container input {
+  width: 94%;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.superadmin-form-container input:focus {
+  border-color: #2563eb;
+}
+
+/* ================================
+   BUTTONS
+================================ */
+.superadmin-btn {
+  width: 100%;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.superadmin-btn:hover {
+  background: #1d4ed8;
+}
+
+.superadmin-btn-secondary {
+  margin-top: 12px;
+  background: #9ca3af;
+}
+
+.superadmin-btn-secondary:hover {
+  background: #6b7280;
+}
+
+/* ================================
+   MESSAGE
+================================ */
+.superadmin-message {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #16a34a;
+}
+
+.superadmin-error {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #dc2626;
+}

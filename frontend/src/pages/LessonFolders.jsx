@@ -31,7 +31,7 @@ export default function Lessons() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `/api/${academyCode}/lessons?category=${category}`
+        `/${academyCode}/lessons?category=${category}`
       );
       setLessons(res.data);
     } catch (err) {
@@ -99,11 +99,11 @@ export default function Lessons() {
 
       if (editMode && editLessonId) {
         await axios.put(
-          `/api/${academyCode}/lessons/${editLessonId}`,
+          `/${academyCode}/lessons/${editLessonId}`,
           payload
         );
       } else {
-        await axios.post(`/api/${academyCode}/lessons`, payload);
+        await axios.post(`/${academyCode}/lessons`, payload);
       }
 
       // Reset
@@ -126,7 +126,7 @@ export default function Lessons() {
     if (!window.confirm("Delete this lesson?")) return;
 
     try {
-      await axios.delete(`/api/${academyCode}/lessons/${id}`);
+      await axios.delete(`/${academyCode}/lessons/${id}`);
       loadLessons();
     } catch (err) {
       alert(err.response?.data?.message || "Delete failed");

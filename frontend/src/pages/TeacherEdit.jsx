@@ -7,6 +7,7 @@ import "../styles/student.css";
 export default function TeacherEdit() {
   const { academyCode, id } = useParams();
   const navigate = useNavigate();
+  // const { academyCode } = useParams();
 
   const [form, setForm] = useState({});
   const [age, setAge] = useState("");
@@ -16,7 +17,7 @@ export default function TeacherEdit() {
   ============================ */
   const loadTeacher = async () => {
     try {
-      const res = await axios.get(`/api/${academyCode}/teachers/${id}`);
+      const res = await axios.get(`/${academyCode}/teachers/${id}`);
       setForm(res.data);
 
       // calculate age initially
@@ -67,7 +68,7 @@ export default function TeacherEdit() {
         age: age,
       };
 
-      await axios.put(`/api/${academyCode}/teachers/${id}`, updated);
+      await axios.put(`/${academyCode}/teachers/${id}`, updated);
 
       alert("Teacher Updated Successfully!");
       navigate(`/${academyCode}/teachers`);
@@ -169,15 +170,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Emergency 2
-            <div className="form-row">
-              <label>Emergency Contact 2</label>
-              <input
-                name="emergencyContact2"
-                value={form.emergencyContact2 || ""}
-                onChange={handleChange}
-              />
-            </div> */}
 
             {/* Father Contact */}
             <div className="form-row">

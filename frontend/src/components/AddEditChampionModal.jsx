@@ -29,10 +29,10 @@ export default function AddEditChampionModal({
 
     if (data) {
       // Update
-      await axios.put(`/api/${academyCode}/champions/${data._id}`, form);
+      await axios.put(`${academyCode}/champions/${data._id}`, form);
     } else {
       // Create
-      await axios.post(`/api/${academyCode}/champions`, form);
+      await axios.post(`${academyCode}/champions`, form);
     }
 
     refresh();

@@ -1,29 +1,33 @@
-// frontend/src/components/RoleSwitcher.jsx
-import React from 'react';
-
-// frontend/src/components/RoleSwitcher.jsx
+import React from "react";
 
 export default function RoleSwitcher({ role, setRole }) {
-  const roles = [
-    // { key: "academyAdmin", label: "Login Here"}
-
-
-    // { key: "academyAdmin", label: "Admin" },
-    // { key: "teacher", label: "Teacher" },
-    // { key: "student", label: "Student" }
-  ]; 
-
   return (
-    <div className="role-switcher">
-      {roles.map(r => (
-        <button
-          key={r.key}
-          className={`role-btn ${role === r.key ? "active" : ""}`}
-          onClick={() => setRole(r.key)}
-        >
-          {r.label}
-        </button>
-      ))}
+    <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+      
+      <button
+        type="button"
+        onClick={() => setRole("academyAdmin")}
+        className={role === "academyAdmin" ? "active" : ""}
+      >
+        Admin
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setRole("teacher")}
+        className={role === "teacher" ? "active" : ""}
+      >
+        Teacher
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setRole("student")}
+        className={role === "student" ? "active" : ""}
+      >
+        Student
+      </button>
+
     </div>
   );
 }

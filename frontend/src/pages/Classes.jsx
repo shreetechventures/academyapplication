@@ -1,6 +1,4 @@
 // frontend/src/pages/Classes.jsx
-
-
 import React from "react";
 import DashboardSidebar from "../components/DashboardSidebar";
 import DashboardHeader from "../components/DashboardHeader";

@@ -38,7 +38,7 @@ export default function TeacherRegister() {
         age: age
       };
 
-      await axios.post(`/api/${academyCode}/teachers/create`, finalData);
+      await axios.post(`/${academyCode}/teachers/create`, finalData);
 
       alert("Trainer Registered Successfully!");
       navigate(`/${academyCode}/teachers`);

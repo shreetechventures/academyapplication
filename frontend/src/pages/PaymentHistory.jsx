@@ -1,0 +1,27 @@
+import React, { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { useParams } from "react-router-dom";
+
+export default function PaymentHistory({ studentFeeId }) {
+  const { academyCode } = useParams();
+  const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    if (!studentFeeId) return;
+    (async () => {
+      const res = await axios.get(`/${academyCode}/fees/history/${studentFeeId}`);
+      setHistory(res.data.data || []);
+    })();
+  }, [studentFeeId]);
+
+  return (
+    <div>
+      <h4>Payment History</h4>
+      {history.map(h => (
+        <div key={h._id}>
+          ₹{h.amount} — {h.month || new Date(h.date).toLocaleDateString()} — {h.mode}
+        </div>
+      ))}
+    </div>
+  );
+}

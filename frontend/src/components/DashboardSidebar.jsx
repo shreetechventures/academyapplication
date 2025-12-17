@@ -1,4 +1,3 @@
-
 // DashboardSidebar.jsx
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -31,7 +30,11 @@ export default function DashboardSidebar({ academyCode, open, close }) {
 
         {/* ---------------- BASE MENU ---------------- */}
         <div className="sidebar-section">
-          <Item icon="🏠" label="Dashboard" link={`/${academyCode}/dashboard`} />
+          <Item
+            icon="🏠"
+            label="Dashboard"
+            link={`/${academyCode}/dashboard`}
+          />
           <Item icon="📚" label="Lessons" link={`/${academyCode}/lessons`} />
         </div>
 
@@ -40,9 +43,34 @@ export default function DashboardSidebar({ academyCode, open, close }) {
         {/* ---------------- ADMIN + TEACHER ---------------- */}
         {(role === "academyAdmin" || role === "teacher") && (
           <div className="sidebar-section">
-            <Item icon="👨‍🎓" label="Students" link={`/${academyCode}/students`} />
-            <Item icon="📁" label="Left Students" link={`/${academyCode}/students/left`} />
-            <Item icon="📝" label="Assessments" link={`/${academyCode}/teacher-assessments`} />
+            <Item
+              icon="👨‍🎓"
+              label="Students"
+              link={`/${academyCode}/students`}
+            />
+            <Item
+              icon="📁"
+              label="Left Students"
+              link={`/${academyCode}/students/left`}
+            />
+            <Item
+              icon="📝"
+              label="Assessments"
+              link={`/${academyCode}/teacher-assessments`}
+            />
+            <Item
+              icon="💰"
+              label="Fee Structures"
+              link={`/${academyCode}/fees/structures`}
+            />
+
+            <Item
+              icon="🧾"
+              label="Student Fees"
+              link={`/${academyCode}/fees/students`}
+            />
+
+
           </div>
         )}
 
@@ -53,8 +81,16 @@ export default function DashboardSidebar({ academyCode, open, close }) {
         {/* ---------------- ADMIN ONLY ---------------- */}
         {role === "academyAdmin" && (
           <div className="sidebar-section">
-            <Item icon="👨‍🏫" label="Trainers" link={`/${academyCode}/teachers`} />
-            <Item icon="📂" label="Left Trainers" link={`/${academyCode}/teachers/left`} />
+            <Item
+              icon="👨‍🏫"
+              label="Trainers"
+              link={`/${academyCode}/teachers`}
+            />
+            <Item
+              icon="📂"
+              label="Left Trainers"
+              link={`/${academyCode}/teachers/left`}
+            />
           </div>
         )}
 
@@ -64,7 +100,16 @@ export default function DashboardSidebar({ academyCode, open, close }) {
         {role === "student" && (
           <>
             <div className="sidebar-section">
-              <Item icon="📊" label="My Assessments" link={`/${academyCode}/student-assessments`} />
+              <Item
+                icon="📊"
+                label="My Assessments"
+                link={`/${academyCode}/student-assessments`}
+              />
+              <Item
+                icon="💰"
+                label="My Fees"
+                link={`/${academyCode}/fees/my`}
+              />  
             </div>
             <div className="sidebar-separator"></div>
           </>
@@ -72,7 +117,11 @@ export default function DashboardSidebar({ academyCode, open, close }) {
 
         {/* ---------------- CHAMPIONS (ALL ROLES) ---------------- */}
         <div className="sidebar-section">
-          <Item icon="🏆" label="Our Champions" link={`/${academyCode}/our-champions`} />
+          <Item
+            icon="🏆"
+            label="Our Champions"
+            link={`/${academyCode}/our-champions`}
+          />
         </div>
 
         <div className="sidebar-separator"></div>

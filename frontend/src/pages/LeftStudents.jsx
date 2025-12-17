@@ -23,7 +23,7 @@ export default function LeftStudents() {
     setFiltered(result);
   };
 useEffect(() => {
-  axios.get(`/api/${academyCode}/students/left/all`)
+  axios.get(`/${academyCode}/students/left/all`)
     .then(res => {
       setStudents(res.data);
       setFiltered(res.data);   // ← ADD THIS

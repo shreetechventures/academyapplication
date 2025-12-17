@@ -1,0 +1,68 @@
+/* ================================
+   SUPERADMIN LAYOUT
+================================ */
+.superadmin-container {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.superadmin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.superadmin-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.superadmin-logout {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.superadmin-logout:hover {
+  background: #dc2626;
+}
+
+/* ================================
+   ACTION BUTTONS
+================================ */
+.superadmin-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+}
+
+.superadmin-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.superadmin-card:hover {
+  transform: translateY(-5px);
+}
+
+.superadmin-card h3 {
+  font-size: 20px;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.superadmin-card p {
+  font-size: 14px;
+  color: #6b7280;
+}

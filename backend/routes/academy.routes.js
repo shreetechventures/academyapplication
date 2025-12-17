@@ -1,13 +1,13 @@
 // backend/routes/academy.routes.js
 
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const Academy = require('../models/Academy');
 const { authMiddleware, permit } = require('../middleware/auth');
 
 
 // Create academy - only superadmin
-// POST /api/academy/create
+// POST //academy/create
 router.post('/create', authMiddleware, permit('superadmin'), async (req, res) => {
 const { code, name, branding } = req.body;
 if (!code || !name) return res.status(400).json({ message: 'code and name required' });
@@ -19,12 +19,15 @@ res.json({ message: 'Academy created', academy: a });
 });
 
 
-// Get academy info (public) - GET /api/academy/:code
-router.get('/:code', async (req, res) => {
-const code = req.params.code;
-const academy = await Academy.findOne({ code });
-if (!academy) return res.status(404).json({ message: 'Not found' });
-res.json(academy);
+// GET /api/:academyCode
+router.get("/", async (req, res) => {
+  try {
+    const academy = await Academy.findOne({ code: req.params.academyCode });
+    if (!academy) return res.status(404).json({ message: "Academy not found" });
+    res.json(academy);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 

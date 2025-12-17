@@ -19,7 +19,7 @@ export default function Students() {
 
   const loadStudents = async () => {
     try {
-      const res = await axios.get(`/api/${academyCode}/students`);
+      const res = await axios.get(`/${academyCode}/students`);
       setStudents(res.data);
       
 
@@ -44,7 +44,7 @@ export default function Students() {
 
   const markAsLeft = async (id) => {
     try {
-      await axios.put(`/api/${academyCode}/students/${id}/leave`);
+      await axios.put(`/${academyCode}/students/${id}/leave`);
       setFiltered(prev => prev.filter(s => s._id !== id));
     } catch {
       alert("Error updating status");

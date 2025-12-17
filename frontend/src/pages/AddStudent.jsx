@@ -29,7 +29,7 @@ export default function AddStudent() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(`/api/${academyCode}/students/create`, form);
+      await axios.post(`/${academyCode}/students/create`, form);
       alert("✅ Student registered successfully!");
       navigate(`/${academyCode}/students`);
     } catch (err) {

@@ -9,6 +9,53 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 
+
+/* ============================================================
+   ✅ STUDENT LOGIN (PUBLIC — MUST BE FIRST)
+   POST /api/:academyCode/students/login
+============================================================ */
+router.post("/login", async (req, res) => {
+  try {
+    const academyCode = req.params.academyCode;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
+
+    const student = await Candidate.findOne({ academyCode, email });
+    if (!student) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const match = await bcrypt.compare(password, student.password);
+    if (!match) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: student._id, role: "student", academyCode },
+      process.env.JWT_SECRET,
+      { expiresIn: "8h" }
+    );
+
+    res.json({
+      token,
+      role: "student",
+      name: student.name,
+      userId: student._id.toString(),
+      academyCode
+    });
+
+  } catch (err) {
+    console.error("STUDENT LOGIN ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
 // ============================================================================
 // 📌 DASHBOARD COUNTS
 // ============================================================================
@@ -161,45 +208,6 @@ router.get("/left/all", authMiddleware, permit("academyAdmin", "teacher"), async
   }
 });
 
-
-// ============================================================================
-// 📌 STUDENT LOGIN  (IMPORTANT)
-// ============================================================================
-router.post("/login", async (req, res) => {
-  try {
-    const academyCode = req.academyCode;
-    const { email, password } = req.body;
-
-    const student = await Candidate.findOne({ academyCode, email });
-
-    if (!student) {
-      return res.status(404).json({ message: "Student not found" });
-    }
-
-    const match = await bcrypt.compare(password, student.password);
-    if (!match) {
-      return res.status(401).json({ message: "Invalid password" });
-    }
-
-    const token = jwt.sign(
-      { id: student._id, role: "student", academyCode },
-      process.env.JWT_SECRET,
-      { expiresIn: "7h" }
-    );
-
-    res.json({
-      token,
-      role: "student",
-      name: student.name,
-      userId: student._id.toString(),
-      academyCode
-    });
-
-  } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 
 // ============================================================================

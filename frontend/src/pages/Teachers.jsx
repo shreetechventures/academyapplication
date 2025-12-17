@@ -17,7 +17,7 @@ export default function Teachers() {
 
   // Load Teachers
   const loadTeachers = async () => {
-    const res = await axios.get(`/api/${academyCode}/teachers`);
+    const res = await axios.get(`/${academyCode}/teachers`);
     setTeachers(res.data);
     setFiltered(res.data);
   };
@@ -28,7 +28,7 @@ export default function Teachers() {
   }, []);
 
   const markAsLeft = async (id) => {
-    await axios.put(`/api/${academyCode}/teachers/${id}/leave`);
+    await axios.put(`/${academyCode}/teachers/${id}/leave`);
     setFiltered(prev => prev.filter(t => t._id !== id));
   };
 

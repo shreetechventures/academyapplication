@@ -16,10 +16,11 @@ export default function PageWrapper({ children }) {
   const academyCode = getAcademyCodeFromPath(location.pathname);
   const [academy, setAcademy] = useState(null);
 
+  // console.log(academyCode, "academy code");
   useEffect(() => {
     async function load() {
       try {
-        const res = await axios.get(`/api/academy/${academyCode}`);
+        const res = await axios.get(`/${academyCode}`);
         setAcademy(res.data);
       } catch (err) {
         console.error("Academy load error:", err);

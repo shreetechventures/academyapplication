@@ -13,7 +13,7 @@ export default function LeftTeachers() {
   // Load Left Teachers
   const loadTeachers = async () => {
     try {
-      const res = await axios.get(`/api/${academyCode}/teachers/left/all`);
+      const res = await axios.get(`/${academyCode}/teachers/left/all`);
       setTeachers(res.data);
     } catch (err) {
       console.error("Error loading teachers:", err);
@@ -27,7 +27,7 @@ export default function LeftTeachers() {
   // Restore Teacher
   const restoreTeacher = async (id) => {
     try {
-      await axios.put(`/api/${academyCode}/teachers/${id}/restore`);
+      await axios.put(`/${academyCode}/teachers/${id}/restore`);
       alert("Teacher restored to Active!");
       loadTeachers();
     } catch (err) {

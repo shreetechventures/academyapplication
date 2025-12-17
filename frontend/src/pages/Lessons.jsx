@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import "../styles/lessons.css";
 
 export default function Lessons() {
-
   const { academyCode } = useParams();
 
   const [lessons, setLessons] = useState([]);
@@ -31,7 +30,7 @@ export default function Lessons() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `/api/${academyCode}/lessons?category=${category}`
+        `/${academyCode}/lessons?category=${category}`
       );
       setLessons(res.data);
     } catch (err) {
@@ -54,7 +53,7 @@ export default function Lessons() {
       /youtu\.be\/([A-Za-z0-9_-]{6,20})/,
       /v=([A-Za-z0-9_-]{6,20})/,
       /embed\/([A-Za-z0-9_-]{6,20})/,
-      /\/v\/([A-Za-z0-9_-]{6,20})/
+      /\/v\/([A-Za-z0-9_-]{6,20})/,
     ];
 
     for (const p of patterns) {
@@ -94,16 +93,13 @@ export default function Lessons() {
         title: title.trim(),
         youtubeUrlOrId: youtubeUrl.trim(),
         description,
-        category
+        category,
       };
 
       if (editMode && editLessonId) {
-        await axios.put(
-          `/api/${academyCode}/lessons/${editLessonId}`,
-          payload
-        );
+        await axios.put(`/${academyCode}/lessons/${editLessonId}`, payload);
       } else {
-        await axios.post(`/api/${academyCode}/lessons`, payload);
+        await axios.post(`/${academyCode}/lessons`, payload);
       }
 
       // Reset
@@ -115,7 +111,6 @@ export default function Lessons() {
       setShowAdd(false);
 
       loadLessons();
-
     } catch (err) {
       setError(err.response?.data?.message || "Unable to save lesson");
     }
@@ -126,7 +121,7 @@ export default function Lessons() {
     if (!window.confirm("Delete this lesson?")) return;
 
     try {
-      await axios.delete(`/api/${academyCode}/lessons/${id}`);
+      await axios.delete(`/${academyCode}/lessons/${id}`);
       loadLessons();
     } catch (err) {
       alert(err.response?.data?.message || "Delete failed");
@@ -134,153 +129,159 @@ export default function Lessons() {
   };
 
   return (
-  <PageWrapper>
-    <div className="lessons-page">
-      <div className="lessons-header">
-        <h2>Lessons</h2>
+    <PageWrapper>
+      <div className="lessons-page">
+        <div className="lessons-header">
+          <h2>Lessons</h2>
 
-        {(role === "academyAdmin" || role === "teacher") && (
-          <button
-            className="btn add-btn"
-            onClick={() => {
-              setShowAdd(!showAdd);
-              if (!showAdd) {
-                setTitle("");
-                setYoutubeUrl("");
-                setDescription("");
-                setEditMode(false);
-              }
-            }}
-          >
-            {showAdd ? (editMode ? "Close Edit" : "Close") : "Add Video"}
-          </button>
-        )}
-      </div>
-
-      {/* CATEGORY BUTTONS */}
-      <div className="lesson-category-buttons">
-        <button
-          className={`lesson-cat-btn ${category === "army" ? "active" : ""}`}
-          onClick={() => setCategory("army")}
-        >
-          Army
-        </button>
-
-        <button
-          className={`lesson-cat-btn ${category === "navy" ? "active" : ""}`}
-          onClick={() => setCategory("navy")}
-        >
-          Navy
-        </button>
-
-        <button
-          className={`lesson-cat-btn ${category === "airforce" ? "active" : ""}`}
-          onClick={() => setCategory("airforce")}
-        >
-          Airforce
-        </button>
-      </div>
-
-      {/* ADD LESSON FORM — stays above videos */}
-      {showAdd && (
-        <div className="add-lesson-form card">
-          {error && <div className="form-error">{error}</div>}
-
-          <label>Title</label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter video title"
-          />
-
-          <label>YouTube URL or ID</label>
-          <input
-            value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value)}
-            placeholder="https://youtube.com/watch?v=..."
-          />
-
-          <label>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows="3"
-          />
-
-          <label>Category</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="army">Army</option>
-            <option value="navy">Navy</option>
-            <option value="airforce">Airforce</option>
-          </select>
-
-          <div className="form-actions">
-            <button className="btn primary" onClick={handleSave}>
-              {editMode ? "Update" : "Save"}
-            </button>
-
+          {(role === "academyAdmin" || role === "teacher") && (
             <button
-              className="btn secondary"
+              className="btn add-btn"
               onClick={() => {
-                setShowAdd(false);
-                setEditMode(false);
-                setEditLessonId(null);
-                setError("");
+                setShowAdd(!showAdd);
+                if (!showAdd) {
+                  setTitle("");
+                  setYoutubeUrl("");
+                  setDescription("");
+                  setEditMode(false);
+                }
               }}
             >
-              Cancel
+              {showAdd ? (editMode ? "Close Edit" : "Close") : "Add Video"}
             </button>
-          </div>
+          )}
         </div>
-      )}
 
-      {/* VIDEO LIST — stays ALWAYS displayed */}
-      <div className="lessons-list">
-        {loading ? (
-          <div>Loading...</div>
-        ) : lessons.length === 0 ? (
-          <div className="empty">No lessons found.</div>
-        ) : (
-          lessons.map((lesson) => (
-            <div className="lesson-card" key={lesson._id}>
-              <div className="lesson-meta">
-                <h3>{lesson.title}</h3>
+        {/* CATEGORY BUTTONS */}
+        <div className="lesson-category-buttons">
+          <button
+            className={`lesson-cat-btn ${category === "army" ? "active" : ""}`}
+            onClick={() => setCategory("army")}
+          >
+            Army
+          </button>
 
-                {(role === "academyAdmin" || role === "teacher") && (
-                  <div className="lesson-controls">
-                    <button
-                      className="btn secondary small"
-                      onClick={() => startEdit(lesson)}
-                    >
-                      Edit
-                    </button>
+          <button
+            className={`lesson-cat-btn ${category === "navy" ? "active" : ""}`}
+            onClick={() => setCategory("navy")}
+          >
+            Navy
+          </button>
 
-                    <button
-                      className="btn danger small"
-                      onClick={() => handleDelete(lesson._id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
+          <button
+            className={`lesson-cat-btn ${
+              category === "airforce" ? "active" : ""
+            }`}
+            onClick={() => setCategory("airforce")}
+          >
+            Airforce
+          </button>
+        </div>
+
+        {/* ADD LESSON FORM — stays above videos */}
+        {showAdd && (
+          <div className="add-lesson-form card">
+            {error && <div className="form-error">{error}</div>}
+
+            <label>Title</label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter video title"
+            />
+
+            <label>YouTube URL or ID</label>
+            <input
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              placeholder="https://youtube.com/watch?v=..."
+            />
+
+            <label>Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="3"
+            />
+
+            <label>Category</label>
+            <select
+              className="select"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="army">Army</option>
+              <option value="navy">Navy</option>
+              <option value="airforce">Airforce</option>
+            </select>
+
+            <div className="form-actions">
+              <button className="btn primary" onClick={handleSave}>
+                {editMode ? "Update" : "Save"}
+              </button>
+
+              <button
+                className="btn secondary"
+                onClick={() => {
+                  setShowAdd(false);
+                  setEditMode(false);
+                  setEditLessonId(null);
+                  setError("");
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* VIDEO LIST — stays ALWAYS displayed */}
+        <div className="lessons-list">
+          {loading ? (
+            <div>Loading...</div>
+          ) : lessons.length === 0 ? (
+            <div className="empty">No lessons found.</div>
+          ) : (
+            lessons.map((lesson) => (
+              <div className="lesson-card" key={lesson._id}>
+                <div className="lesson-meta">
+                  <h3>{lesson.title}</h3>
+
+                  {(role === "academyAdmin" || role === "teacher") && (
+                    <div className="lesson-controls">
+                      <button
+                        className="btn secondary small"
+                        onClick={() => startEdit(lesson)}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="btn danger small"
+                        onClick={() => handleDelete(lesson._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="lesson-player">
+                  <iframe
+                    title={lesson.title}
+                    src={`https://www.youtube.com/embed/${lesson.youtubeId}`}
+                    allowFullScreen
+                  />
+                </div>
+
+                {lesson.description && (
+                  <p className="lesson-desc">{lesson.description}</p>
                 )}
               </div>
-
-              <div className="lesson-player">
-                <iframe
-                  title={lesson.title}
-                  src={`https://www.youtube.com/embed/${lesson.youtubeId}`}
-                  allowFullScreen
-                />
-              </div>
-
-              {lesson.description && (
-                <p className="lesson-desc">{lesson.description}</p>
-              )}
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
-    </div>
-  </PageWrapper>
-);
+    </PageWrapper>
+  );
 }

@@ -23,7 +23,7 @@ const TeacherSchema = new mongoose.Schema({
   // NEW FIELD
   designation: { type: String, required: true },
 
-  password: { type: String, required: true , select: false },
+  password: { type: String, required: true , select: false }, 
 
   status: { type: String, default: "Active" }
 });

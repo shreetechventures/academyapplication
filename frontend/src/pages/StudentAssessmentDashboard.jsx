@@ -17,6 +17,31 @@ export default function StudentAssessmentDashboard() {
   const [results, setResults] = useState([]);
   const [summary, setSummary] = useState([]);
 
+  const ALLOWED_TITLES = [
+  "Written Exam Score",
+  "Gola Fek / Shot Put",
+  "High Jump",
+  "Long Jump",
+  "Pull-Ups",
+  "Sit-Ups",
+  "Push-Ups",
+  "1600 Meter",
+  "100 Meter",
+];
+
+
+const normalizeTitle = (title) => {
+  const map = {
+    "Gola Fek": "Gola Fek / Shot Put",
+    "Shot Put": "Gola Fek / Shot Put",
+    "100 Meter Run": "100 Meter",
+    "1600 Meter Run": "1600 Meter",
+  };
+
+  return map[title] || title;
+};
+
+  
   useEffect(() => {
     if (!studentId) return;
     loadTypes();
@@ -28,25 +53,61 @@ export default function StudentAssessmentDashboard() {
     loadResults(selectedType._id);
   }, [selectedType, studentId]);
 
-  const loadTypes = async () => {
-    try {
-      const res = await axios.get(`/api/${academyCode}/assessments`);
-      setTypes(res.data);
+  // const loadTypes = async () => {
+  //   try {
+  //     const res = await axios.get(`/${academyCode}/assessments`);
+  //     setTypes(res.data);
 
-      if (res.data.length > 0 && !selectedType) {
-        setSelectedType(res.data[0]);
-      }
-    } catch (err) {
-      console.error("Error loading types:", err);
+  //     if (res.data.length > 0 && !selectedType) {
+  //       setSelectedType(res.data[0]);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error loading types:", err);
+  //   }
+  // };
+
+
+  const loadTypes = async () => {
+  try {
+    const res = await axios.get(`/${academyCode}/assessments`);
+
+    const cleaned = [];
+    const seen = new Set();
+
+    res.data.forEach((t) => {
+      const normalizedTitle = normalizeTitle(t.title);
+
+      // ❌ ignore unwanted titles
+      if (!ALLOWED_TITLES.includes(normalizedTitle)) return;
+
+      // ❌ remove duplicates
+      if (seen.has(normalizedTitle)) return;
+
+      seen.add(normalizedTitle);
+
+      cleaned.push({
+        ...t,
+        title: normalizedTitle, // ✅ overwrite title
+      });
+    });
+
+    setTypes(cleaned);
+
+    if (cleaned.length > 0 && !selectedType) {
+      setSelectedType(cleaned[0]);
     }
-  };
+  } catch (err) {
+    console.error("Error loading types:", err);
+  }
+};
+
 
   const loadResults = async (typeId) => {
     if (!typeId || !studentId) return;
 
     try {
       const res = await axios.get(
-        `/api/${academyCode}/assessments/students/${studentId}/results/${typeId}`
+        `/${academyCode}/assessments/students/${studentId}/results/${typeId}`
       );
 
       let list = res.data || [];
@@ -77,7 +138,7 @@ export default function StudentAssessmentDashboard() {
 
     try {
       const res = await axios.get(
-        `/api/${academyCode}/assessments/students/${studentId}/summary`
+        `/${academyCode}/assessments/students/${studentId}/summary`
       );
       setSummary(res.data);
     } catch (err) {
@@ -91,7 +152,14 @@ export default function StudentAssessmentDashboard() {
         <h2>Your Assessments</h2>
 
         {/* TEST BUTTONS */}
-        <div style={{ display: "flex", gap: 12, margin: "12px 0", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            margin: "12px 0",
+            flexWrap: "wrap",
+          }}
+        >
           {types.map((t) => (
             <button
               key={t._id}
@@ -129,9 +197,13 @@ export default function StudentAssessmentDashboard() {
                     boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
                   }}
                 >
-                  <div><strong>{r.date}</strong></div>
-                  <div>Value: {r.value} {selectedType.unit}</div>
-                  <div>Score: {r.score}</div>
+                  <div>
+                    <strong>{r.date}</strong>
+                  </div>
+                  <div>
+                    Result: {r.value} {selectedType.unit}
+                  </div>
+                  {/* <div>Score: {r.score}</div> */}
                 </div>
               ))}
             </div>
@@ -150,9 +222,20 @@ export default function StudentAssessmentDashboard() {
           {summary.map((s) => (
             <div key={s.assessmentType._id} className="card">
               <h4>{s.assessmentType.title}</h4>
-              <div>Avg Score: {Math.round(s.stats.avgScore)}</div>
-              <div>Best: {s.stats.bestScore}</div>
-              <div>Attempts: {s.stats.attempts}</div>
+              {/* <div>Avg Score: {Math.round(s.stats.avgScore)}</div> */}
+              {/* <div>Best: {s.stats.bestScore}</div> */}
+              {/* <div>Attempts: {s.stats.attempts}</div> */}
+              {/* <div style={{ marginTop: 8 }}>
+                <strong>Avg Score:</strong> {Math.round(s.stats.avgScore)}
+              </div>
+
+              <div>
+                <strong>Best Score:</strong> {s.stats.bestScore}
+              </div> */}
+
+              <div>
+                <strong>Attempts:</strong> {s.stats.attempts}
+              </div>
             </div>
           ))}
         </div>

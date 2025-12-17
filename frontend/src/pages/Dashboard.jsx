@@ -15,9 +15,9 @@ export default function Dashboard() {
 
   const loadStats = async () => {
     try {
-      const active = await axios.get(`/api/${academyCode}/dashboard/students/active`);
-      const left = await axios.get(`/api/${academyCode}/dashboard/students/left`);
-      const trainers = await axios.get(`/api/${academyCode}/dashboard/trainers`);
+      const active = await axios.get(`/${academyCode}/dashboard/students/active`);
+      const left = await axios.get(`/${academyCode}/dashboard/students/left`);
+      const trainers = await axios.get(`/${academyCode}/dashboard/trainers`);
 
       setStats({
         totalStudents: active.data.count,

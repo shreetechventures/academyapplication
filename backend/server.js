@@ -70,7 +70,7 @@
 // // -----------------------------------------------
 // // Import all other routes
 // // -----------------------------------------------
-// app.use("/api/academy", require("./routes/academy.routes"));
+// app.use("//academy", require("./routes/academy.routes"));
 // app.use("/api/:academyCode/auth", require("./routes/auth.routes"));
 // app.use("/api/:academyCode/admin", require("./routes/admin.routes"));
 // app.use("/api/:academyCode/students", require("./routes/candidate.routes"));
@@ -109,7 +109,6 @@
 
 // start();
 
-
 require("dotenv").config();
 
 const express = require("express");
@@ -121,6 +120,12 @@ const Academy = require("./models/Academy");
 
 // ROUTES
 const lessonsRoute = require("./routes/lessons.routes");
+const superAdminRoutes = require("./routes/superAdmin.routes");
+const feeRoutes = require("./routes/fee.routes");
+
+console.log("Fee routes loaded at /api/:academyCode/fees");
+
+
 
 // Create App
 const app = express();
@@ -128,6 +133,12 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+
+// ============================================================================
+// ✅ SUPERADMIN ROUTES (NO academyCode, MUST COME FIRST)
+// ============================================================================
+app.use("/api/superadmin", superAdminRoutes);
 
 
 // ============================================================================
@@ -165,19 +176,19 @@ async function insertMany() {
 
 
 // ============================================================================
-// 📌 GLOBAL ROUTE (lessons)
+// 📌 GLOBAL ROUTE (LESSONS)
 // ============================================================================
 app.use("/api/:academyCode/lessons", lessonsRoute);
 
 
 // ============================================================================
-// 📌 AUTO-EXTRACT academyCode Middleware
+// 📌 AUTO-EXTRACT academyCode (ONLY FOR TENANT ROUTES)
 // ============================================================================
 app.use((req, res, next) => {
   const parts = req.path.split("/").filter(Boolean);
 
-  if (parts[0] === "api" && parts[1]) {
-    req.academyCode = parts[1]; // Attach academyCode to req
+  if (parts[0] === "api" && parts[1] && parts[1] !== "superadmin") {
+    req.academyCode = parts[1];
   }
 
   next();
@@ -185,23 +196,34 @@ app.use((req, res, next) => {
 
 
 // ============================================================================
-// 📌 IMPORT ALL ROUTES
+// 📌 TENANT ROUTES
 // ============================================================================
-app.use("/api/academy", require("./routes/academy.routes"));
+app.use("/api/:academyCode", require("./routes/academy.routes"));
+// app.use("/api/academy", require("./routes/academy.routes"));
+
 app.use("/api/:academyCode/auth", require("./routes/auth.routes"));
 app.use("/api/:academyCode/admin", require("./routes/admin.routes"));
+// app.use("/:academyCode/students", require("./routes/candidate.routes"));
 app.use("/api/:academyCode/students", require("./routes/candidate.routes"));
+
 app.use("/api/:academyCode/teachers", require("./routes/teachers.routes"));
 app.use("/api/:academyCode/dashboard", require("./routes/dashboard.routes"));
 app.use("/api/:academyCode/lesson-folders", require("./routes/lessonFolders.routes"));
 app.use("/api/:academyCode/assessments", require("./routes/assessments.routes"));
-app.use("/api", require("./routes/champions.routes")); // global
+// app.use("/api/:academyCode/champions", require("./routes/champions.routes"));
+app.use("/api/:academyCode/champions", require("./routes/champions.routes"));
+
+app.use("/api/:academyCode/fees", feeRoutes);
+// app.use("/api/:academyCode/fees", require("./routes/fee.routes"));
+
 
 
 // ============================================================================
 // 📁 STATIC FILES
 // ============================================================================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static("uploads"));
+
 
 
 // ============================================================================
@@ -220,7 +242,7 @@ const start = async () => {
     await connectDB(process.env.MONGO_URI);
     console.log("✅ Mongo connected");
 
-    await insertMany(); // Run seed only after DB connection
+    await insertMany();
 
     const port = process.env.PORT || 5000;
     app.listen(port, () =>

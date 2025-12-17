@@ -5,11 +5,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { authMiddleware } = require("../middleware/auth");
 
-const User = require("../models/User");            // Academy Admin
-const Teacher = require("../models/Teacher");      // Teacher
-const Candidate = require("../models/Candidate");  // Student
+const User = require("../models/User"); // Academy Admin
+const Teacher = require("../models/Teacher"); // Teacher
+const Candidate = require("../models/Candidate"); // Student
 const Academy = require("../models/Academy");
-
 
 // ============================================================================
 // 🔐 Helper → Send Login Token
@@ -20,7 +19,7 @@ function sendToken(user, role, academyCode, res) {
       id: user._id,
       email: user.email,
       role,
-      academyCode
+      academyCode,
     },
     process.env.JWT_SECRET,
     { expiresIn: "8h" }
@@ -31,10 +30,9 @@ function sendToken(user, role, academyCode, res) {
     role,
     name: user.name,
     userId: user._id.toString(),
-    academyCode
+    academyCode,
   });
 }
-
 
 // ============================================================================
 // 🔐 CHANGE PASSWORD (Admin + Teacher + Student)
@@ -51,10 +49,13 @@ router.put("/change-password", authMiddleware, async (req, res) => {
 
     if (!model) return res.status(400).json({ message: "Invalid role" });
 
-    const user = await model.findById(req.user.id);
+    const user = await model.findById(req.user.id).select("+password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const valid = await bcrypt.compare(currentPassword, user.password || user.passwordHash);
+    const valid = await bcrypt.compare(
+      currentPassword,
+      user.password || user.passwordHash
+    );
     if (!valid)
       return res.status(400).json({ message: "Incorrect current password" });
 
@@ -72,11 +73,6 @@ router.put("/change-password", authMiddleware, async (req, res) => {
   }
 });
 
-
-// ============================================================================
-// 🔐 MASTER LOGIN → SuperAdmin, AcademyAdmin, Teacher
-// POST /api/:academyCode/auth/login
-// ============================================================================
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -86,19 +82,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
     }
 
-    // -----------------------------------------------
-    // 0️⃣ SUPERADMIN LOGIN
-    // -----------------------------------------------
+    // 0️⃣ Super Admin Login
     if (
       email === process.env.SUPERADMIN_EMAIL &&
       password === process.env.SUPERADMIN_PASSWORD
     ) {
       const token = jwt.sign(
-        {
-          email,
-          role: "superadmin",
-          academyCode
-        },
+        { email, role: "superadmin" },
         process.env.JWT_SECRET,
         { expiresIn: "8h" }
       );
@@ -111,53 +101,56 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // -----------------------------------------------
-    // 1️⃣ Validate Academy exists
-    // -----------------------------------------------
+    // 1️⃣ Check academy exists
     const academy = await Academy.findOne({ code: academyCode });
     if (!academy)
       return res.status(400).json({ message: "Academy not found" });
 
-
-    // -----------------------------------------------
-    // 2️⃣ Academy Admin Login (User Model)
-    // -----------------------------------------------
+    // 2️⃣ Academy Admin Login
     let user = await User.findOne({
       email: email.toLowerCase(),
       academyCode
-    });
+    }).select("+passwordHash");
 
     if (user) {
       const valid = await bcrypt.compare(password, user.passwordHash);
-      if (!valid)
-        return res.status(401).json({ message: "Invalid password" });
+      if (!valid) return res.status(401).json({ message: "Invalid password" });
 
       return sendToken(user, "academyAdmin", academyCode, res);
     }
 
-
-    // -----------------------------------------------
     // 3️⃣ Teacher Login
-    // -----------------------------------------------
-    user = await Teacher.findOne({ email, academyCode });
+    let teacherUser = await Teacher
+      .findOne({ email: email.toLowerCase(), academyCode })
+      .select("+password");
 
-    if (user) {
-      const valid = await bcrypt.compare(password, user.password);
-      if (!valid)
-        return res.status(401).json({ message: "Invalid password" });
+    if (teacherUser) {
+      const valid = await bcrypt.compare(password, teacherUser.password);
+      if (!valid) return res.status(401).json({ message: "Invalid password" });
 
-      return sendToken(user, "teacher", academyCode, res);
+      return sendToken(teacherUser, "teacher", academyCode, res);
     }
 
+    // 4️⃣ Student Login (Candidate)
+    let student = await Candidate
+      .findOne({ email: email.toLowerCase(), academyCode })
+      .select("+password");
 
-    return res.status(401).json({ message: "Invalid email or password" });
+    if (student) {
+      const valid = await bcrypt.compare(password, student.password);
+      if (!valid) return res.status(401).json({ message: "Invalid password" });
+
+      return sendToken(student, "student", academyCode, res);
+    }
+
+    // 5️⃣ No user found
+    return res.status(404).json({ message: "User not found" });
 
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 
 module.exports = router;

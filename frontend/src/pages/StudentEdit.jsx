@@ -18,7 +18,7 @@ export default function EditStudent() {
   const loadStudent = async () => {
     try {
       const res = await axios.get(
-        `/api/${academyCode}/students/${id}`,
+        `/${academyCode}/students/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -49,7 +49,7 @@ export default function EditStudent() {
   const updateStudent = async () => {
     try {
       await axios.put(
-        `/api/${academyCode}/students/${id}`,
+        `/${academyCode}/students/${id}`,
         form,
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

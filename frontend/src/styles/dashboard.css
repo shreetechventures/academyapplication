@@ -14,8 +14,6 @@
 ================================= */
 .sidebar {
   width: 240px;
-  /* background: #1f3b2c; */
-  /* background: #d1632f; */
   background: #d1632f;
   color: white;
   position: fixed;
@@ -43,15 +41,18 @@
 }
 
 .sidebar-item:hover {
-  background: #d5f766;
-  color: black;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
+
+/*  */
+
 .sidebar-item.active {
-  /* background: #1b3c2f; */
-  background: #8d1a1a;
-  border-left: 4px solid #f36f21;
+  background: #7a1515;
+  border-left: 4px solid #ffd166;
 }
+
 
 /* ===============================
    HAMBURGER — MOBILE ONLY
@@ -113,6 +114,8 @@
   align-items: center;
   border-bottom: 2px solid #e6e6e6;
   z-index: 1500;
+    box-sizing: border-box;
+
 }
 
 
@@ -149,7 +152,9 @@
 }
 
 .dashboard-content {
-  padding: 20px;
+  /* padding: 20px; */
+  padding: 30px 20px 20px 20px;
+
   min-height: calc(100vh - 80px); /* ensures the inner container has height */
   /* width: 100%; */
   display: block;
@@ -209,3 +214,55 @@
   cursor: pointer;
 }
 
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 350px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+
+
+
+.sidebar-social {
+  margin-top: auto;       /* pushes to bottom */
+      margin-bottom: 30px;
+
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px 0 18px;   /* more breathing space */
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+
+.social-icon {
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.2s;
+}
+
+.social-icon:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}

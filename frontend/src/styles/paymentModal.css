@@ -1,7 +1,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,4 +25,473 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+/* Overlay */
+.payment-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Modal box */
+.payment-modal {
+  background: #ffffff;
+  width: 520px;
+  max-width: 95%;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Header */
+.payment-modal-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid #eee;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Content */
+.payment-modal-body {
+  padding: 16px;
+}
+
+/* Table */
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.payment-table th,
+.payment-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.payment-table th {
+  background: #f7f9fb;
+  font-size: 14px;
+}
+
+/* Footer */
+.payment-modal-footer {
+  padding: 12px 16px;
+  text-align: right;
+  border-top: 1px solid #eee;
+}
+
+/* Button */
+.payment-close-btn {
+  padding: 6px 14px;
+  background: #d33;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.payment-close-btn:hover {
+  background: #b92a2a;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===== Billing table ===== */
+.fee-table {
+  /* width: 100%;
+  border-collapse: collapse; */
+  background: #fff;
+}
+
+/* .fee-table th,
+.fee-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+} */
+
+.fee-table th {
+  background: #f5f7fa;
+  font-weight: 600;
+}
+
+/* ===== Status badges ===== */
+.status-paid {
+  color: #0a7d2c;
+  font-weight: 600;
+}
+
+.status-partial {
+  color: #d17a00;
+  font-weight: 600;
+}
+
+.status-unpaid {
+  color: #c62828;
+  font-weight: 600;
+}
+
+/* ===== Action buttons ===== */
+.fee-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Set Fee */
+.btn-set {
+  background: #eef2ff;
+  color: #1e40af;
+}
+
+/* Pay */
+.btn-pay {
+  background: #16a34a;
+  color: #fff;
+}
+
+.btn-pay:hover {
+  background: #15803d;
+}
+
+/* History */
+.btn-history {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* ===== Pay input ===== */
+.pay-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pay-input {
+  width: 80px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.pay-save {
+  background: #2563eb;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.pay-save:hover {
+  background: #1e40af;
+}
+
+/* =========================================
+   📱 MOBILE RESPONSIVE FIXES
+========================================= */
+
+/* ---------- General ---------- */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* ---------- Fee Table ---------- */
+@media (max-width: 768px) {
+  .fee-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .fee-table th {
+    max-width: 100%;
+    padding: 8px;
+    font-size: 13px;
+    max-width: 56px;
+  }
+  
+  .fee-table td {
+    padding: 8px;
+    font-size: 13px;
+    max-width: 56px;
+  }
+}
+
+/* ---------- Action Buttons ---------- */
+@media (max-width: 768px) {
+  .fee-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+/* ---------- Payment Modal ---------- */
+@media (max-width: 768px) {
+  .payment-modal {
+    width: 95%;
+    margin: 0 10px;
+    border-radius: 10px;
+  }
+
+  .payment-modal-header {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .payment-modal-body {
+    padding: 14px;
+  }
+
+  .payment-modal-body label {
+    font-size: 13px;
+    margin-top: 10px;
+    display: block;
+  }
+
+  .payment-modal-body input,
+  .payment-modal-body select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .payment-modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .payment-modal-footer button {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+  }
+}
+
+/* ---------- History Modal Table ---------- */
+@media (max-width: 768px) {
+  .payment-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .payment-table th,
+  .payment-table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+/* ---------- Students List ---------- */
+@media (max-width: 768px) {
+  .students-list {
+    width: 100% !important;
+  }
+}
+
+/* ---------- Modal Overlay Touch ---------- */
+@media (max-width: 768px) {
+  .payment-overlay {
+    align-items: flex-end;
+  }
+
+  .payment-modal {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+/* ---------- Better Touch Targets ---------- */
+@media (max-width: 768px) {
+  button {
+    min-height: 42px;
+  }
+}
+
+/* Fee edit inline box */
+.fee-edit-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 768px) {
+  .fee-edit-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* =========================================
+   🚫 FIX TABLE OVERFLOW (MOST IMPORTANT)
+========================================= */
+
+
+
+/* Prevent table from expanding screen */
+.fee-table {
+  table-layout: fixed;
+  min-width: 720px; /* desktop minimum */
+}
+
+/* Break long text properly */
+.fee-table td {
+  /* word-break: break-word; */
+  white-space: normal;
+}
+
+/* Period column fix */
+.fee-table td:first-child {
+  max-width: 65px;
+}
+
+/* Actions column fix */
+.fee-table td:last-child {
+  min-width: 160px;
+}
+
+/* =========================================
+   📱 MOBILE STRONG FIX
+========================================= */
+@media (max-width: 768px) {
+  .fee-table {
+    min-width: 520px; /* enables smooth horizontal scroll */
+  }
+
+  /* Keep actions readable */
+  .fee-actions {
+    flex-direction: column;
+  }
+
+  .fee-actions .btn {
+    width: 40%;
+  }
+}
+
+/* ===============================
+   💰 FEE SUMMARY (ADMIN)
+================================ */
+
+.fee-summary-admin {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Summary Box */
+.summary-box {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summary-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Label */
+.summary-box span {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+/* Amount */
+.summary-box strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Paid */
+.summary-box.paid {
+  background: #ecfdf5;
+  border-color: #86efac;
+}
+
+.summary-box.paid strong {
+  color: #15803d;
+}
+
+/* Pending */
+.summary-box.pending {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.summary-box.pending strong {
+  color: #c2410c;
+}
+
+/* =====================================
+   📱 MOBILE VIEW
+===================================== */
+@media (max-width: 768px) {
+  .fee-summary-admin {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .summary-box {
+    padding: 14px;
+  }
+
+  .summary-box span {
+    font-size: 12px;
+  }
+
+  .summary-box strong {
+    font-size: 20px;
+  }
+}
+
+/* =====================================
+   📱 EXTRA SMALL DEVICES
+===================================== */
+@media (max-width: 420px) {
+  .summary-box strong {
+    font-size: 18px;
+  }
 }

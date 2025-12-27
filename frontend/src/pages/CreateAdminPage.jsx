@@ -60,7 +60,7 @@ export default function CreateAdminPage() {
   return (
     <div className="superadmin-form-container">
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div>
         <h2>Manage Academy Admins</h2>
         {/* <button onClick={logout}>Logout</button> */}
       </div>

@@ -30,7 +30,6 @@ export default function Login() {
 
           // const res = await axios.get(`/api/${academyCode}/academy`);
           // const res = await axios.get(`/api/${academyCode}`);
-
         }
       } catch (err) {
         console.error("Academy load error:", err);
@@ -39,14 +38,92 @@ export default function Login() {
     fetchAcademy();
   }, [academyCode]);
 
-
   const validateInput = () => {
-  if (!identifier.trim() || !secret.trim()) {
-    setErr("All fields are required");
-    return false;
-  }
-  return true;
-};
+    if (!identifier.trim() || !secret.trim()) {
+      setErr("All fields are required");
+      return false;
+    }
+    return true;
+  };
+
+  // const handleLogin = async () => {
+  //   try {
+  //     setErr("");
+  //     if (!validateInput()) return;
+
+  //     const academyCode = getAcademyCodeFromPath(location.pathname);
+
+  //     const email = identifier;
+  //     const password = secret;
+
+  //     // console.log("PATHNAME:", location.pathname);
+  //     // console.log("Trying auto-role login…");
+
+  //     // 1️⃣ Try ADMIN / ACADEMY-ADMIN login
+  //     try {
+  //       const res = await axios.post(`/${academyCode}/auth/login`, {
+  //         email,
+  //         password,
+  //       });
+
+  //       // console.log("ROLE DETECTED: ADMIN");
+  //       localStorage.setItem("token", res.data.token);
+  //       localStorage.setItem("role", res.data.role);
+  //       localStorage.setItem("name", res.data.name);
+  //       localStorage.setItem("academyCode", academyCode);
+  //       localStorage.setItem("userId", res.data.userId);
+
+  //       if (res.data.role === "superadmin") return navigate("/superadmin");
+
+  //       return navigate(`/${academyCode}/dashboard`);
+  //     } catch (err) {
+  //       console.log("Admin login failed → checking Teacher");
+  //     }
+
+  //     // 2️⃣ Try TEACHER LOGIN
+  //     try {
+  //       const res = await axios.post(`/${academyCode}/teachers/login`, {
+  //         email,
+  //         password,
+  //       });
+
+  //       console.log("ROLE DETECTED: TEACHER");
+  //       localStorage.setItem("token", res.data.token);
+  //       localStorage.setItem("role", "teacher");
+  //       localStorage.setItem("name", res.data.name);
+  //       localStorage.setItem("academyCode", academyCode);
+  //       localStorage.setItem("userId", res.data.userId);
+
+  //       return navigate(`/${academyCode}/dashboard`);
+  //     } catch (err) {
+  //       console.log("Teacher login failed → checking Student");
+  //     }
+
+  //     // 3️⃣ Try STUDENT LOGIN
+  //     try {
+  //       const res = await axios.post(`/${academyCode}/students/login`, {
+  //         email,
+  //         password,
+  //       });
+
+  //       console.log("ROLE DETECTED: STUDENT");
+  //       localStorage.setItem("token", res.data.token);
+  //       localStorage.setItem("role", "student");
+  //       localStorage.setItem("name", res.data.name);
+  //       localStorage.setItem("academyCode", academyCode);
+  //       localStorage.setItem("userId", res.data.userId);
+
+  //       return navigate(`/${academyCode}/dashboard`);
+  //     } catch (err) {
+  //       console.log("Student login failed");
+  //     }
+
+  //     // ❌ If all fail
+  //     setErr("Invalid email or password");
+  //   } catch (e) {
+  //     setErr("Login failed");
+  //   }
+  // };
 
   const handleLogin = async () => {
     try {
@@ -54,75 +131,63 @@ export default function Login() {
       if (!validateInput()) return;
 
       const academyCode = getAcademyCodeFromPath(location.pathname);
-
       const email = identifier;
       const password = secret;
 
-      // console.log("PATHNAME:", location.pathname);
-      // console.log("Trying auto-role login…");
-
-      // 1️⃣ Try ADMIN / ACADEMY-ADMIN login
+      // ================= ADMIN =================
       try {
         const res = await axios.post(`/${academyCode}/auth/login`, {
           email,
           password,
         });
 
-        // console.log("ROLE DETECTED: ADMIN");
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("role", res.data.role);
         localStorage.setItem("name", res.data.name);
         localStorage.setItem("academyCode", academyCode);
         localStorage.setItem("userId", res.data.userId);
 
-        if (res.data.role === "superadmin") return navigate("/superadmin");
+        if (res.data.role === "superadmin") {
+          return navigate("/superadmin");
+        }
 
         return navigate(`/${academyCode}/dashboard`);
-      } catch (err) {
-        console.log("Admin login failed → checking Teacher");
-      }
+      } catch {}
 
-      // 2️⃣ Try TEACHER LOGIN
+      // ================= TEACHER =================
       try {
         const res = await axios.post(`/${academyCode}/teachers/login`, {
           email,
           password,
         });
 
-        console.log("ROLE DETECTED: TEACHER");
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("role", "teacher");
         localStorage.setItem("name", res.data.name);
         localStorage.setItem("academyCode", academyCode);
         localStorage.setItem("userId", res.data.userId);
 
-        return navigate(`/${academyCode}/dashboard`);
-      } catch (err) {
-        console.log("Teacher login failed → checking Student");
-      }
+        return navigate(`/${academyCode}/dashboard/teacher`);
+      } catch {}
 
-      // 3️⃣ Try STUDENT LOGIN
+      // ================= STUDENT =================
       try {
         const res = await axios.post(`/${academyCode}/students/login`, {
           email,
           password,
         });
 
-        console.log("ROLE DETECTED: STUDENT");
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("role", "student");
         localStorage.setItem("name", res.data.name);
         localStorage.setItem("academyCode", academyCode);
         localStorage.setItem("userId", res.data.userId);
 
-        return navigate(`/${academyCode}/dashboard`);
-      } catch (err) {
-        console.log("Student login failed");
-      }
+        return navigate(`/${academyCode}/dashboard/student`);
+      } catch {}
 
-      // ❌ If all fail
       setErr("Invalid email or password");
-    } catch (e) {
+    } catch {
       setErr("Login failed");
     }
   };

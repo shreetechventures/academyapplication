@@ -4,7 +4,9 @@ const router = express.Router();
 
 const User = require("../models/User");
 const Academy = require("../models/Academy");
-const { authMiddleware } = require("../middleware/auth");
+const AcademySubscription = require("../models/AcademySubscription");
+const SubscriptionPayment = require("../models/SubscriptionPayment");
+const { authMiddleware, permit } = require("../middleware/auth");
 
 /**
  * ============================================================================
@@ -12,13 +14,169 @@ const { authMiddleware } = require("../middleware/auth");
  * POST /api/superadmin/create-academy
  * ============================================================================
  */
+
+// MARK SUBSCRIPTION PAID
+router.post(
+  "/subscription/mark-paid",
+  authMiddleware,
+  permit("superadmin"),
+  async (req, res) => {
+    const { academyCode, durationMonths, maxStudents, remark } = req.body;
+
+    if (!academyCode || !durationMonths || !maxStudents) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + Number(durationMonths));
+
+    let subscription = await AcademySubscription.findOne({ academyCode });
+
+    if (!subscription) {
+      subscription = new AcademySubscription({
+        academyCode,
+        startDate,
+        endDate,
+        maxStudents,
+        remark, // ✅ SAVE REMARK
+
+        status: "active",
+      });
+    } else {
+      subscription.startDate = startDate;
+      subscription.endDate = endDate;
+      if (maxStudents) subscription.maxStudents = maxStudents;
+      subscription.remark = remark; // ✅ SAVE REMARK
+
+      subscription.status = "active";
+    }
+
+    await subscription.save();
+
+    await Academy.updateOne({ code: academyCode }, { isActive: true });
+
+    await SubscriptionPayment.create({
+      academyCode,
+      durationMonths,
+      markedBy: req.user.id,
+      remark,
+      paidOn: new Date(), // explicit
+    });
+
+    res.json({ message: "Subscription activated successfully" });
+  }
+);
+
+// router.post("/create-academy", authMiddleware, async (req, res) => {
+//   try {
+//     if (req.user.role !== "superadmin") {
+//       return res.status(403).json({ message: "Access denied" });
+//     }
+
+//     const { name, code, address } = req.body;
+
+//     if (!name || !code) {
+//       return res.status(400).json({ message: "Name and code required" });
+//     }
+
+//     const existing = await Academy.findOne({ code });
+//     if (existing) {
+//       return res.status(400).json({ message: "Academy code already exists" });
+//     }
+
+//     const academy = new Academy({
+//       name,
+//       code,
+//       address
+//     });
+
+//     await academy.save();
+
+//     res.json({
+//       message: "Academy created successfully",
+//       academy
+//     });
+//   } catch (err) {
+//     console.error("CREATE ACADEMY ERROR:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// router.post("/create-academy", authMiddleware, async (req, res) => {
+//   try {
+//     if (req.user.role !== "superadmin") {
+//       return res.status(403).json({ message: "Access denied" });
+//     }
+
+//     const { name, code, address, durationMonths, maxStudents, remark } =
+//       req.body;
+
+//     if (!name || !code) {
+//       return res.status(400).json({ message: "Name and code required" });
+//     }
+
+//     const existing = await Academy.findOne({ code });
+//     if (existing) {
+//       return res.status(400).json({ message: "Academy code already exists" });
+//     }
+
+//     // 1️⃣ Create academy
+//     const academy = new Academy({
+//       name,
+//       code,
+//       address,
+//       isActive: true,
+//     });
+//     await academy.save();
+
+//     // 2️⃣ Create subscription (if provided)
+//     if (durationMonths && maxStudents) {
+//       const startDate = new Date();
+//       const endDate = new Date();
+//       endDate.setMonth(endDate.getMonth() + Number(durationMonths));
+
+//       await AcademySubscription.create({
+//         academyCode: code,
+//         startDate,
+//         endDate,
+//         maxStudents,
+//                   remark,
+
+//         status: "active",
+//       });
+
+//       // 3️⃣ Optional: record payment
+//       if (amount) {
+//         await SubscriptionPayment.create({
+//           academyCode: code,
+//           durationMonths,
+//           markedBy: req.user.id,
+//           remark,
+//               paidOn: new Date(),
+
+//         });
+//       }
+//     }
+
+//     res.json({
+//       message: "✅ Academy created with subscription",
+//       academy,
+//     });
+//   } catch (err) {
+//     console.error("CREATE ACADEMY ERROR:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
 router.post("/create-academy", authMiddleware, async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const { name, code, address } = req.body;
+    const { name, code, address, durationMonths, maxStudents, remark } =
+      req.body;
 
     if (!name || !code) {
       return res.status(400).json({ message: "Name and code required" });
@@ -29,23 +187,102 @@ router.post("/create-academy", authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "Academy code already exists" });
     }
 
+    // 1️⃣ Create academy
     const academy = new Academy({
       name,
       code,
-      address
+      address,
+      isActive: true,
     });
-
     await academy.save();
 
+    // 2️⃣ Create subscription (NO PAYMENT HERE)
+    if (durationMonths && maxStudents) {
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + Number(durationMonths));
+
+      await AcademySubscription.create({
+        academyCode: code,
+        startDate,
+        endDate,
+        maxStudents,
+        remark,
+        status: "active",
+      });
+    }
+
     res.json({
-      message: "Academy created successfully",
-      academy
+      message: "✅ Academy created successfully",
+      academy,
     });
   } catch (err) {
     console.error("CREATE ACADEMY ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// ✅ HISTORY ROUTE (FIRST)
+router.get(
+  "/subscription/:academyCode/history",
+  authMiddleware,
+  permit("superadmin"),
+  async (req, res) => {
+    const history = await SubscriptionPayment.find({
+      academyCode: req.params.academyCode,
+    }).sort({ createdAt: -1 });
+
+    res.json(history);
+  }
+);
+
+// ✅ SUBSCRIPTION ROUTE (SECOND)
+router.get(
+  "/subscription/:academyCode",
+  authMiddleware,
+  permit("superadmin"),
+  async (req, res) => {
+    const sub = await AcademySubscription.findOne({
+      academyCode: req.params.academyCode,
+    });
+
+    res.json(sub || null);
+  }
+);
+
+// ENABLE / DISABLE ACADEMY
+router.put(
+  "/academy/:id/toggle",
+  authMiddleware,
+  permit("superadmin"),
+  async (req, res) => {
+    const academy = await Academy.findById(req.params.id);
+    if (!academy) return res.status(404).json({ message: "Not found" });
+
+    academy.isActive = !academy.isActive;
+    await academy.save();
+
+    res.json({
+      message: academy.isActive ? "Academy enabled" : "Academy disabled",
+      isActive: academy.isActive,
+    });
+  }
+);
+
+// ✅ GET TOTAL REGISTERED ACADEMIES
+router.get(
+  "/academies/count",
+  authMiddleware,
+  permit("superadmin"),
+  async (req, res) => {
+    try {
+      const count = await Academy.countDocuments();
+      res.json({ count });
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 
 /**
  * ============================================================================
@@ -125,7 +362,6 @@ router.delete("/admin/:id", authMiddleware, async (req, res) => {
   }
 });
 
-
 // ============================================================================
 // ✅ SUPERADMIN → LIST ACADEMIES
 // GET /api/superadmin/academies
@@ -138,13 +374,10 @@ router.get("/academies", authMiddleware, async (req, res) => {
 
     const academies = await Academy.find().sort({ createdAt: -1 });
     res.json(academies);
-
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 // ============================================================================
 // ✅ SUPERADMIN → UPDATE ACADEMY
@@ -168,12 +401,10 @@ router.put("/academy/:id", authMiddleware, async (req, res) => {
 
     await academy.save();
     res.json({ message: "Academy updated", academy });
-
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // ============================================================================
 // ✅ SUPERADMIN → DELETE ACADEMY
@@ -187,12 +418,10 @@ router.delete("/academy/:id", authMiddleware, async (req, res) => {
 
     await Academy.findByIdAndDelete(req.params.id);
     res.json({ message: "Academy deleted" });
-
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 /**
  * ============================================================================
@@ -229,7 +458,7 @@ router.post("/create-admin", authMiddleware, async (req, res) => {
       email: email.toLowerCase(),
       passwordHash: hashedPassword,
       role: "academyAdmin",
-      academyCode
+      academyCode,
     });
 
     await admin.save();
@@ -240,10 +469,9 @@ router.post("/create-admin", authMiddleware, async (req, res) => {
         id: admin._id,
         name: admin.name,
         email: admin.email,
-        academyCode
-      }
+        academyCode,
+      },
     });
-
   } catch (err) {
     console.error("CREATE ADMIN ERROR:", err);
     res.status(500).json({ message: "Server error" });

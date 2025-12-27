@@ -122,10 +122,9 @@ const Academy = require("./models/Academy");
 const lessonsRoute = require("./routes/lessons.routes");
 const superAdminRoutes = require("./routes/superAdmin.routes");
 const feeRoutes = require("./routes/fee.routes");
+const settingsRoutes = require("./routes/settings.routes");
 
 console.log("Fee routes loaded at /api/:academyCode/fees");
-
-
 
 // Create App
 const app = express();
@@ -134,12 +133,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 // ============================================================================
 // ✅ SUPERADMIN ROUTES (NO academyCode, MUST COME FIRST)
 // ============================================================================
 app.use("/api/superadmin", superAdminRoutes);
-
 
 // ============================================================================
 // 🌱 SEED ACADEMIES — Runs Only Once
@@ -174,12 +171,10 @@ async function insertMany() {
   }
 }
 
-
 // ============================================================================
 // 📌 GLOBAL ROUTE (LESSONS)
 // ============================================================================
 app.use("/api/:academyCode/lessons", lessonsRoute);
-
 
 // ============================================================================
 // 📌 AUTO-EXTRACT academyCode (ONLY FOR TENANT ROUTES)
@@ -194,7 +189,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // ============================================================================
 // 📌 TENANT ROUTES
 // ============================================================================
@@ -207,16 +201,27 @@ app.use("/api/:academyCode/admin", require("./routes/admin.routes"));
 app.use("/api/:academyCode/students", require("./routes/candidate.routes"));
 
 app.use("/api/:academyCode/teachers", require("./routes/teachers.routes"));
+
 app.use("/api/:academyCode/dashboard", require("./routes/dashboard.routes"));
-app.use("/api/:academyCode/lesson-folders", require("./routes/lessonFolders.routes"));
-app.use("/api/:academyCode/assessments", require("./routes/assessments.routes"));
+
+app.use(
+  "/api/:academyCode/lesson-folders",
+  require("./routes/lessonFolders.routes")
+);
+app.use(
+  "/api/:academyCode/assessments",
+  require("./routes/assessments.routes")
+);
 // app.use("/api/:academyCode/champions", require("./routes/champions.routes"));
 app.use("/api/:academyCode/champions", require("./routes/champions.routes"));
 
 app.use("/api/:academyCode/fees", feeRoutes);
+app.use("/api/:academyCode/settings", settingsRoutes);
+
+
+app.use("/api/superadmin", require("./routes/superAdmin.routes"));
+
 // app.use("/api/:academyCode/fees", require("./routes/fee.routes"));
-
-
 
 // ============================================================================
 // 📁 STATIC FILES
@@ -224,15 +229,12 @@ app.use("/api/:academyCode/fees", feeRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // app.use("/uploads", express.static("uploads"));
 
-
-
 // ============================================================================
 // ROOT TEST
 // ============================================================================
 app.get("/", (req, res) => {
   res.send("Academy Server Running...");
 });
-
 
 // ============================================================================
 // 🚀 START SERVER
@@ -245,9 +247,7 @@ const start = async () => {
     await insertMany();
 
     const port = process.env.PORT || 5000;
-    app.listen(port, () =>
-      console.log(`🚀 Server running on port ${port}`)
-    );
+    app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
   } catch (err) {
     console.error("❌ Server failed:", err.message);
   }

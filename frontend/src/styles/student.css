@@ -352,3 +352,43 @@
     width: 100%;
   }
 }
+
+
+
+/* =========================
+   STUDENT TABS + BADGES
+========================= */
+
+.student-tabs {
+  display: flex;
+  gap: 12px;
+}
+
+.tab-btn {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-btn.active {
+  background: #1f3b2c;
+  color: #fff;
+}
+
+.badge {
+  background: #22c55e;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.badge.warning {
+  background: #ef4444;
+}

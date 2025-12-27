@@ -14,13 +14,11 @@ export default function ChampionCard({
   return (
     <div className="champion-card">
       <div className="champion-media">
-        
         {data.videoUrl ? (
           <video src={BASE_URL + data.videoUrl} controls />
         ) : (
           <img src={BASE_URL + data.imageUrl} alt={data.name} />
         )}
-
       </div>
 
       <div className="champion-info">
@@ -31,8 +29,12 @@ export default function ChampionCard({
       {/* Admin/Teacher only */}
       {isAdminOrTeacher && (
         <div className="champion-actions">
-          <button className="edit-btn" onClick={onEdit}>✎</button>
-          <button className="delete-btn" onClick={onDelete}>✖</button>
+          <button className="edit-btn" onClick={onEdit}>
+            ✎
+          </button>
+          <button className="delete-btn" onClick={onDelete}>
+            ✖
+          </button>
         </div>
       )}
     </div>

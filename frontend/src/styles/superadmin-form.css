@@ -2,12 +2,15 @@
    FORM CONTAINER
 ================================ */
 .superadmin-form-container {
-  max-width: 500px;
+  /* max-width: 500px;
+   */
+  max-width: 92%;
+
   margin: 40px auto;
   background: #ffffff;
-  padding: 40px;
+  /* padding: 40px; */
   border-radius: 14px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
 }
 
 .superadmin-form-container h2 {
@@ -20,9 +23,9 @@
    INPUTS
 ================================ */
 .superadmin-form-container input {
-  width: 94%;
+  width: 90%;
   padding: 12px 14px;
-  margin-bottom: 18px;
+  margin: 20px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;

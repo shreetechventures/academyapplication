@@ -177,3 +177,23 @@
   margin: 12px 0;
   opacity: 0.6;
 }
+
+
+.sidebar-social {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 12px 0;
+}
+
+.social-icon {
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.social-icon:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}

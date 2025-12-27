@@ -102,11 +102,12 @@
   overflow: hidden;
 }
 
+
 .champion-media img,
 .champion-media video {
-  width: 70%;
+  /* width: 100%; */
   height: 100%;
-  object-fit: cover;
+  /* object-fit: cover; */
 }
 
 /* fallback text */
@@ -314,3 +315,5 @@
   font-size: 14px;
   background: #f8fafc;
 }
+
+

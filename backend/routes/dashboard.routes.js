@@ -3,13 +3,15 @@ const router = express.Router({ mergeParams: true });
 
 const Candidate = require("../models/Candidate");
 const Teacher = require("../models/Teacher");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, permit } = require("../middleware/auth");
+
+const AcademySubscription = require("../models/AcademySubscription");
 
 // Total Active Students
 router.get("/students/active", authMiddleware, async (req, res) => {
   const count = await Candidate.countDocuments({
     academyCode: req.params.academyCode,
-    status: "Active"
+    status: "Active",
   });
   res.json({ count });
 });
@@ -18,7 +20,7 @@ router.get("/students/active", authMiddleware, async (req, res) => {
 router.get("/students/left", authMiddleware, async (req, res) => {
   const count = await Candidate.countDocuments({
     academyCode: req.params.academyCode,
-    status: "Left"
+    status: "Left",
   });
   res.json({ count });
 });
@@ -26,9 +28,57 @@ router.get("/students/left", authMiddleware, async (req, res) => {
 // Total Trainers
 router.get("/trainers", authMiddleware, async (req, res) => {
   const count = await Teacher.countDocuments({
-    academyCode: req.params.academyCode
+    academyCode: req.params.academyCode,
   });
   res.json({ count });
 });
+
+/* =========================================================
+   📊 ADMIN ONLY – SUBSCRIPTION INFO
+   GET /api/:academyCode/dashboard/subscription-info
+========================================================= */
+
+router.get(
+  "/subscription-info",
+  authMiddleware,
+  permit("academyAdmin"),
+  async (req, res) => {
+    try {
+      const academyCode = req.academyCode;
+
+      const subscription = await AcademySubscription.findOne({
+        academyCode,
+        status: "active",
+      });
+
+      if (!subscription) {
+        return res.json(null);
+      }
+
+      const activeStudents= await Candidate.countDocuments({
+        academyCode,
+        status: "Active",
+      });
+
+      const maxStudents = subscription.maxStudents;
+      const remaining = Math.max(maxStudents - activeStudents, 0);
+      const usagePercent = Math.round(
+        (activeStudents/ maxStudents) * 100
+      );
+
+      res.json({
+        maxStudents,
+        remaining,
+        used: activeStudents,
+        usagePercent,
+        expiryDate: subscription.endDate,
+        showWarning: usagePercent >= 90,
+      });
+    } catch (err) {
+      console.error("Subscription info error:", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 
 module.exports = router;

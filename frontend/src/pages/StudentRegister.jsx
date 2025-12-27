@@ -6,10 +6,14 @@ import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
+
 export default function StudentRegister() {
 
   const { academyCode } = useParams();
   const navigate = useNavigate();
+
+const [academySettings, setAcademySettings] = useState(null);
+const role = localStorage.getItem("role");
 
   const [form, setForm] = useState({
     studentCode: "",
@@ -35,7 +39,15 @@ useEffect(() => {
   generateCode();
 }, [academyCode]);
 
-
+useEffect(() => {
+  if (
+    role === "teacher" &&
+    !academySettings?.allowTrainerStudentRegistration
+  ) {
+    alert("❌ You are not allowed to register students");
+    navigate(`/${academyCode}/students`);
+  }
+}, []);
 
 
   /* =======================

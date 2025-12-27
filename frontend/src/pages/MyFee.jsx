@@ -1,118 +1,291 @@
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { useParams } from "react-router-dom";
+import PaymentHistoryModal from "../components/PaymentHistoryModal";
 import PageWrapper from "../components/PageWrapper";
+import confetti from "canvas-confetti";
+
 import "../styles/myFee.css";
 
 export default function MyFee() {
   const { academyCode } = useParams();
   const studentId = localStorage.getItem("userId");
 
-  const [fee, setFee] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [billings, setBillings] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [activeBillingId, setActiveBillingId] = useState(null);
 
   useEffect(() => {
     if (!studentId) return;
-    loadMyFee();
-  }, [academyCode, studentId]);
+    loadData();
+  }, [studentId]);
 
-  const loadMyFee = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
 
-      // ✅ STUDENT-ONLY API
-      const res = await axios.get(
-        `/${academyCode}/fees/student/${studentId}`
+      const billingRes = await axios.get(
+        `/${academyCode}/fees/student/${studentId}/billing`
       );
+      setBillings(billingRes.data.data || []);
 
-      const feeData = res.data.data;
-      setFee(feeData);
-
-      if (feeData?._id) {
-        loadHistory(feeData._id);
-      }
+      const summaryRes = await axios.get(
+        `/${academyCode}/fees/student/${studentId}/summary`
+      );
+      setSummary(summaryRes.data.data || null);
     } catch (err) {
-      console.error("Load my fee error:", err);
-      setFee(null);
+      console.error("Failed to load fee data", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadHistory = async (studentFeeId) => {
-    try {
-      const res = await axios.get(
-        `/${academyCode}/fees/history/${studentFeeId}`
-      );
-      setHistory(res.data.data || []);
-    } catch (err) {
-      console.error("History error:", err);
+  useEffect(() => {
+    if (!summary) return;
+
+    const isFullyPaid =
+      summary.totalFee > 0 && summary.paidFee === summary.totalFee;
+
+    const confettiKey = `fee_confetti_${studentId}`;
+
+    if (isFullyPaid && !localStorage.getItem(confettiKey)) {
+      // 🎊 FIRE CONFETTI
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ["#2e7d32", "#66bb6a", "#ffd166"],
+      });
+
+      // ✅ Mark as shown
+      localStorage.setItem(confettiKey, "shown");
     }
-  };
 
-  if (loading) {
-    return <PageWrapper>Loading fee details...</PageWrapper>;
-  }
+    // 🔄 Reset confetti if payment is no longer complete
+    if (!isFullyPaid) {
+      localStorage.removeItem(confettiKey);
+    }
+  }, [summary, studentId]);
 
-if (!fee) {
   return (
     <PageWrapper>
-      <div className="no-fee">No fee assigned yet.</div>
-    </PageWrapper>
-  );
-}
+      <div className="my-fee-container">
+        <h2 className="my-fee-title">My Fees</h2>
 
+        {loading && <p className="loading">Loading fee details...</p>}
 
-    return (
-  <PageWrapper>
-    <div className="my-fee-container">
+        {/* ===== DASHBOARD STYLE SUMMARY ===== */}
+        {/* {!loading && summary && (
+        <div className="fee-summary-dashboard">
+          <div className="summary-card total">
+            <span>Total Fee</span>
+            <strong>₹{summary.totalFee}</strong>
+          </div>
 
-      <h2 className="my-fee-title">My Fee Details</h2>
+          <div className="summary-card paid">
+            <span>Paid</span>
+            <strong>₹{summary.paidFee}</strong>
+          </div>
 
-      {/* Fee Summary */}
-      <div className="fee-summary">
-        <div className="fee-box fee-total">
-          <span>Total Fee</span>
-          <strong>₹{fee.totalFee}</strong>
+          <div className="summary-card pending">
+            <span>Pending</span>
+            <strong>₹{summary.pendingFee}</strong>
+          </div>
         </div>
+      )} */}
 
-        <div className="fee-box fee-paid">
-          <span>Paid</span>
-          <strong>₹{fee.paidFee}</strong>
-        </div>
-
-        <div className="fee-box fee-pending">
-          <span>Pending</span>
-          <strong>₹{fee.pendingFee}</strong>
-        </div>
-      </div>
-
-      {/* Payment History */}
-      <h3 className="history-title">Payment History</h3>
-
-      {history.length === 0 && (
-        <div className="no-fee">No payments made yet.</div>
-      )}
-
-      <div className="history-list">
-        {history.map((h) => (
-          <div key={h._id} className="history-item">
-            <div className="history-left">
-              <strong>₹{h.amount}</strong>
-              <small>{h.month}</small>
+        {!loading && summary && (
+          <div className="fee-summary-dashboard">
+            {/* TOTAL */}
+            <div className="summary-card total">
+              <span>Total Fee</span>
+              <strong>₹{summary.totalFee}</strong>
             </div>
 
-            <div className="history-right">
-              <div>Mode: {h.mode}</div>
-              <div>{new Date(h.date).toLocaleString()}</div>
+            {/* PAID */}
+            {/* <div className="summary-card paid">
+              <span>Paid</span>
+              <strong>₹{summary.paidFee}</strong>
+
+              <div className="circle-wrapper">
+                <svg className="progress-ring" width="90" height="90">
+                  <circle
+                    className="progress-ring-bg"
+                    strokeWidth="8"
+                    r="38"
+                    cx="45"
+                    cy="45"
+                  />
+                  <circle
+                    className="progress-ring-fill paid"
+                    strokeWidth="8"
+                    r="38"
+                    cx="45"
+                    cy="45"
+                    style={{
+                      strokeDashoffset:
+                        238 -
+                        (summary.totalFee
+                          ? (summary.paidFee / summary.totalFee) * 238
+                          : 0),
+                    }}
+                  />
+                </svg>
+                <div className="circle-text">
+                  {summary.totalFee
+                    ? Math.round((summary.paidFee / summary.totalFee) * 100)
+                    : 0}
+                  %
+                </div>
+              </div>
+            </div> */}
+
+            {/* PAID */}
+            <div className="summary-card paid">
+              <span>Paid</span>
+              <strong>₹{summary.paidFee}</strong>
+
+              {/* 🎉 PAID BADGE */}
+              {summary.totalFee > 0 && summary.paidFee === summary.totalFee && (
+                <div className="paid-badge">PAID</div>
+              )}
+
+              <div className="circle-wrapper">
+                <svg className="progress-ring" width="90" height="90">
+                  <circle
+                    className="progress-ring-bg"
+                    strokeWidth="8"
+                    r="38"
+                    cx="45"
+                    cy="45"
+                  />
+                  <circle
+                    className="progress-ring-fill paid"
+                    strokeWidth="8"
+                    r="38"
+                    cx="45"
+                    cy="45"
+                    style={{
+                      strokeDashoffset:
+                        summary.totalFee > 0
+                          ? 238 - (summary.paidFee / summary.totalFee) * 238
+                          : 238,
+                    }}
+                  />
+                </svg>
+
+                <div className="circle-text">
+                  {summary.totalFee > 0
+                    ? Math.round((summary.paidFee / summary.totalFee) * 100)
+                    : 0}
+                  %
+                </div>
+              </div>
+            </div>
+
+            {/* PENDING */}
+            <div className="summary-card pending">
+              <span>Pending</span>
+              <strong>₹{summary.pendingFee}</strong>
+
+              <div className="circle-wrapper">
+                <svg className="progress-ring" width="90" height="90">
+                  <circle
+                    className="progress-ring-bg"
+                    strokeWidth="8"
+                    r="38"
+                    cx="45"
+                    cy="45"
+                  />
+                  <circle
+                    className="progress-ring-fill pending"
+                    strokeWidth="8"
+                    r="38"
+                    cx="45"
+                    cy="45"
+                    style={{
+                      strokeDashoffset:
+                        238 -
+                        (summary.totalFee
+                          ? (summary.pendingFee / summary.totalFee) * 238
+                          : 0),
+                    }}
+                  />
+                </svg>
+                <div className="circle-text">
+                  {summary.totalFee
+                    ? Math.round((summary.pendingFee / summary.totalFee) * 100)
+                    : 0}
+                  %
+                </div>
+              </div>
             </div>
           </div>
-        ))}
+        )}
+
+        {!loading && billings.length === 0 && (
+          <div className="no-fee">No fee records available yet.</div>
+        )}
+
+        {/* ===== TRAINER STYLE TABLE ===== */}
+        {!loading && billings.length > 0 && (
+          <div className="fee-table-wrapper">
+            <table className="fee-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Fee</th>
+                  <th>Paid</th>
+                  <th>Status</th>
+                  <th>History</th>
+                </tr>
+              </thead>
+              <tbody>
+                {billings.map((b) => (
+                  <tr key={b._id}>
+                    <td>
+                      {new Date(b.periodStart).toLocaleDateString()} –{" "}
+                      {new Date(b.periodEnd).toLocaleDateString()}
+                    </td>
+                    <td>₹{b.finalFee}</td>
+                    <td>₹{b.paidAmount}</td>
+                    <td>
+                      <span className={`status-badge ${b.status}`}>
+                        {b.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td>
+                      {b.paidAmount > 0 ? (
+                        <button
+                          className="view-btn"
+                          onClick={() => {
+                            setActiveBillingId(b._id);
+                            setHistoryOpen(true);
+                          }}
+                        >
+                          View
+                        </button>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <PaymentHistoryModal
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          academyCode={academyCode}
+          billingId={activeBillingId}
+        />
       </div>
-
-    </div>
-  </PageWrapper>
-
+    </PageWrapper>
   );
 }

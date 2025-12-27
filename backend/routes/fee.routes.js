@@ -1,54 +1,191 @@
+// const express = require("express");
+// const router = express.Router({ mergeParams: true });
+
+// const { authMiddleware, permit } = require("../middleware/auth");
+// const feeController = require("../controllers/fee.controller");
+
+// // Assign fee
+// router.post(
+//   "/assign",
+//   authMiddleware,
+//   permit("academyAdmin"),
+//   feeController.assignFee
+// );
+
+// // Record payment
+// router.post(
+//   "/pay/:studentFeeId",
+//   authMiddleware,
+//   // permit("academyAdmin", "teacher"),
+//     canManageFees, // 🔥 HERE
+
+//   feeController.recordPaymentForStudent
+// );
+
+// // Update fee
+// router.put(
+//   "/update/:studentFeeId",
+//   authMiddleware,
+//   permit("academyAdmin", "teacher"),
+//   feeController.updateStudentFee
+// );
+
+// // Get all fees
+// router.get(
+//   "/all",
+//   authMiddleware,
+//   permit("academyAdmin", "teacher"),
+//   feeController.getAllStudentsFee
+// );
+
+// // Get student fee
+// router.get(
+//   "/student/:studentId",
+//   authMiddleware,
+//   feeController.getStudentFee
+// );
+
+// // Payment history
+// router.get(
+
+//   "/history/:studentFeeId",
+//   authMiddleware,
+//   feeController.getPaymentHistory
+// );
+
+// module.exports = router;
+
+// const express = require("express");
+// const router = express.Router({ mergeParams: true });
+
+// const { authMiddleware } = require("../middleware/auth");
+// const { canManageFees } = require("../middleware/feePermission");
+// const feeController = require("../controllers/fee.controller");
+// const { requirePermission } = require("../middleware/permission");
+
+// router.put(
+//   "/billing/:billingId/amount",
+//   authMiddleware,
+//   canManageFees,
+//   requirePermission("fee"),
+//   feeController.updateBillingFeeAmount
+// );
+
+// // Assign fee → ADMIN ONLY
+// router.post(
+//   "/assign",
+//   authMiddleware,
+//   canManageFees,
+//     requirePermission("fee"),
+
+//   feeController.assignFee
+// );
+
+// // Record payment
+// router.post(
+//   "/pay/:studentFeeId",
+//   authMiddleware,
+//   canManageFees,
+//     requirePermission("fee"),
+
+//   // feeController.recordPaymentForStudent
+//   feeController.assignFee
+// );
+
+// // Update fee
+// router.put(
+//   "/update/:studentFeeId",
+//   authMiddleware,
+//   canManageFees,
+//   // feeController.updateStudentFee
+// feeController.updateStudentFee
+// );
+
+// // Get all fees
+// router.get(
+//   "/all",
+//   authMiddleware,
+//   canManageFees,
+//   feeController.getAllStudentsFee
+// );
+
+// // Get student fee (view only → all roles)
+// router.get(
+//   "/student/:studentId",
+//   authMiddleware,
+//   feeController.getStudentFee
+// );
+
+// // Payment history (view only)
+// router.get(
+//   "/history/:studentFeeId",
+//   authMiddleware,
+//   feeController.getPaymentHistory
+// );
+
+// module.exports = router;
+
+
+
+
+
+
+// backend/routes/fee.routes.js
+
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 
-const { authMiddleware, permit } = require("../middleware/auth");
+const { authMiddleware } = require("../middleware/auth");
+const { canManageFees } = require("../middleware/feePermission");
+
 const feeController = require("../controllers/fee.controller");
 
-// Assign fee
-router.post(
-  "/assign",
+/* ===================== STUDENT ===================== */
+
+// billing cycles
+router.get(
+  "/student/:studentId/billing",
   authMiddleware,
-  permit("academyAdmin"),
-  feeController.assignFee
+  feeController.getStudentBillingCycles
 );
 
-// Record payment
-router.post(
-  "/pay/:studentFeeId",
+// billing summary (optional, if you use it)
+router.get(
+  "/student/:studentId/summary",
   authMiddleware,
-  permit("academyAdmin", "teacher"),
-  feeController.recordPaymentForStudent
+  feeController.getStudentFeeSummary
 );
 
-// Update fee
+/* ===================== ADMIN / TEACHER ===================== */
+
+// set / update billing fee
 router.put(
-  "/update/:studentFeeId",
+  "/billing/:billingId/amount",
   authMiddleware,
-  permit("academyAdmin", "teacher"),
-  feeController.updateStudentFee
+  canManageFees,
+  feeController.updateBillingFeeAmount
 );
 
-// Get all fees
-router.get(
-  "/all",
+// pay billing fee
+router.post(
+  "/billing/:billingId/pay",
   authMiddleware,
-  permit("academyAdmin", "teacher"),
-  feeController.getAllStudentsFee
+  canManageFees,
+  feeController.payBillingFee
 );
 
-// Get student fee
+// payment history
 router.get(
-  "/student/:studentId",
+  "/billing/:billingId/history",
   authMiddleware,
-  feeController.getStudentFee
+  feeController.getBillingPaymentHistory
 );
 
-// Payment history
-router.get(
-
-  "/history/:studentFeeId",
+router.put(
+  "/billing/:billingId/discount",
   authMiddleware,
-  feeController.getPaymentHistory
+  canManageFees,
+  feeController.applyDiscount
 );
 
 module.exports = router;

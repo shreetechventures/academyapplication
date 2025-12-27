@@ -1,6 +1,14 @@
 // DashboardSidebar.jsx
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faInstagram,
+  faYoutube,
+  faWhatsapp,
+  faFacebook,
+} from "@fortawesome/free-brands-svg-icons";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 
 export default function DashboardSidebar({ academyCode, open, close }) {
   const navigate = useNavigate();
@@ -13,7 +21,7 @@ export default function DashboardSidebar({ academyCode, open, close }) {
     close();
   };
 
-  // Helper: Sidebar Item Component
+  // Sidebar Item
   const Item = ({ icon, label, link }) => (
     <div
       className={`sidebar-item ${path === link ? "active" : ""}`}
@@ -25,78 +33,85 @@ export default function DashboardSidebar({ academyCode, open, close }) {
 
   return (
     <>
+      {/* ================= SIDEBAR ================= */}
       <div className={`sidebar ${open ? "open" : ""}`}>
         <h3>Defence Academy</h3>
 
-        {/* ---------------- BASE MENU ---------------- */}
+        {/* -------- DASHBOARD (ROLE BASED) -------- */}
         <div className="sidebar-section">
-          <Item
-            icon="🏠"
-            label="Dashboard"
-            link={`/${academyCode}/dashboard`}
-          />
+          {role === "academyAdmin" && (
+            <Item
+              icon="🏠"
+              label="Dashboard"
+              link={`/${academyCode}/dashboard/admin`}
+            />
+          )}
+
+          {role === "teacher" && (
+            <Item
+              icon="🏠"
+              label="Dashboard"
+              link={`/${academyCode}/dashboard/teacher`}
+            />
+          )}
+
+          {role === "student" && (
+            <Item
+              icon="🏠"
+              label="Dashboard"
+              link={`/${academyCode}/dashboard/student`}
+            />
+          )}
+
           <Item icon="📚" label="Lessons" link={`/${academyCode}/lessons`} />
         </div>
 
-        <div className="sidebar-separator"></div>
+        <div className="sidebar-separator" />
 
-        {/* ---------------- ADMIN + TEACHER ---------------- */}
+        {/* -------- ADMIN + TEACHER -------- */}
         {(role === "academyAdmin" || role === "teacher") && (
-          <div className="sidebar-section">
-            <Item
-              icon="👨‍🎓"
-              label="Students"
-              link={`/${academyCode}/students`}
-            />
-            <Item
-              icon="📁"
-              label="Left Students"
-              link={`/${academyCode}/students/left`}
-            />
-            <Item
-              icon="📝"
-              label="Assessments"
-              link={`/${academyCode}/teacher-assessments`}
-            />
-            <Item
-              icon="💰"
-              label="Fee Structures"
-              link={`/${academyCode}/fees/structures`}
-            />
-
-            <Item
-              icon="🧾"
-              label="Student Fees"
-              link={`/${academyCode}/fees/students`}
-            />
-
-
-          </div>
+          <>
+            <div className="sidebar-section">
+              <Item
+                icon="👨‍🎓"
+                label="Students"
+                link={`/${academyCode}/students`}
+              />
+              <Item
+                icon="📝"
+                label="Assessments"
+                link={`/${academyCode}/teacher-assessments`}
+              />
+              <Item
+                icon="🧾"
+                label="Student Fees"
+                link={`/${academyCode}/fees/students`}
+              />
+            </div>
+            <div className="sidebar-separator" />
+          </>
         )}
 
-        {(role === "academyAdmin" || role === "teacher") && (
-          <div className="sidebar-separator"></div>
-        )}
-
-        {/* ---------------- ADMIN ONLY ---------------- */}
+        {/* -------- ADMIN ONLY -------- */}
         {role === "academyAdmin" && (
-          <div className="sidebar-section">
-            <Item
-              icon="👨‍🏫"
-              label="Trainers"
-              link={`/${academyCode}/teachers`}
-            />
-            <Item
-              icon="📂"
-              label="Left Trainers"
-              link={`/${academyCode}/teachers/left`}
-            />
-          </div>
+          <>
+            <div className="sidebar-section">
+              <Item
+                icon="👨‍🏫"
+                label="Trainers"
+                link={`/${academyCode}/teachers`}
+              />
+              <Item
+                icon="📂"
+                label="Left Trainers"
+                link={`/${academyCode}/teachers/left`}
+              />
+            </div>
+            <div className="sidebar-separator" />
+          </>
         )}
 
-        {role === "academyAdmin" && <div className="sidebar-separator"></div>}
-
-        {/* ---------------- STUDENT ONLY ---------------- */}
+        {/* -------- STUDENT ONLY -------- */}
         {role === "student" && (
           <>
             <div className="sidebar-section">
@@ -109,13 +124,13 @@ export default function DashboardSidebar({ academyCode, open, close }) {
                 icon="💰"
                 label="My Fees"
                 link={`/${academyCode}/fees/my`}
-              />  
+              />
             </div>
-            <div className="sidebar-separator"></div>
+            <div className="sidebar-separator" />
           </>
         )}
 
-        {/* ---------------- CHAMPIONS (ALL ROLES) ---------------- */}
+        {/* -------- CHAMPIONS (ALL) -------- */}
         <div className="sidebar-section">
           <Item
             icon="🏆"
@@ -124,14 +139,61 @@ export default function DashboardSidebar({ academyCode, open, close }) {
           />
         </div>
 
-        <div className="sidebar-separator"></div>
+        {/* -------- SETTINGS (ADMIN ONLY – BOTTOM) -------- */}
+        {role === "academyAdmin" && (
+          <>
+            <div className="sidebar-separator" />
+            <div className="sidebar-section">
+              <Item
+                icon="⚙️"
+                label="Settings"
+                link={`/${academyCode}/settings`}
+              />
+            </div>
+          </>
+        )}
 
-        {/* ---------------- SETTINGS (ALL ROLES) ---------------- */}
-        <div className="sidebar-section">
-          <Item icon="⚙️" label="Settings" link={`/${academyCode}/settings`} />
+        {/* -------- SOCIAL LINKS (ABSOLUTE LAST) -------- */}
+        {/* -------- SOCIAL LINKS (ABSOLUTE LAST) -------- */}
+        <div className="sidebar-social">
+          <span
+            className="social-icon"
+            title="Instagram"
+            onClick={() =>
+              window.open("https://www.instagram.com/jobs_genix/", "_blank")
+            }
+          >
+            <FontAwesomeIcon icon={faInstagram} />
+          </span>
+
+
+
+          <span
+            className="social-icon"
+            title="WhatsApp"
+            onClick={() => window.open("https://wa.me/", "_blank")}
+          >
+            <FontAwesomeIcon icon={faWhatsapp} />
+          </span>
+
+          <span
+            className="social-icon"
+            title="Website"
+            onClick={() => window.open("https://shreegroup.io/", "_blank")}
+          >
+            <FontAwesomeIcon icon={faGlobe} />
+          </span>
+
+          <span
+            className="social-icon"
+            title="Facebook"
+            onClick={() => window.open("https://facebook.com/", "_blank")}
+          >
+            <FontAwesomeIcon icon={faFacebook} />
+          </span>
         </div>
       </div>
-
+      {/* OVERLAY */}
       {open && <div className="overlay" onClick={close} />}
     </>
   );

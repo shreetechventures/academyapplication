@@ -1,138 +1,229 @@
 /* ===============================
-   MY FEE PAGE
+   DASHBOARD STYLE SUMMARY
 ================================ */
 
-.my-fee-container {
-  max-width: 900px;
-  margin: auto;
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  margin-top: 30px;
-}
-
-/* Title */
-.my-fee-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1f3b2c;
-}
-
-/* ===============================
-   FEE SUMMARY BOX
-================================ */
-
-.fee-summary {
+.fee-summary-dashboard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 30px;
+  gap: 18px;
+  margin: 25px 0;
 }
 
-.fee-box {
+.summary-card {
+  background: #ffffff;
   padding: 18px;
-  border-radius: 8px;
-  background: #f7f9f8;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
-.fee-box span {
+.summary-card span {
   display: block;
   font-size: 13px;
   color: #666;
   margin-bottom: 6px;
 }
 
-.fee-box strong {
-  font-size: 20px;
+.summary-card strong {
+  font-size: 22px;
+  font-weight: 600;
 }
 
-.fee-total strong {
+.summary-card.total strong {
   color: #1f3b2c;
 }
 
-.fee-paid strong {
+.summary-card.paid strong {
   color: #2e7d32;
 }
 
-.fee-pending strong {
+.summary-card.pending strong {
   color: #c62828;
 }
 
 /* ===============================
-   PAYMENT HISTORY
+   TRAINER STYLE TABLE
 ================================ */
 
-.history-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 12px;
+.fee-table-wrapper {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
-.history-list {
-  border-top: 1px solid #eee;
+.fee-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.history-left strong {
-  font-size: 16px;
-}
-
-.history-left small {
-  display: block;
-  color: #666;
-}
-
-.history-right {
-  text-align: right;
+.fee-table th {
+  background: #f7f9f8;
+  text-align: left;
+  padding: 12px;
   font-size: 14px;
   color: #444;
 }
 
-/* ===============================
-   EMPTY STATE
-================================ */
+.fee-table td {
+  padding: 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
 
-.no-fee {
-  text-align: center;
-  padding: 40px 10px;
-  color: #777;
+.fee-table tr:last-child td {
+  border-bottom: none;
+}
+
+.fee-table tr:hover {
+  background: #fafafa;
 }
 
 /* ===============================
-   LOADING
+   STATUS BADGES
 ================================ */
 
-.loading {
-  text-align: center;
-  padding: 40px;
-  font-size: 16px;
-  color: #444;
+.status-badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.status-badge.paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.pending {
+  background: #fdecea;
+  color: #c62828;
 }
 
 /* ===============================
-   MOBILE RESPONSIVE
+   BUTTON
+================================ */
+
+.view-btn {
+  padding: 6px 12px;
+  background: #1f3b2c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.view-btn:hover {
+  background: #163026;
+}
+
+/* ===============================
+   MOBILE
 ================================ */
 
 @media (max-width: 768px) {
-  .fee-summary {
+  .fee-summary-dashboard {
     grid-template-columns: 1fr;
   }
 
-  .history-item {
-    flex-direction: column;
-    gap: 6px;
+  .fee-table th,
+  .fee-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+}
+
+/* ===============================
+   CIRCULAR PROGRESS
+================================ */
+
+.circle-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 12px auto 0;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  fill: none;
+  stroke: #eee;
+}
+
+.progress-ring-fill {
+  fill: none;
+  stroke-dasharray: 238;
+  stroke-dashoffset: 238;
+  transition: stroke-dashoffset 0.8s ease;
+  stroke-linecap: round;
+}
+
+/* Colors */
+.progress-ring-fill.paid {
+  stroke: #2e7d32;
+}
+
+.progress-ring-fill.pending {
+  stroke: #c62828;
+}
+
+/* Percentage Text */
+.circle-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Mobile tweak */
+@media (max-width: 768px) {
+  .circle-wrapper {
+    width: 80px;
+    height: 80px;
   }
 
-  .history-right {
-    text-align: left;
+  .circle-text {
+    font-size: 13px;
   }
+}
+
+/* ===============================
+   PAID BADGE
+================================ */
+
+.paid-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #2e7d32, #66bb6a);
+  border-radius: 12px;
+  letter-spacing: 1px;
+  animation: popIn 0.4s ease;
+}
+
+/* Animation */
+@keyframes popIn {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.summary-card.paid:has(.paid-badge) {
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.3),
+    0 6px 18px rgba(46, 125, 50, 0.25);
 }

@@ -33,17 +33,6 @@
 
 // module.exports = { authMiddleware, permit };
 
-
-
-
-
-
-
-
-
-
-
-
 // const jwt = require("jsonwebtoken");
 // const Academy = require("../models/Academy");
 // const AcademySubscription = require("../models/AcademySubscription");
@@ -123,106 +112,88 @@
 //   };
 
 // module.exports = { authMiddleware, permit };
-
-
-
-
-
-
-
-
-
-
-
-
 const jwt = require("jsonwebtoken");
 const Academy = require("../models/Academy");
 const AcademySubscription = require("../models/AcademySubscription");
 
 const authMiddleware = async (req, res, next) => {
   const header = req.headers.authorization;
-  if (!header) {
+
+  if (!header?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Missing token" });
   }
 
-  const token = header.split(" ")[1];
-
   try {
+    const token = header.split(" ")[1];
     const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Attach user immediately
     req.user = payload;
 
-    // ✅ Superadmin bypass
-    if (payload.role === "superadmin") return next();
+    console.log("JWT PAYLOAD:", payload);
 
-    const academyCode = payload.academyCode;
-    if (!academyCode) {
-      return res.status(403).json({ message: "Academy missing" });
+    // =====================================================
+    // ✅ SUPERADMIN → SKIP ACADEMY COMPLETELY
+    // =====================================================
+    if (payload.role === "superadmin") {
+      return next();
     }
+
+    // =====================================================
+    // 🔐 TENANT ROLES → academy REQUIRED
+    // =====================================================
+    const academyCode = req.params.academyCode || payload.academyCode;
+
+    if (!academyCode) {
+      return res.status(403).json({ message: "Academy code missing" });
+    }
+
+    req.academyCode = academyCode;
 
     const academy = await Academy.findOne({ code: academyCode });
     if (!academy) {
       return res.status(404).json({ message: "Academy not found" });
     }
 
-    // 🚫 MANUAL DISABLE HAS HIGHEST PRIORITY
     if (!academy.isActive) {
-      return res.status(403).json({
-        message: "Academy is disabled by Super Admin.",
-      });
+      return res.status(403).json({ message: "Academy disabled" });
     }
 
     const subscription = await AcademySubscription.findOne({ academyCode });
     if (!subscription) {
-      return res.status(403).json({
-        message: "Subscription not configured. Contact support.",
-      });
+      return res.status(403).json({ message: "Subscription missing" });
     }
 
     const today = new Date();
-    const endDate = new Date(subscription.endDate);
+    const graceEnd = new Date(subscription.endDate);
+    graceEnd.setDate(
+      graceEnd.getDate() + (subscription.gracePeriodDays || 0)
+    );
 
-    const warningStart = new Date(endDate);
-    warningStart.setDate(warningStart.getDate() - 5);
-
-    const graceEnd = new Date(endDate);
-    graceEnd.setDate(graceEnd.getDate() + (subscription.gracePeriodDays || 0));
-
-    let showWarning = false;
-
-    // 🔐 Subscription logic ONLY
-    if (today <= endDate) {
-      subscription.status = "active";
-      if (today >= warningStart) showWarning = true;
-    } 
-    else if (today <= graceEnd) {
-      subscription.status = "expired";
-      showWarning = true;
-    } 
-    else {
-      subscription.status = "disabled";
-
-      return res.status(403).json({
-        message: "Academy subscription expired. Contact support.",
-      });
+    if (today > graceEnd) {
+      return res.status(403).json({ message: "Subscription expired" });
     }
 
-    subscription.updatedAt = new Date();
-    await subscription.save();
-
-    res.setHeader("X-Subscription-Warning", showWarning);
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
 
+/* =====================================================
+   🔐 ROLE PERMISSION HELPER
+===================================================== */
 const permit =
   (...allowed) =>
   (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    if (allowed.includes(req.user.role)) return next();
+
+    if (allowed.includes(req.user.role)) {
+      return next();
+    }
+
     return res.status(403).json({ message: "Forbidden" });
   };
 

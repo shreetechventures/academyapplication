@@ -135,10 +135,11 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, permit } = require("../middleware/auth");
 const { canManageFees } = require("../middleware/feePermission");
 
 const feeController = require("../controllers/fee.controller");
+
 
 /* ===================== STUDENT ===================== */
 
@@ -187,5 +188,17 @@ router.put(
   canManageFees,
   feeController.applyDiscount
 );
+
+/* ===================== SUMMARY ===================== */
+
+// academy fee summary
+router.get(
+  "/summary",
+  authMiddleware,
+  // canManageFees, // or 
+  permit("academyAdmin"),
+  feeController.getAcademyFeeSummary
+);
+
 
 module.exports = router;

@@ -7,6 +7,7 @@ import {
   YAxis,
   Tooltip
 } from "recharts";
+import "../styles/assessmentChart.css";
 
 export default function AssessmentChart({ data, testTitle = "" }) {
   if (!data || data.length === 0) return <div>No data</div>;
@@ -16,22 +17,22 @@ export default function AssessmentChart({ data, testTitle = "" }) {
   const max = Math.max(...values);
 
   const reverseTests = ["100 Meter", "1600 Meter", "Gola Fek", "Shot Put"];
-
   const isReverse = reverseTests.some((name) =>
     testTitle.toLowerCase().includes(name.toLowerCase())
   );
 
   return (
-    <div style={{ width: "100%", height: 350 }}>
-      <ResponsiveContainer minWidth={300} minHeight={250}>
-        <LineChart data={data}>
+    <div className="chart-container">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={data}
+          margin={{ top: 10, right: 1, left: 1, bottom: 10 }}
+        >
           <XAxis dataKey="date" />
-
           <YAxis
             domain={isReverse ? [max, min] : [min, max]}
             reversed={isReverse}
           />
-
           <Tooltip />
           <Line
             type="monotone"

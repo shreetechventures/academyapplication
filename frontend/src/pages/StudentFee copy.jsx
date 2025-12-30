@@ -3,7 +3,7 @@ import api from "../api/axios";
 import { useParams, Navigate } from "react-router-dom";
 import PaymentHistoryModal from "../components/PaymentHistoryModal";
 import PageWrapper from "../components/PageWrapper";
-import "../styles/abc.css";
+
 export default function StudentFee() {
   const { academyCode } = useParams();
   const role = localStorage.getItem("role");
@@ -36,9 +36,6 @@ export default function StudentFee() {
   // discount
   const [discountModalOpen, setDiscountModalOpen] = useState(false);
   const [discountAmount, setDiscountAmount] = useState("");
-
-  // search
-  const [search, setSearch] = useState("");
 
   // history
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -120,10 +117,6 @@ export default function StudentFee() {
     openStudent(selectedStudent);
   };
 
-  const filteredStudents = students.filter((s) =>
-    `${s.name} ${s.studentCode}`.toLowerCase().includes(search.toLowerCase())
-  );
-
   /* =======================
      UI
   ======================= */
@@ -147,22 +140,10 @@ export default function StudentFee() {
         </div>
       </div>
 
-
-      <div className="student-search">
-        <input
-          type="text"
-          placeholder="Search student by name or code..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
       {/* ===== STUDENTS ===== */}
       <div className="student-list">
         <h3 className="section-title">Students</h3>
-        {/* {students.map((s) => ( */}
-        {filteredStudents.map((s) => (
-
+        {students.map((s) => (
           <div
             key={s._id}
             className={`student-card ${
@@ -183,7 +164,7 @@ export default function StudentFee() {
 
       {/* ===== BILLINGS ===== */}
       {selectedStudent && (
-        <div className="student-fee-table">
+        <>
           <h3>
             Fees – {selectedStudent.name} ({selectedStudent.studentCode})
           </h3>
@@ -205,7 +186,7 @@ export default function StudentFee() {
                 {billings.map((b) => (
                   <tr key={b._id}>
                     <td className="cell">
-                      <span className="cell-label">Date : </span>
+                      <span className="cell-label">Date  :  </span>
                       <span className="cell-value">
                         {new Date(b.periodStart).toLocaleDateString()} –{" "}
                         {new Date(b.periodEnd).toLocaleDateString()}
@@ -213,7 +194,7 @@ export default function StudentFee() {
                     </td>
 
                     <td className="cell">
-                      <span className="cell-label">Total Fee : </span>
+                      <span className="cell-label">Total Fee  :  </span>
                       <span className="cell-value">₹{b.finalFee}</span>
 
                       {b.discountAmount > 0 && (
@@ -224,19 +205,19 @@ export default function StudentFee() {
                     </td>
 
                     <td className="cell">
-                      <span className="cell-label">Paid Fee : </span>
+                      <span className="cell-label">Paid Fee  :  </span>
                       <span className="cell-value">₹{b.paidAmount}</span>
                     </td>
 
                     <td className="cell">
-                      <span className="cell-label">Pending Fee : </span>
+                      <span className="cell-label">Pending Fee  :  </span>
                       <span className="cell-value red">
                         ₹{Math.max(b.finalFee - b.paidAmount, 0)}
                       </span>
                     </td>
 
                     <td className="cell">
-                      <span className="cell-label">Status : </span>
+                      <span className="cell-label">Status  :  </span>
                       <span className={`status-badge ${b.status}`}>
                         {b.status.toUpperCase()}
                       </span>
@@ -297,7 +278,7 @@ export default function StudentFee() {
               </tbody>
             </table>
           </div>
-        </div>
+        </>
       )}
 
       {/* ===== SET FEE MODAL ===== */}

@@ -1,0 +1,145 @@
+/* ===============================
+   STUDENT FEE TABLE (SCOPED)
+================================ */
+
+.student-fee-table .fee-table-wrapper {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* TABLE */
+.student-fee-table .fee-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* table-layout: fixed;  */
+}
+
+/* HEAD */
+.student-fee-table .fee-table th {
+  background: #f7f9f8;
+  padding: 10px;
+  font-size: 13px;
+  color: #444;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* BODY */
+.student-fee-table .fee-table td {
+  padding: 10px;
+  font-size: 13px;
+  /* vertical-align: top; */
+  border-bottom: 1px solid #eee;
+  word-wrap: break-word;
+}
+
+/* LAST ROW */
+.student-fee-table .fee-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* CELL CONTENT */
+.student-fee-table .cell {
+  /* display: flex; */
+  flex-direction: column;
+  gap: 4px;
+}
+
+.student-fee-table .cell-label {
+  /* font-size: 11px; */
+  color: #777;
+  font-weight: 600;
+}
+
+.student-fee-table .cell-value {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.student-fee-table .cell-sub {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.student-fee-table .cell-sub.green {
+  color: #2e7d32;
+}
+
+.student-fee-table .cell-value.red {
+  color: #c62828;
+  font-weight: 600;
+}
+
+/* STATUS */
+.student-fee-table .status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.student-fee-table .status-badge.paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.student-fee-table .status-badge.pending,
+.student-fee-table .status-badge.partial {
+  background: #fdecea;
+  color: #c62828;
+}
+
+/* ACTIONS */
+.student-fee-table .fee-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ===============================
+   MOBILE FIX (NO SCROLL)
+================================ */
+@media (max-width: 768px) {
+  .student-fee-table .fee-table th {
+    display: none; /* hide headers */
+  }
+
+  .student-fee-table .fee-table tr {
+    /* display: block; */
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #fafafa;
+    padding: 8px;
+  }
+
+  .student-fee-table .fee-table td {
+    display: block;
+    padding: 6px 4px;
+    border: none;
+  }
+
+  .student-fee-table .fee-actions {
+    justify-content: flex-start;
+  }
+  .student-search .input {
+    width: 50%;
+
+  }
+}
+
+.student-search {
+  margin-bottom: 12px;
+      width: 100%;
+
+}
+
+.student-search input {
+  width: 91%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}

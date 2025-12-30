@@ -521,6 +521,58 @@ exports.getStudentBillingCycles = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
+    // 1️⃣ Get last billing
+    const lastBilling = await StudentBillingFee.findOne({
+      academyCode,
+      studentId,
+      type: "monthly",
+    }).sort({ periodEnd: -1 });
+
+    const today = new Date();
+
+    // 2️⃣ Auto-create next month if needed
+    // 2️⃣ Auto-create next month if needed
+    if (lastBilling && lastBilling.periodEnd < today) {
+      const nextStart = new Date(lastBilling.periodEnd);
+      nextStart.setDate(nextStart.getDate() + 1);
+
+      const year = nextStart.getFullYear();
+      const month = nextStart.getMonth(); // 0-based
+
+      // 🔐 STRONG duplicate check (month-level)
+      const alreadyExists = await StudentBillingFee.findOne({
+        academyCode,
+        studentId,
+        type: "monthly",
+        periodStart: {
+          $gte: new Date(year, month, 1),
+          $lte: new Date(year, month + 1, 0),
+        },
+      });
+
+      if (!alreadyExists) {
+        const nextEnd = new Date(nextStart);
+        nextEnd.setMonth(nextEnd.getMonth() + 1);
+        nextEnd.setDate(nextEnd.getDate() - 1);
+
+        await StudentBillingFee.create({
+          academyCode,
+          studentId,
+          periodStart: nextStart,
+          periodEnd: nextEnd,
+
+          baseFee: student.currentFee,
+          finalFee: student.currentFee,
+
+          paidAmount: 0,
+          discountAmount: 0,
+          status: "unpaid",
+          type: "monthly",
+        });
+      }
+    }
+
+    // 3️⃣ Return updated list
     const billings = await StudentBillingFee.find({
       academyCode,
       studentId,
@@ -762,3 +814,35 @@ exports.applyDiscount = async (req, res) => {
   }
 };
 
+
+
+/* =====================================================
+   🧾 ACADEMY FEE SUMMARY
+===================================================== */
+exports.getAcademyFeeSummary = async (req, res) => {
+  try {
+    const academyCode = req.academyCode;
+
+    const result = await StudentBillingFee.aggregate([
+      { $match: { academyCode } },
+      {
+        $group: {
+          _id: null,
+          totalFee: { $sum: "$finalFee" },
+          totalPaid: { $sum: "$paidAmount" },
+        },
+      },
+    ]);
+
+    const summary = result[0] || { totalFee: 0, totalPaid: 0 };
+
+    res.json({
+      total: summary.totalFee,
+      received: summary.totalPaid,
+      pending: Math.max(summary.totalFee - summary.totalPaid, 0),
+    });
+  } catch (err) {
+    console.error("ACADEMY FEE SUMMARY ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

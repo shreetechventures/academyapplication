@@ -1,5 +1,5 @@
 .champions-wrapper {
-  padding: 20px;
+  /* padding: 20px; */
   font-family: "Poppins", sans-serif;
 }
 
@@ -142,13 +142,6 @@
 /* ------------------------------
     ACTION BUTTONS (ADMIN/TEACHER)
 ------------------------------ */
-.champion-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px;
-  border-top: 1px solid #f1f5f9;
-}
 
 .edit-btn,
 .delete-btn {
@@ -238,14 +231,30 @@
 /* ------------------------------
     ACTION BUTTONS ON CARD
 ------------------------------ */
+/* ------------------------------
+   ACTION BUTTONS (HIDDEN BY DEFAULT)
+------------------------------ */
 .champion-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px;
-  border-top: 1px solid #f1f5f9;
-  background: #ffffff;
+  gap: 10px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(-4px);
 }
+
+/* SHOW ON CARD HOVER */
+.champion-card:hover .champion-actions {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 
 /* EDIT BUTTON */
 .champion-actions .edit-btn {
@@ -317,3 +326,10 @@
 }
 
 
+@media (max-width: 768px) {
+  .champion-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+}

@@ -290,7 +290,8 @@ router.get(
  * GET /api/superadmin/admins
  * ============================================================================
  */
-router.get("/admins", authMiddleware, async (req, res) => {
+router.get("/admins", authMiddleware,   permit("superadmin"),
+async (req, res) => {
   try {
     if (req.user.role !== "superadmin") {
       return res.status(403).json({ message: "Access denied" });
@@ -366,18 +367,29 @@ router.delete("/admin/:id", authMiddleware, async (req, res) => {
 // ✅ SUPERADMIN → LIST ACADEMIES
 // GET /api/superadmin/academies
 // ============================================================================
-router.get("/academies", authMiddleware, async (req, res) => {
-  try {
-    if (req.user.role !== "superadmin") {
-      return res.status(403).json({ message: "Access denied" });
-    }
+// router.get("/academies", authMiddleware, async (req, res) => {
+//   try {
+//     if (req.user.role !== "superadmin") {
+//       return res.status(403).json({ message: "Access denied" });
+//     }
 
+//     const academies = await Academy.find().sort({ createdAt: -1 });
+//     res.json(academies);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+
+router.get(
+  "/academies",
+  authMiddleware,
+  permit("superadmin"),
+  async (req, res) => {
     const academies = await Academy.find().sort({ createdAt: -1 });
     res.json(academies);
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
   }
-});
+);
 
 // ============================================================================
 // ✅ SUPERADMIN → UPDATE ACADEMY

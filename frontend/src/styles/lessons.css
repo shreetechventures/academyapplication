@@ -1,12 +1,12 @@
 /* frontend/src/styles/lessons.css */
 
 .lessons-page {
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 select {
-  width: 100%;
-  max-width: 280px;
+    /* width: 98%; */
+  /* max-width: 280px; */
   padding: 10px 14px;
   font-size: 15px;
   font-weight: 500;
@@ -36,7 +36,7 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  /* margin-bottom: 16px; */
   gap: 12px;
 }
 
@@ -139,7 +139,7 @@ select {
 .lesson-category-buttons {
   display: flex;
   gap: 14px;
-  margin: 18px 0;
+  /* margin: 18px 0; */
 }
 
 .lesson-cat-btn {

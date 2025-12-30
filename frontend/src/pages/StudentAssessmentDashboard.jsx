@@ -148,7 +148,7 @@ const normalizeTitle = (title) => {
 
   return (
     <PageWrapper>
-      <div style={{ padding: 18 }}>
+      <div style={{ padding: 18, background: 'white'}}>
         <h2>Your Assessments</h2>
 
         {/* TEST BUTTONS */}

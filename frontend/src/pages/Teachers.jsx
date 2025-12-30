@@ -78,6 +78,13 @@ export default function Teachers() {
               + Add Trainer
             </button>
 
+                        <button 
+              className="add-student-btn"
+              onClick={() => navigate(`/${academyCode}/teachers/left`)}
+            >
+              Left Trainer
+            </button>
+
           </div>
         </div>
 

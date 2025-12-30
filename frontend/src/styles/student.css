@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   width: 100%;
 }
 
@@ -70,7 +70,7 @@
 /* Add button */
 .add-student-btn {
   /* background: #1b3c2f; */
-    background:#d95b17;
+  background: #d95b17;
 
   color: white;
 }
@@ -96,12 +96,12 @@
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
 .student-table thead {
   /* background: linear-gradient(90deg, #1b3c2f, #2e5f3e); */
-    background: linear-gradient(90deg, #ba6600, #e2ab52e4);
+  background: linear-gradient(90deg, #ba6600, #e2ab52e4);
 
   color: white;
 }
@@ -178,9 +178,8 @@
 ================================= */
 
 @media (max-width: 768px) {
-
   .students-content-wrapper {
-    padding: 10px;
+    padding: 0px;
     width: 100%;
   }
 
@@ -212,14 +211,12 @@
     display: none;
   }
 
-
-
   .student-table tr {
     margin-bottom: 15px;
     background: white;
     border-radius: 10px;
     padding: 10px 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     /* box-shadow:#e99a3 */
     /* box-shadow:#f36f21; */
   }
@@ -251,9 +248,11 @@
 ================================= */
 
 @media (max-width: 500px) {
-
   .student-page-title {
-    font-size: 20px;
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .student-search-input {
@@ -283,7 +282,7 @@
   border-radius: 12px;
   width: 100%;
   max-width: 700px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   /* display: grid; */
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
@@ -333,7 +332,6 @@
 ================================= */
 
 @media (max-width: 768px) {
-
   .register-form {
     grid-template-columns: 1fr;
     padding: 20px;
@@ -353,8 +351,6 @@
   }
 }
 
-
-
 /* =========================
    STUDENT TABS + BADGES
 ========================= */
@@ -362,6 +358,7 @@
 .student-tabs {
   display: flex;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .tab-btn {
@@ -373,7 +370,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 61px;
 }
 
 .tab-btn.active {

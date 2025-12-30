@@ -88,7 +88,7 @@ export default function DashboardHeader({ academy, onLogout }) {
     } else if (role === "teacher") {
       endpoint = `/${academyCode}/teachers/change-password`;
     } else if (role === "student") {
-      endpoint = `/${academyCode}/students/change-password`;
+      endpoint = `/${academyCode}/students/self/change-password`;
     }
 
     try {

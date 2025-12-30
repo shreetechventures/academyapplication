@@ -101,11 +101,11 @@ export default function DashboardSidebar({ academyCode, open, close }) {
                 label="Trainers"
                 link={`/${academyCode}/teachers`}
               />
-              <Item
+              {/* <Item
                 icon="📂"
                 label="Left Trainers"
                 link={`/${academyCode}/teachers/left`}
-              />
+              /> */}
             </div>
             <div className="sidebar-separator" />
           </>

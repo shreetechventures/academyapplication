@@ -8,7 +8,6 @@ import DeleteConfirm from "../components/DeleteConfirm";
 import EditResultModal from "../components/EditResultModal";
 import PerformanceSummary from "../components/PerformanceSummary";
 import MultiTestAssessmentForm from "../components/MultiTestAssessmentForm";
-
 import "../styles/teacherAssessment.css";
 
 export default function TeacherAssessmentPage() {

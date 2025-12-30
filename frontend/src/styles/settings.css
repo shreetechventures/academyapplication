@@ -112,7 +112,7 @@
 @media (max-width: 768px) {
   .settings-page {
     margin-left: 0;
-    padding: 15px;
+    padding: 0px;
   }
 }
 

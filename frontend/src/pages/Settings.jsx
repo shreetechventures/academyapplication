@@ -323,6 +323,7 @@ export default function Settings() {
                 }
               />
             </div>
+            <hr></hr>
 
             {/* STUDENT REGISTRATION PERMISSION */}
             <div className="toggle-row">
@@ -338,6 +339,8 @@ export default function Settings() {
                 }
               />
             </div>
+                        <hr></hr>
+
           </div>
         )}
       </div>

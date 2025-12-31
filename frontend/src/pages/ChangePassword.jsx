@@ -9,74 +9,81 @@ export default function ChangePassword() {
   const [form, setForm] = useState({
     currentPassword: "",
     newPassword: "",
-    confirmNewPassword: ""
+    confirmNewPassword: "",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-const updatePassword = async () => {
-  if (form.newPassword !== form.confirmNewPassword) {
-    alert("❌ New passwords do not match");
-    return;
-  }
-
-  try {
-    const role = localStorage.getItem("role"); // 👈 detect role
+  const updatePassword = async () => {
+    if (form.newPassword !== form.confirmNewPassword) {
+      alert("❌ New passwords do not match");
+      return;
+    }
 
     let endpoint = "";
 
     if (role === "academyAdmin") {
       endpoint = `/${academyCode}/auth/change-password`;
     } else if (role === "teacher") {
-      endpoint = `/${academyCode}/teachers/change-password`;
+      endpoint = `/${academyCode}/teachers/change-password`; // ✅ FIX
     } else if (role === "student") {
-      endpoint = `/${academyCode}/students/change-password`;
+      endpoint = `/${academyCode}/students/self/change-password`;
     }
 
-    await axios.put(
-      endpoint,
-      form,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      }
-    );
+    try {
+      await axios.put(endpoint, {
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword,
+      });
 
-    alert("✅ Password Updated Successfully!");
+      alert("✅ Password Updated Successfully");
 
-  } catch (err) {
-    alert(err.response?.data?.message || "❌ Error updating password");
-  }
-};
-
+      setOpenPassword(false);
+      setForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+    } catch (err) {
+      alert(err.response?.data?.message || "❌ Error updating password");
+    }
+  };
 
   return (
     <PageWrapper>
       <div className="students-content-wrapper">
-
         <div className="student-header-row">
           <h2 className="student-page-title">Change Password</h2>
         </div>
 
         <div className="register-container">
           <div className="register-form">
-
             <div className="form-row">
               <label>Current Password</label>
-              <input type="password" name="currentPassword" onChange={handleChange} />
+              <input
+                type="password"
+                name="currentPassword"
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-row">
               <label>New Password</label>
-              <input type="password" name="newPassword" onChange={handleChange} />
+              <input
+                type="password"
+                name="newPassword"
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-row">
               <label>Confirm New Password</label>
-              <input type="password" name="confirmNewPassword" onChange={handleChange} />
+              <input
+                type="password"
+                name="confirmNewPassword"
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-actions">
@@ -84,7 +91,6 @@ const updatePassword = async () => {
                 Update Password
               </button>
             </div>
-
           </div>
         </div>
       </div>

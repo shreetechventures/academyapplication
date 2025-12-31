@@ -45,24 +45,63 @@ router.post(
 );
 
 
-//change password for teacher
-router.put("/change-password", authMiddleware, async (req, res) => {
-  try {
-    const teacher = await Teacher.findById(req.user.id);
-    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
 
-    const match = await bcrypt.compare(req.body.currentPassword, teacher.password);
-    if (!match) return res.status(400).json({ message: "Incorrect current password" });
+/* ===============================
+   🔐 CHANGE PASSWORD (MUST BE ABOVE /:id)
+================================= */
+router.put(
+  "/change-password",
+  authMiddleware,
+  permit("teacher", "academyAdmin"),
+  async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
 
-    teacher.password = await bcrypt.hash(req.body.newPassword, 10);
-    await teacher.save();
+      const teacher = await Teacher
+        .findById(req.user.id)
+        .select("+password");
 
-    res.json({ message: "Password updated" });
+      if (!teacher) {
+        return res.status(404).json({ message: "Teacher not found" });
+      }
 
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+      const match = await bcrypt.compare(
+        currentPassword,
+        teacher.password
+      );
+
+      if (!match) {
+        return res.status(400).json({ message: "Incorrect current password" });
+      }
+
+      teacher.password = await bcrypt.hash(newPassword, 10);
+      await teacher.save();
+
+      res.json({ message: "Password updated successfully" });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
+
+// //change password for teacher
+// router.put("/change-password", authMiddleware, async (req, res) => {
+//   try {
+//     const teacher = await Teacher.findById(req.user.id);
+//     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
+//     const match = await bcrypt.compare(req.body.currentPassword, teacher.password);
+//     if (!match) return res.status(400).json({ message: "Incorrect current password" });
+
+//     teacher.password = await bcrypt.hash(req.body.newPassword, 10);
+//     await teacher.save();
+
+//     res.json({ message: "Password updated" });
+
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 
 
@@ -198,61 +237,38 @@ router.put("/:id/restore",
   }
 );
 
-//password
-router.post("/create",
-  authMiddleware,
-  permit("academyAdmin"),
-  async (req, res) => {
-    try {
-      const academyCode = req.user.academyCode;
+// //password
+// router.post("/create",
+//   authMiddleware,
+//   permit("academyAdmin"),
+//   async (req, res) => {
+//     try {
+//       const academyCode = req.user.academyCode;
 
-      // hash password
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+//       // hash password
+//       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      const teacher = new Teacher({
-        ...req.body,
-        password: hashedPassword,   // save hashed password
-        select: false,
-        academyCode
-      });
+//       const teacher = new Teacher({
+//         ...req.body,
+//         password: hashedPassword,   // save hashed password
+//         select: false,
+//         academyCode
+//       });
 
-      await teacher.save();
+//       await teacher.save();
 
-      res.json({ message: "Teacher Registered Successfully", teacher });
+//       res.json({ message: "Teacher Registered Successfully", teacher });
 
-    } catch (err) {
-      console.error("Teacher Register Error:", err);
-      res.status(500).json({ message: err.message });
-    }
-  }
-);
+//     } catch (err) {
+//       console.error("Teacher Register Error:", err);
+//       res.status(500).json({ message: err.message });
+//     }
+//   }
+// );
 
-//change password
-router.put("/change-password",
-  authMiddleware,
-  permit("teacher", "academyAdmin"),
-  async (req, res) => {
-    try {
-      const userId = req.user.id;
 
-      const teacher = await Teacher.findById(userId);
 
-      const valid = await bcrypt.compare(req.body.currentPassword, teacher.password);
 
-      if (!valid) return res.status(400).json({ message: "Wrong current password" });
-
-      const newHashed = await bcrypt.hash(req.body.newPassword, 10);
-
-      teacher.password = newHashed;
-      await teacher.save();
-
-      res.json({ message: "Password updated successfully" });
-
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-);
 
 
 

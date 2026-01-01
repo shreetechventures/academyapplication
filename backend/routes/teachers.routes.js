@@ -84,26 +84,6 @@ router.put(
   }
 );
 
-// //change password for teacher
-// router.put("/change-password", authMiddleware, async (req, res) => {
-//   try {
-//     const teacher = await Teacher.findById(req.user.id);
-//     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
-
-//     const match = await bcrypt.compare(req.body.currentPassword, teacher.password);
-//     if (!match) return res.status(400).json({ message: "Incorrect current password" });
-
-//     teacher.password = await bcrypt.hash(req.body.newPassword, 10);
-//     await teacher.save();
-
-//     res.json({ message: "Password updated" });
-
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// });
-
-
 
 /* ===============================
    GET ALL ACTIVE TEACHERS
@@ -236,40 +216,5 @@ router.put("/:id/restore",
     }
   }
 );
-
-// //password
-// router.post("/create",
-//   authMiddleware,
-//   permit("academyAdmin"),
-//   async (req, res) => {
-//     try {
-//       const academyCode = req.user.academyCode;
-
-//       // hash password
-//       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-//       const teacher = new Teacher({
-//         ...req.body,
-//         password: hashedPassword,   // save hashed password
-//         select: false,
-//         academyCode
-//       });
-
-//       await teacher.save();
-
-//       res.json({ message: "Teacher Registered Successfully", teacher });
-
-//     } catch (err) {
-//       console.error("Teacher Register Error:", err);
-//       res.status(500).json({ message: err.message });
-//     }
-//   }
-// );
-
-
-
-
-
-
 
 module.exports = router;

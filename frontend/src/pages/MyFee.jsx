@@ -77,26 +77,7 @@ export default function MyFee() {
 
         {loading && <p className="loading">Loading fee details...</p>}
 
-        {/* ===== DASHBOARD STYLE SUMMARY ===== */}
-        {/* {!loading && summary && (
-        <div className="fee-summary-dashboard">
-          <div className="summary-card total">
-            <span>Total Fee</span>
-            <strong>₹{summary.totalFee}</strong>
-          </div>
-
-          <div className="summary-card paid">
-            <span>Paid</span>
-            <strong>₹{summary.paidFee}</strong>
-          </div>
-
-          <div className="summary-card pending">
-            <span>Pending</span>
-            <strong>₹{summary.pendingFee}</strong>
-          </div>
-        </div>
-      )} */}
-
+       
         {!loading && summary && (
           <div className="fee-summary-dashboard">
             {/* TOTAL */}
@@ -105,43 +86,6 @@ export default function MyFee() {
               <strong>₹{summary.totalFee}</strong>
             </div>
 
-            {/* PAID */}
-            {/* <div className="summary-card paid">
-              <span>Paid</span>
-              <strong>₹{summary.paidFee}</strong>
-
-              <div className="circle-wrapper">
-                <svg className="progress-ring" width="90" height="90">
-                  <circle
-                    className="progress-ring-bg"
-                    strokeWidth="8"
-                    r="38"
-                    cx="45"
-                    cy="45"
-                  />
-                  <circle
-                    className="progress-ring-fill paid"
-                    strokeWidth="8"
-                    r="38"
-                    cx="45"
-                    cy="45"
-                    style={{
-                      strokeDashoffset:
-                        238 -
-                        (summary.totalFee
-                          ? (summary.paidFee / summary.totalFee) * 238
-                          : 0),
-                    }}
-                  />
-                </svg>
-                <div className="circle-text">
-                  {summary.totalFee
-                    ? Math.round((summary.paidFee / summary.totalFee) * 100)
-                    : 0}
-                  %
-                </div>
-              </div>
-            </div> */}
 
             {/* PAID */}
             <div className="summary-card paid">

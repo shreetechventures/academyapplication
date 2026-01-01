@@ -222,16 +222,7 @@ const normalizeTitle = (title) => {
           {summary.map((s) => (
             <div key={s.assessmentType._id} className="card">
               <h4>{s.assessmentType.title}</h4>
-              {/* <div>Avg Score: {Math.round(s.stats.avgScore)}</div> */}
-              {/* <div>Best: {s.stats.bestScore}</div> */}
-              {/* <div>Attempts: {s.stats.attempts}</div> */}
-              {/* <div style={{ marginTop: 8 }}>
-                <strong>Avg Score:</strong> {Math.round(s.stats.avgScore)}
-              </div>
-
-              <div>
-                <strong>Best Score:</strong> {s.stats.bestScore}
-              </div> */}
+         
 
               <div>
                 <strong>Attempts:</strong> {s.stats.attempts}

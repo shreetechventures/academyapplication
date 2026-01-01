@@ -4,6 +4,8 @@ Frontend folder structure
 
 // frontend/src/api/axios.js
 
+// frontend/src/assets/logo.jpg
+
 // frontend/src/components/AcademyHeader.jsx
 // frontend/src/components/AddEditChampionModal.jsx
 // frontend/src/components/AssessmentChart.jsx
@@ -14,12 +16,20 @@ Frontend folder structure
 // frontend/src/components/DeleteConfirm.jsx
 // frontend/src/components/EditChampionsModel.jsx
 // frontend/src/components/EditResultModal.jsx
+// frontend/src/components/EnquiryModal.jsx
+
 // frontend/src/components/FeaturedChampionSlider.jsx
+// frontend/src/components/Header.jsx
+
 // frontend/src/components/MultiTestAssessmentForm.jsx
 // frontend/src/components/PageWrapper.jsx
+// frontend/src/components/PaymentHistoryModal.jsx
 // frontend/src/components/PerformanceSummary.jsx
+// frontend/src/components/PricingCard.jsx
+
 // frontend/src/components/ProtectedRoute.jsx
 // frontend/src/components/RoleSwitcher.jsx
+// frontend/src/components/SubscriptionWarning.jsx
 
 
 
@@ -30,6 +40,7 @@ Frontend folder structure
 
 
 // frontend/src/pages/AddStudent.jsx
+// frontend/src/pages/AdminDashboard.jsx
 // frontend/src/pages/AdminPanel.jsx
 // frontend/src/pages/Champions.jsx
 // frontend/src/pages/ChangePassword.jsx
@@ -37,23 +48,27 @@ Frontend folder structure
 // frontend/src/pages/CreateAcademyPage.jsx
 // frontend/src/pages/CreateAdminPage.jsx
 // frontend/src/pages/Dashboard.jsx
-// frontend/src/pages/FeeStructures.jsx
-// frontend/src/pages/Classes.jsx
+// frontend/src/pages/LandingPage.jsx
+
 // frontend/src/pages/LeftStudents.jsx
 // frontend/src/pages/LeftTeachers.jsx
+// frontend/src/pages/LessonFolders.jsx
 // frontend/src/pages/Lessons.jsx
 // frontend/src/pages/Login.jsx
 // frontend/src/pages/MyFee.jsx
 // frontend/src/pages/PaymentHistory.jsx
-
+// frontend/src/pages/RoleDashboard.jsx
 // frontend/src/pages/Settings.jsx
 // frontend/src/pages/StudentAssessmentDashboard.jsx
+// frontend/src/pages/StudentDashboard.jsx
 // frontend/src/pages/StudentEdit.jsx
+// frontend/src/pages/StudentFee.jsx
 // frontend/src/pages/StudentRegister.jsx
 // frontend/src/pages/Students.jsx
+// frontend/src/pages/SubscriptionWarning.jsx
 // frontend/src/pages/SuperAdminDashboard.jsx
+// frontend/src/pages/TeacherDashboard.jsx
 // frontend/src/pages/TeacherEdit.jsx
-// frontend/src/pages/TeacherFeeDashboard.jsx
 // frontend/src/pages/TeacherRegister.jsx
 // frontend/src/pages/Teachers.jsx
 // frontend/src/pages/TeacherStudentReport.jsx
@@ -62,9 +77,10 @@ Frontend folder structure
 
 
 
-
+/* frontend/src/styles/abc.css */
 /* frontend/src/styles/academyHeader.css */
 /* frontend/src/styles/adminAssignFee.css */
+/* frontend/src/styles/assessmentChart.css */
 
 
 /* frontend/src/styles/champions.css */
@@ -75,6 +91,8 @@ Frontend folder structure
 /* frontend/src/styles/FeePage.css */
 
 /* frontend/src/styles/folders.css */
+/* frontend/src/styles/landing.css */
+
 /* frontend/src/styles/lessons.css */
 /* frontend/src/styles/login.css */
 /* frontend/src/styles/myFee.css */
@@ -83,6 +101,8 @@ Frontend folder structure
 /* frontend/src/styles/settings.css */
 /* frontend/src/styles/sidebar.css */
 /* frontend/src/styles/student.css */
+/* frontend/src/styles/StudentDashboard.css */
+
 /* frontend/src/styles/studentFeeList.css */
 /* frontend/src/styles/superadmin-form.css */
 /* frontend/src/styles/superadmin.css */
@@ -105,17 +125,25 @@ Backend Folder structure
 
 
 // backend/models/Academy.js
+// backend/models/AcademySubscription.js
+
 // backend/models/Assessment.js
 // backend/models/AssessmentResult.js
 // backend/models/AssessmentType.js
 // backend/models/Candidate.js
 // backend/models/Champion.js
+// backend/models/ExamResult.js
+
 // backend/models/FeePayment.js
 // backend/models/FeeStructure.js
 
 // backend/models/Lesson.js
 // backend/models/LessonFolder.js
+// backend/models/StudentBillingFee.js
+
 // backend/models/StudentFee.js
+// backend/models/StudentMonthlyFee.js
+// backend/models/SubscriptionPayment.js
 
 // backend/models/Teacher.js
 // backend/models/User.js
@@ -123,6 +151,8 @@ Backend Folder structure
 
 
 // backend/controllers/assessments.controller.js
+// backend/controllers/auth.controller.js
+// backend/controllers/candidate.controller.js
 // backend/controllers/champions.controller.js
 // backend/controllers/fee.controller.js
 
@@ -140,15 +170,18 @@ Backend Folder structure
 // backend/routes/candidate.routes.js
 // backend/routes/champions.routes.js
 // backend/routes/dashboard.routes.js
+// backend/routes/fee.routes.js
 // backend/routes/lessonFolders.routes.js
 // backend/routes/lessons.routes.js
+// backend/routes/settings.routes.js
 // backend/routes/superAdmin.routes.js
 // backend/routes/teachers.routes.js
 
 
 
-
+// backend/utils/billingGenerator.js
 // backend/utils/db.js
+// backend/utils/recalculateStudentFee.js
 // backend/utils/studentCodeGenerator.js
 // backend/utils/upload.js
 // backend/utils/whatsapp.js

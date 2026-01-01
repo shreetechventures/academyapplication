@@ -99,45 +99,6 @@ export default function CreateAcademyPage() {
     }
   };
 
-  // ===============================
-  // LOAD ACADEMIES
-  // ===============================
-  // const loadAcademies = async () => {
-  //   try {
-  //     const res = await axios.get("/superadmin/academies");
-  //     // setAcademies(res.data);
-  //     const academyList = res.data;
-  //     setAcademies(academyList);
-
-  //     // load subscriptions for each academy
-  //     const subs = {};
-
-  //     for (const a of academyList) {
-  //       // try {
-  //       //   const res = await axios.get(`/superadmin/subscription/${a.code}`);
-  //       //   subs[a.code] = res.data;
-  //       // } catch {
-  //       //   subs[a.code] = null;
-  //       // }
-
-  //       try {
-  //         const res = await axios.get(`/superadmin/subscription/${a.code}`);
-  //         subs[a.code] = res.data;
-  //       } catch (err) {
-  //         if (err.response?.status === 404) {
-  //           subs[a.code] = null; // no subscription = valid
-  //         } else {
-  //           console.error("Subscription fetch error:", err);
-  //         }
-  //       }
-  //     }
-
-  //     setSubscriptionMap(subs);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   const loadAcademies = async () => {
     try {
       const res = await axios.get("/superadmin/academies");

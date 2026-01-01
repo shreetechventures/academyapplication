@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {  Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import api from "../api/axios";
 import PageWrapper from "../components/PageWrapper";
 import "../styles/studentDashboard.css";
 
 /* ===============================
-   💰 CIRCULAR PROGRESS (SHARED)
+   💰 CIRCULAR PROGRESS
 ================================ */
-function FeeProgressCircle({ label, value, total, color }) {
+function FeeProgressCircle({ value, total, color }) {
   const radius = 50;
   const stroke = 8;
   const normalizedRadius = radius - stroke * 2;
@@ -20,7 +20,6 @@ function FeeProgressCircle({ label, value, total, color }) {
   return (
     <div className="fee-progress">
       <svg width={radius * 2} height={radius * 2}>
-        {/* Background */}
         <circle
           stroke="#eee"
           fill="transparent"
@@ -29,8 +28,6 @@ function FeeProgressCircle({ label, value, total, color }) {
           cx={radius}
           cy={radius}
         />
-
-        {/* Progress */}
         <circle
           stroke={color}
           fill="transparent"
@@ -43,7 +40,6 @@ function FeeProgressCircle({ label, value, total, color }) {
           cy={radius}
         />
       </svg>
-
       <div className="fee-progress-text">
         <strong>{percentage}%</strong>
       </div>
@@ -51,11 +47,7 @@ function FeeProgressCircle({ label, value, total, color }) {
   );
 }
 
-/* ===============================
-   🎓 STUDENT DASHBOARD
-================================ */
 export default function StudentDashboard() {
-
   const role = localStorage.getItem("role");
   const studentId = localStorage.getItem("userId");
   const studentName = localStorage.getItem("name");
@@ -64,7 +56,6 @@ export default function StudentDashboard() {
   const [lastExam, setLastExam] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  /* LOAD DATA */
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -72,9 +63,7 @@ export default function StudentDashboard() {
 
         const [feeRes, examRes] = await Promise.all([
           api.get(`/fees/student/${studentId}/summary`),
-          api.get(
-            `/assessments/students/${studentId}/last-exam`
-          ),
+          api.get(`/assessments/students/${studentId}/last-exam`),
         ]);
 
         setFeeSummary(feeRes.data.data);
@@ -87,11 +76,10 @@ export default function StudentDashboard() {
     };
 
     loadData();
-  }, [academyCode, studentId, role]);
+  }, [studentId, role]); // ✅ FIXED
 
-  /* ROLE GUARD */
   if (role !== "student") {
-    return <Navigate to={`/login`} replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -106,65 +94,37 @@ export default function StudentDashboard() {
           <p>Loading...</p>
         ) : feeSummary ? (
           <>
-            {/* ===== FEE CARDS (MATCH MY FEES) ===== */}
             <div className="student-fee-summary">
+              <div className="summary-card total">
+                <span>Total Fee</span>
+                <strong>₹{feeSummary.totalFee}</strong>
+              </div>
 
-              {/* TOTAL */}
-          <div className="summary-card total">
-  <span>Total Fee</span>
-  <strong>₹{feeSummary.totalFee}</strong>
-
-  <div className="total-fee-percent">
-    <span className="paid-text">
-      {Math.round((feeSummary.paidFee / feeSummary.totalFee) * 100)}% Paid
-    </span>
-    <span className="divider">•</span>
-    <span className="pending-text">
-      {Math.round((feeSummary.pendingFee / feeSummary.totalFee) * 100)}% Pending
-    </span>
-  </div>
-</div>
-
-
-              {/* PAID */}
               <div className="summary-card paid">
                 <span>Paid</span>
                 <strong>₹{feeSummary.paidFee}</strong>
-
                 <FeeProgressCircle
-                  label="Paid"
                   value={feeSummary.paidFee}
                   total={feeSummary.totalFee}
                   color="#2e7d32"
                 />
               </div>
 
-              {/* PENDING */}
               <div className="summary-card pending">
                 <span>Pending</span>
                 <strong>₹{feeSummary.pendingFee}</strong>
-
                 <FeeProgressCircle
-                  label="Pending"
                   value={feeSummary.pendingFee}
                   total={feeSummary.totalFee}
                   color="#d32f2f"
                 />
               </div>
             </div>
-
-            {/* WARNING */}
-            {feeSummary.pendingFee > 0 && (
-              <div className="pending-warning">
-                ⚠️ You have pending fees. Please Pay Remaining Fee.
-              </div>
-            )}
           </>
         ) : (
           <p>No fee data available.</p>
         )}
 
-        {/* LAST EXAM */}
         {lastExam && (
           <div className="last-exam-card">
             <span className="label">Last Assessment</span>

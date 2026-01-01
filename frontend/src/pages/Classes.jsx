@@ -1,6 +1,5 @@
-// frontend/src/pages/Classes.jsx
 import React from "react";
-
+import PageWrapper from "../components/PageWrapper"; // ✅ MISSING IMPORT
 import "../styles/dashboard.css";
 
 export default function Classes() {
@@ -13,5 +12,3 @@ export default function Classes() {
     </PageWrapper>
   );
 }
-
-

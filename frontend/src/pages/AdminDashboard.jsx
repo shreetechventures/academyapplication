@@ -1,6 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import { useParams, Navigate } from "react-router-dom";
-// import axios from "../api/axios";
+// import api from "../api/axios";
+
 // import PageWrapper from "../components/PageWrapper";
 // import "../styles/dashboardStats.css";
 
@@ -28,11 +29,11 @@
 //   useEffect(() => {
 //     const loadStats = async () => {
 //       try {
-//         const active = await axios.get(
-//           `/${academyCode}/dashboard/students/active`
+//         const active = await api.get(
+//           `/dashboard/students/active`
 //         );
-//         const left = await axios.get(`/${academyCode}/dashboard/students/left`);
-//         const trainers = await axios.get(`/${academyCode}/dashboard/trainers`);
+//         const left = await api.get(`/dashboard/students/left`);
+//         const trainers = await api.get(`/dashboard/trainers`);
 
 //         setStats({
 //           totalStudents: active.data.count,
@@ -42,14 +43,14 @@
 
 //         // 🔐 ADMIN ONLY
 //         if (role === "academyAdmin") {
-//           const planRes = await axios.get(
-//             `/${academyCode}/dashboard/subscription-info`
+//           const planRes = await api.get(
+//             `/dashboard/subscription-info`
 //           );
 //           setPlan(planRes.data);
 //         }
 
 //         // 💰 FEE SUMMARY (admin + teacher)
-//         const feeRes = await axios.get(`/${academyCode}/fees/summary`);
+//         const feeRes = await api.get(`/fees/summary`);
 //         setFeeSummary(feeRes.data);
 //       } catch (err) {
 //         console.error("Dashboard loading error:", err);
@@ -63,7 +64,7 @@
 //      ROLE GUARD (AFTER HOOKS)
 //   ======================= */
 //   if (role !== "academyAdmin") {
-//     return <Navigate to={`/${academyCode}/login`} replace />;
+//     return <Navigate to={`/login`} replace />;
 //   }
 
 //   return (

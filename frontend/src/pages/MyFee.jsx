@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useParams } from "react-router-dom";
 import PaymentHistoryModal from "../components/PaymentHistoryModal";
 import PageWrapper from "../components/PageWrapper";
@@ -27,13 +28,13 @@ export default function MyFee() {
     try {
       setLoading(true);
 
-      const billingRes = await axios.get(
-        `/${academyCode}/fees/student/${studentId}/billing`
+      const billingRes = await api.get(
+        `/fees/student/${studentId}/billing`
       );
       setBillings(billingRes.data.data || []);
 
-      const summaryRes = await axios.get(
-        `/${academyCode}/fees/student/${studentId}/summary`
+      const summaryRes = await api.get(
+        `/fees/student/${studentId}/summary`
       );
       setSummary(summaryRes.data.data || null);
     } catch (err) {

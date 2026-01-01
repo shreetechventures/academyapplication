@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useNavigate } from "react-router-dom";
 import "../styles/superadmin-form.css";
 
@@ -101,14 +102,14 @@ export default function CreateAcademyPage() {
 
   const loadAcademies = async () => {
     try {
-      const res = await axios.get("/superadmin/academies");
+      const res = await api.get("/superadmin/academies");
       setAcademies(res.data);
 
       const subs = {};
 
       for (const a of res.data) {
         try {
-          const s = await axios.get(`/superadmin/subscription/${a.code}`);
+          const s = await api.get(`/superadmin/subscription/${a.code}`);
           subs[a.code] = s.data;
         } catch (err) {
           if (err.response?.status === 404) {
@@ -146,7 +147,7 @@ export default function CreateAcademyPage() {
 
     // 🔹 Load subscription
     try {
-      const subRes = await axios.get(
+      const subRes = await api.get(
         `/superadmin/subscription/${academy.code}`
       );
 
@@ -175,7 +176,7 @@ export default function CreateAcademyPage() {
 
     // 🔹 Load subscription payment history
     try {
-      const histRes = await axios.get(
+      const histRes = await api.get(
         `/superadmin/subscription/${academy.code}/history`
       );
       setSubHistory(histRes.data);

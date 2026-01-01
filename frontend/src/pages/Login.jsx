@@ -1,6 +1,7 @@
 // // frontend/src/pages/Login.jsx
 // import React, { useState, useEffect } from "react";
-// import axios from "../api/axios";
+// import api from "../api/axios";
+
 // import { useNavigate, useLocation } from "react-router-dom";
 // import { getAcademyCodeFromPath } from "../utils/tenant";
 // // import RoleSwitcher from "../components/RoleSwitcher";
@@ -23,13 +24,13 @@
 //     async function fetchAcademy() {
 //       try {
 //         if (academyCode) {
-//           const res = await axios.get(`/${academyCode}`);
-//           // const res = await axios.get(`${academyCode}`);
+//           const res = await api.get(``);
+//           // const res = await api.get(`${academyCode}`);
 
 //           setAcademy(res.data);
 
-//           // const res = await axios.get(`/api/${academyCode}/academy`);
-//           // const res = await axios.get(`/api/${academyCode}`);
+//           // const res = await api.get(`/api/academy`);
+//           // const res = await api.get(`/api`);
 //         }
 //       } catch (err) {
 //         console.error("Academy load error:", err);
@@ -57,7 +58,7 @@
 
 //       // ================= ADMIN =================
 //       try {
-//         const res = await axios.post(`/${academyCode}/auth/login`, {
+//         const res = await axios.post(`/auth/login`, {
 //           email,
 //           password,
 //         });
@@ -72,12 +73,12 @@
 //           return navigate("/superadmin");
 //         }
 
-//         return navigate(`/${academyCode}/dashboard`);
+//         return navigate(`/dashboard`);
 //       } catch {}
 
 //       // ================= TEACHER =================
 //       try {
-//         const res = await axios.post(`/${academyCode}/teachers/login`, {
+//         const res = await axios.post(`/teachers/login`, {
 //           email,
 //           password,
 //         });
@@ -88,12 +89,12 @@
 //         localStorage.setItem("academyCode", academyCode);
 //         localStorage.setItem("userId", res.data.userId);
 
-//         return navigate(`/${academyCode}/dashboard/teacher`);
+//         return navigate(`/dashboard/teacher`);
 //       } catch {}
 
 //       // ================= STUDENT =================
 //       try {
-//         const res = await axios.post(`/${academyCode}/students/login`, {
+//         const res = await axios.post(`/students/login`, {
 //           email,
 //           password,
 //         });
@@ -104,7 +105,7 @@
 //         localStorage.setItem("academyCode", academyCode);
 //         localStorage.setItem("userId", res.data.userId);
 
-//         return navigate(`/${academyCode}/dashboard/student`);
+//         return navigate(`/dashboard/student`);
 //       } catch {}
 
 //       setErr("Invalid email or password");

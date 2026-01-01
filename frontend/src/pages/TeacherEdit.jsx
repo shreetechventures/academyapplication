@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -17,7 +18,7 @@ export default function TeacherEdit() {
   ============================ */
   const loadTeacher = async () => {
     try {
-      const res = await axios.get(`/${academyCode}/teachers/${id}`);
+      const res = await api.get(`/teachers/${id}`);
       setForm(res.data);
 
       // calculate age initially
@@ -68,10 +69,10 @@ export default function TeacherEdit() {
         age: age,
       };
 
-      await axios.put(`/${academyCode}/teachers/${id}`, updated);
+      await axios.put(`/teachers/${id}`, updated);
 
       alert("Teacher Updated Successfully!");
-      navigate(`/${academyCode}/teachers`);
+      navigate(`/teachers`);
 
     } catch (err) {
       console.error(err);
@@ -230,7 +231,7 @@ export default function TeacherEdit() {
 
               <button
                 className="add-student-btn"
-                onClick={() => navigate(`/${academyCode}/teachers`)}
+                onClick={() => navigate(`/teachers`)}
               >
                 Cancel
               </button>

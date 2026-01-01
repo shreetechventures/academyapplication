@@ -1,7 +1,8 @@
 // frontend/src/pages/StudentRegister.jsx
 
 import React, { useState, useEffect } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -45,7 +46,7 @@ useEffect(() => {
     !academySettings?.allowTrainerStudentRegistration
   ) {
     alert("❌ You are not allowed to register students");
-    navigate(`/${academyCode}/students`);
+    navigate(`/students`);
   }
 }, []);
 
@@ -105,10 +106,10 @@ const submit = async () => {
       age: age
     };
 
-    await axios.post(`/${academyCode}/students/create`, finalData);
+    await axios.post(`/students/create`, finalData);
 
     alert("✅ Student Registered Successfully!");
-    navigate(`/${academyCode}/students`);
+    navigate(`/students`);
 
   } catch (err) {
     console.error("BACKEND ERROR:", err.response?.data || err.message);
@@ -274,7 +275,7 @@ const submit = async () => {
 
               <button 
                 className="add-student-btn"
-                onClick={() => navigate(`/${academyCode}/students`)}
+                onClick={() => navigate(`/students`)}
               >
                 Cancel
               </button>

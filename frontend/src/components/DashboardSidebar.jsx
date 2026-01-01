@@ -43,7 +43,7 @@
 //             <Item
 //               icon="🏠"
 //               label="Dashboard"
-//               link={`/${academyCode}/dashboard/admin`}
+//               link={`/dashboard/admin`}
 //             />
 //           )}
 
@@ -51,7 +51,7 @@
 //             <Item
 //               icon="🏠"
 //               label="Dashboard"
-//               link={`/${academyCode}/dashboard/teacher`}
+//               link={`/dashboard/teacher`}
 //             />
 //           )}
 
@@ -59,11 +59,11 @@
 //             <Item
 //               icon="🏠"
 //               label="Dashboard"
-//               link={`/${academyCode}/dashboard/student`}
+//               link={`/dashboard/student`}
 //             />
 //           )}
 
-//           <Item icon="📚" label="Lessons" link={`/${academyCode}/lessons`} />
+//           <Item icon="📚" label="Lessons" link={`/lessons`} />
 //         </div>
 
 //         <div className="sidebar-separator" />
@@ -75,17 +75,17 @@
 //               <Item
 //                 icon="👨‍🎓"
 //                 label="Students"
-//                 link={`/${academyCode}/students`}
+//                 link={`/students`}
 //               />
 //               <Item
 //                 icon="📝"
 //                 label="Assessments"
-//                 link={`/${academyCode}/teacher-assessments`}
+//                 link={`/teacher-assessments`}
 //               />
 //               <Item
 //                 icon="🧾"
 //                 label="Student Fees"
-//                 link={`/${academyCode}/fees/students`}
+//                 link={`/fees/students`}
 //               />
 //             </div>
 //             <div className="sidebar-separator" />
@@ -99,12 +99,12 @@
 //               <Item
 //                 icon="👨‍🏫"
 //                 label="Trainers"
-//                 link={`/${academyCode}/teachers`}
+//                 link={`/teachers`}
 //               />
 //               {/* <Item
 //                 icon="📂"
 //                 label="Left Trainers"
-//                 link={`/${academyCode}/teachers/left`}
+//                 link={`/teachers/left`}
 //               /> */}
 //             </div>
 //             <div className="sidebar-separator" />
@@ -118,12 +118,12 @@
 //               <Item
 //                 icon="📊"
 //                 label="My Assessments"
-//                 link={`/${academyCode}/student-assessments`}
+//                 link={`/student-assessments`}
 //               />
 //               <Item
 //                 icon="💰"
 //                 label="My Fees"
-//                 link={`/${academyCode}/fees/my`}
+//                 link={`/fees/my`}
 //               />
 //             </div>
 //             <div className="sidebar-separator" />
@@ -135,7 +135,7 @@
 //           <Item
 //             icon="🏆"
 //             label="Our Champions"
-//             link={`/${academyCode}/our-champions`}
+//             link={`/our-champions`}
 //           />
 //         </div>
 
@@ -147,7 +147,7 @@
 //               <Item
 //                 icon="⚙️"
 //                 label="Settings"
-//                 link={`/${academyCode}/settings`}
+//                 link={`/settings`}
 //               />
 //             </div>
 //           </>

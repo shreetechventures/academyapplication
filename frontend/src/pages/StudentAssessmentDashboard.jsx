@@ -1,7 +1,8 @@
 // frontend/src/pages/StudentAssessmentDashboard.jsx
 
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams } from "react-router-dom";
 import AssessmentChart from "../components/AssessmentChart";
@@ -55,7 +56,7 @@ const normalizeTitle = (title) => {
 
   // const loadTypes = async () => {
   //   try {
-  //     const res = await axios.get(`/${academyCode}/assessments`);
+  //     const res = await api.get(`/assessments`);
   //     setTypes(res.data);
 
   //     if (res.data.length > 0 && !selectedType) {
@@ -69,7 +70,7 @@ const normalizeTitle = (title) => {
 
   const loadTypes = async () => {
   try {
-    const res = await axios.get(`/${academyCode}/assessments`);
+    const res = await api.get(`/assessments`);
 
     const cleaned = [];
     const seen = new Set();
@@ -106,8 +107,8 @@ const normalizeTitle = (title) => {
     if (!typeId || !studentId) return;
 
     try {
-      const res = await axios.get(
-        `/${academyCode}/assessments/students/${studentId}/results/${typeId}`
+      const res = await api.get(
+        `/assessments/students/${studentId}/results/${typeId}`
       );
 
       let list = res.data || [];
@@ -137,8 +138,8 @@ const normalizeTitle = (title) => {
     if (!studentId) return;
 
     try {
-      const res = await axios.get(
-        `/${academyCode}/assessments/students/${studentId}/summary`
+      const res = await api.get(
+        `/assessments/students/${studentId}/summary`
       );
       setSummary(res.data);
     } catch (err) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import "../styles/superadmin.css";
 
 export default function SuperAdminDashboard() {
@@ -20,7 +21,7 @@ export default function SuperAdminDashboard() {
 
   const loadAcademyCount = async () => {
     try {
-      const res = await axios.get("/superadmin/academies/count");
+      const res = await api.get("/superadmin/academies/count");
       setAcademyCount(res.data.count);
     } catch (err) {
       console.error("Failed to load academy count");

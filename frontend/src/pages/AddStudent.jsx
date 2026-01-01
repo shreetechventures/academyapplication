@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -29,9 +30,9 @@ export default function AddStudent() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(`/${academyCode}/students/create`, form);
+      await axios.post(`/students/create`, form);
       alert("✅ Student registered successfully!");
-      navigate(`/${academyCode}/students`);
+      navigate(`/students`);
     } catch (err) {
       alert(err.response?.data?.message || "Error registering student");
     }

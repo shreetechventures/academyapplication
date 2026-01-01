@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useParams } from "react-router-dom";
 
 export default function PaymentHistory({ studentFeeId }) {
@@ -9,7 +10,7 @@ export default function PaymentHistory({ studentFeeId }) {
   useEffect(() => {
     if (!studentFeeId) return;
     (async () => {
-      const res = await axios.get(`/${academyCode}/fees/history/${studentFeeId}`);
+      const res = await api.get(`/fees/history/${studentFeeId}`);
       setHistory(res.data.data || []);
     })();
   }, [studentFeeId]);

@@ -1,7 +1,8 @@
 // frontend/src/pages/Students.jsx
 
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -27,11 +28,11 @@ export default function Students() {
   ======================= */
   const loadCounts = async () => {
     try {
-      const activeRes = await axios.get(
-        `/${academyCode}/dashboard/students/active`
+      const activeRes = await api.get(
+        `/dashboard/students/active`
       );
-      const leftRes = await axios.get(
-        `/${academyCode}/dashboard/students/left`
+      const leftRes = await api.get(
+        `/dashboard/students/left`
       );
 
       setCounts({
@@ -50,10 +51,10 @@ export default function Students() {
     try {
       const url =
         mode === "left"
-          ? `/${academyCode}/students/left/all`
-          : `/${academyCode}/students`;
+          ? `/students/left/all`
+          : `/students`;
 
-      const res = await axios.get(url);
+      const res = await api.get(url);
       setStudents(res.data);
       setFiltered(res.data);
     } catch (err) {
@@ -83,7 +84,7 @@ export default function Students() {
   ======================= */
   const markAsLeft = async (id) => {
     try {
-      await axios.put(`/${academyCode}/students/${id}/leave`);
+      await axios.put(`/students/${id}/leave`);
       loadStudents();
       loadCounts();
     } catch {
@@ -102,7 +103,7 @@ export default function Students() {
           <div className="student-tabs">
             <button
               className={`tab-btn ${mode === "active" ? "active" : ""}`}
-              onClick={() => navigate(`/${academyCode}/students`)}
+              onClick={() => navigate(`/students`)}
             >
               Active
               <span className="badge">{counts.active}</span>
@@ -110,7 +111,7 @@ export default function Students() {
 
             <button
               className={`tab-btn ${mode === "left" ? "active" : ""}`}
-              onClick={() => navigate(`/${academyCode}/students/left`)}
+              onClick={() => navigate(`/students/left`)}
             >
               Left
               <span className="badge warning">{counts.left}</span>
@@ -137,7 +138,7 @@ export default function Students() {
               <button
                 className="add-student-btn"
                 onClick={() =>
-                  navigate(`/${academyCode}/students/add`)
+                  navigate(`/students/add`)
                 }
               >
                 + Add Student
@@ -189,7 +190,7 @@ export default function Students() {
                             className="student-edit-btn"
                             onClick={() =>
                               navigate(
-                                `/${academyCode}/students/edit/${s._id}`
+                                `/students/edit/${s._id}`
                               )
                             }
                           >

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "../api/axios"; // your axios instance
+import api from "../api/axios";
+ // your axios instance
 
 export default function EnquiryModal({ plan, onClose }) {
   const [submitted, setSubmitted] = useState(false);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -23,7 +24,7 @@ export default function LeftStudents() {
     setFiltered(result);
   };
 useEffect(() => {
-  axios.get(`/${academyCode}/students/left/all`)
+  api.get(`/students/left/all`)
     .then(res => {
       setStudents(res.data);
       setFiltered(res.data);   // ← ADD THIS
@@ -44,7 +45,7 @@ useEffect(() => {
           <div className="student-search-container">
             <button
               className="add-student-btn"
-              onClick={() => navigate(`/${academyCode}/students`)}
+              onClick={() => navigate(`/students`)}
             >
               Back to Active students
             </button>

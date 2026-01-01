@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useParams } from "react-router-dom";
 
 import "../styles/settings.css";
@@ -31,7 +32,7 @@ export default function Settings() {
       if (role !== "academyAdmin") return;
 
       try {
-        const res = await axios.get(`/${academyCode}/settings`);
+        const res = await api.get(`/settings`);
 
         setPermissions({
           allowTrainerFeeManagement:
@@ -62,11 +63,11 @@ export default function Settings() {
     let endpoint = "";
 
     if (role === "academyAdmin") {
-      endpoint = `/${academyCode}/auth/change-password`;
+      endpoint = `/auth/change-password`;
     } else if (role === "teacher") {
-      endpoint = `/${academyCode}/teachers/change-password`;
+      endpoint = `/teachers/change-password`;
     } else if (role === "student") {
-      endpoint = `/${academyCode}/students/self/change-password`;
+      endpoint = `/students/self/change-password`;
     }
 
     if (!endpoint) {
@@ -96,7 +97,7 @@ export default function Settings() {
     try {
       setPermissions((prev) => ({ ...prev, [key]: value }));
 
-      await axios.put(`/${academyCode}/settings/permissions`, {
+      await axios.put(`/settings/permissions`, {
         ...permissions,
         [key]: value,
       });

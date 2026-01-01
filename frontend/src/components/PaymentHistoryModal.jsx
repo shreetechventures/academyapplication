@@ -21,7 +21,7 @@ export default function PaymentHistoryModal({
     try {
       setLoading(true);
       const res = await api.get(
-        `/${academyCode}/fees/billing/${billingId}/history`
+        `/fees/billing/${billingId}/history`
       );
 
       const sorted = (res.data.data || []).sort(

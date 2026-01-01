@@ -4,7 +4,8 @@
 // import DashboardHeader from "./DashboardHeader";
 // import { useLocation, useNavigate } from "react-router-dom";
 // import { getAcademyCodeFromPath } from "../utils/tenant";
-// import axios from "../api/axios";
+// import api from "../api/axios";
+
 // import "../styles/dashboard.css";
 
 // export default function PageWrapper({ children }) {
@@ -20,7 +21,7 @@
 //   useEffect(() => {
 //     async function load() {
 //       try {
-//         const res = await axios.get(`/${academyCode}`);
+//         const res = await api.get(``);
 //         setAcademy(res.data);
 //       } catch (err) {
 //         console.error("Academy load error:", err);
@@ -31,7 +32,7 @@
 
 //   const logout = () => {
 //     localStorage.clear();
-//     navigate(`/${academyCode}/login`);
+//     navigate(`/login`);
 //   };
 
 //   return (

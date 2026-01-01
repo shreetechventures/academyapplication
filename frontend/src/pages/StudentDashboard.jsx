@@ -72,9 +72,9 @@ export default function StudentDashboard() {
         if (!studentId || role !== "student") return;
 
         const [feeRes, examRes] = await Promise.all([
-          api.get(`/${academyCode}/fees/student/${studentId}/summary`),
+          api.get(`/fees/student/${studentId}/summary`),
           api.get(
-            `/${academyCode}/assessments/students/${studentId}/last-exam`
+            `/assessments/students/${studentId}/last-exam`
           ),
         ]);
 
@@ -92,7 +92,7 @@ export default function StudentDashboard() {
 
   /* ROLE GUARD */
   if (role !== "student") {
-    return <Navigate to={`/${academyCode}/login`} replace />;
+    return <Navigate to={`/login`} replace />;
   }
 
   return (

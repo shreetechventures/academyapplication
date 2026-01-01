@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useParams } from "react-router-dom";
 
 import "../styles/paymentModal.css";
@@ -17,7 +18,7 @@ export default function PaymentModal({ fee, onClose, onSuccess }) {
     setLoading(true);
     try {
       await axios.post(
-        `/${academyCode}/fees/pay/${fee._id}`,
+        `/fees/pay/${fee._id}`,
         { amount: Number(amount), mode }
       );
 

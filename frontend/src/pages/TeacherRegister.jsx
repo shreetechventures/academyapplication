@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -38,10 +39,10 @@ export default function TeacherRegister() {
         age: age
       };
 
-      await axios.post(`/${academyCode}/teachers/create`, finalData);
+      await axios.post(`/teachers/create`, finalData);
 
       alert("Trainer Registered Successfully!");
-      navigate(`/${academyCode}/teachers`);
+      navigate(`/teachers`);
 
     } catch (err) {
       console.error(err);
@@ -176,7 +177,7 @@ export default function TeacherRegister() {
               </button>
               <button
                 className="add-student-btn"
-                onClick={() => navigate(`/${academyCode}/teachers`)}
+                onClick={() => navigate(`/teachers`)}
               >
                 Cancel
               </button>

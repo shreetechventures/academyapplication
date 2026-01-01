@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams } from "react-router-dom";
 import "../styles/dashboardStats.css";
@@ -15,9 +16,9 @@ export default function Dashboard() {
 
   const loadStats = async () => {
     try {
-      const active = await axios.get(`/${academyCode}/dashboard/students/active`);
-      const left = await axios.get(`/${academyCode}/dashboard/students/left`);
-      const trainers = await axios.get(`/${academyCode}/dashboard/trainers`);
+      const active = await api.get(`/dashboard/students/active`);
+      const left = await api.get(`/dashboard/students/left`);
+      const trainers = await api.get(`/dashboard/trainers`);
 
       setStats({
         totalStudents: active.data.count,

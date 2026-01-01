@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import "../styles/champions.css";
 // import "../styles/editModal.css";
 export default function AddEditChampionModal({

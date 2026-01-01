@@ -1,6 +1,7 @@
 // // frontend/src/pages/Champions.jsx
 import React, { useState, useEffect } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import DeleteConfirm from "../components/DeleteConfirm";
 import ChampionCard from "../components/ChampionCard";
@@ -32,7 +33,7 @@ export default function Champions() {
   // ======================
   const loadChampions = async () => {
     try {
-      const res = await axios.get(`/${academyCode}/champions`);
+      const res = await api.get(`/champions`);
 
       const groupedData = res.data.reduce((acc, champ) => {
         const y = champ.year || "Unknown";
@@ -73,7 +74,7 @@ export default function Champions() {
       form.append("year", year);
       if (image) form.append("image", image);
 
-      await axios.post(`/${academyCode}/champions`, form, {
+      await axios.post(`/champions`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -97,7 +98,7 @@ export default function Champions() {
   const deleteChampion = async () => {
     try {
       await axios.delete(
-        `/${academyCode}/champions/${deleteModal.id}`
+        `/champions/${deleteModal.id}`
       );
 
       setDeleteModal({ open: false, id: null });
@@ -116,7 +117,7 @@ export default function Champions() {
   const updateChampion = async (id, formData) => {
     try {
       await axios.put(
-        `/${academyCode}/champions/${id}`,
+        `/champions/${id}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

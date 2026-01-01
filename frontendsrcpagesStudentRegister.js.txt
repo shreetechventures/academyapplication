@@ -1,7 +1,8 @@
 // frontend/src/pages/StudentRegister.jsx
 
 import React, { useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -18,9 +19,9 @@ export default function StudentRegister() {
 
   const submit = async () => {
     try {
-      await axios.post(`/api/${academyCode}/students/create`, form);
+      await axios.post(`/api/students/create`, form);
       alert("✅ Student Registered Successfully!");
-      navigate(`/${academyCode}/students`);
+      navigate(`/students`);
     } catch (err) {
       alert("❌ Error while registering student");
     }
@@ -89,7 +90,7 @@ export default function StudentRegister() {
 
               <button 
                 className="add-student-btn"
-                onClick={() => navigate(`/${academyCode}/students`)}
+                onClick={() => navigate(`/students`)}
               >
                 Cancel
               </button>

@@ -1,6 +1,7 @@
 // frontend/src/pages/TeacherAssessmentPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams } from "react-router-dom";
 import AssessmentChart from "../components/AssessmentChart";
@@ -47,7 +48,7 @@ export default function TeacherAssessmentPage() {
 
   const loadStudents = async () => {
     try {
-      const res = await axios.get(`/${academyCode}/students`);
+      const res = await api.get(`/students`);
       setStudents(res.data || []);
     } catch (err) {
       console.error("loadStudents error", err);
@@ -56,7 +57,7 @@ export default function TeacherAssessmentPage() {
 
   const loadTypes = async () => {
     try {
-      const res = await axios.get(`/${academyCode}/assessments`);
+      const res = await api.get(`/assessments`);
       setTypes(res.data || []);
     } catch (err) {
       console.error("loadTypes error", err);
@@ -66,8 +67,8 @@ export default function TeacherAssessmentPage() {
   const loadStudentResults = async (studentId) => {
     if (!studentId) return;
     try {
-      const res = await axios.get(
-        `/${academyCode}/assessments/students/${studentId}/results`
+      const res = await api.get(
+        `/assessments/students/${studentId}/results`
       );
       setResults(res.data || []);
       setPage(1);
@@ -84,8 +85,8 @@ export default function TeacherAssessmentPage() {
   }
 
   try {
-    const res = await axios.get(
-      `/${academyCode}/assessments/students/${studentId}/results/${typeId}`
+    const res = await api.get(
+      `/assessments/students/${studentId}/results/${typeId}`
     );
 
     let list = res.data || [];
@@ -229,7 +230,7 @@ export default function TeacherAssessmentPage() {
       // updates: [{ _id, value, note, attemptDate }]
       await Promise.all(
         updates.map((u) =>
-          axios.put(`/${academyCode}/assessments/result/${u._id}`, {
+          axios.put(`/assessments/result/${u._id}`, {
             value: u.value,
             note: u.note,
             attemptDate: u.attemptDate,
@@ -262,7 +263,7 @@ export default function TeacherAssessmentPage() {
     try {
       await Promise.all(
         dayResults.map((r) =>
-          axios.delete(`/${academyCode}/assessments/result/${r._id}`)
+          axios.delete(`/assessments/result/${r._id}`)
         )
       );
 

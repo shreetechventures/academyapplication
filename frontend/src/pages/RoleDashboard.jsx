@@ -5,22 +5,22 @@
 //   const role = localStorage.getItem("role");
 
 //   if (!role) {
-//     return <Navigate to={`/${academyCode}/login`} replace />;
+//     return <Navigate to={`/login`} replace />;
 //   }
 
 //   if (role === "academyAdmin") {
-//     return <Navigate to={`/${academyCode}/dashboard/admin`} replace />;
+//     return <Navigate to={`/dashboard/admin`} replace />;
 //   }
 
 //   if (role === "teacher") {
-//     return <Navigate to={`/${academyCode}/dashboard/teacher`} replace />;
+//     return <Navigate to={`/dashboard/teacher`} replace />;
 //   }
 
 //   if (role === "student") {
-//     return <Navigate to={`/${academyCode}/dashboard/student`} replace />;
+//     return <Navigate to={`/dashboard/student`} replace />;
 //   }
 
-//   return <Navigate to={`/${academyCode}/login`} replace />;
+//   return <Navigate to={`/login`} replace />;
 // }
 
 import { useEffect } from "react";

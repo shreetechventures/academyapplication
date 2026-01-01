@@ -1,7 +1,8 @@
 // frontend/src/pages/StudentEdit.jsx
 
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -17,8 +18,8 @@ export default function EditStudent() {
   ============================ */
   const loadStudent = async () => {
     try {
-      const res = await axios.get(
-        `/${academyCode}/students/${id}`,
+      const res = await api.get(
+        `/students/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -49,13 +50,13 @@ export default function EditStudent() {
   const updateStudent = async () => {
     try {
       await axios.put(
-        `/${academyCode}/students/${id}`,
+        `/students/${id}`,
         form,
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
 
       alert("Student Updated Successfully!");
-      navigate(`/${academyCode}/students`);
+      navigate(`/students`);
 
     } catch (err) {
       console.error(err);
@@ -198,7 +199,7 @@ export default function EditStudent() {
 
               <button
                 className="add-student-btn"
-                onClick={() => navigate(`/${academyCode}/students`)}
+                onClick={() => navigate(`/students`)}
               >
                 Cancel
               </button>

@@ -47,13 +47,13 @@ export default function StudentFee() {
      LOAD STUDENTS
   ======================= */
   useEffect(() => {
-    api.get(`/${academyCode}/students`).then((res) => {
+    api.get(`/students`).then((res) => {
       setStudents(res.data || []);
     });
   }, [academyCode]);
 
   if (role === "student") {
-    return <Navigate to={`/${academyCode}/fees/my`} replace />;
+    return <Navigate to={`/fees/my`} replace />;
   }
 
   /* =======================
@@ -62,7 +62,7 @@ export default function StudentFee() {
   const openStudent = async (student) => {
     setSelectedStudent(student);
     const res = await api.get(
-      `/${academyCode}/fees/student/${student._id}/billing`
+      `/fees/student/${student._id}/billing`
     );
 
     const data = res.data.data || [];
@@ -84,7 +84,7 @@ export default function StudentFee() {
   const saveFee = async () => {
     if (!feeAmount || feeAmount <= 0) return alert("Invalid fee");
 
-    await api.put(`/${academyCode}/fees/billing/${activeBillingId}/amount`, {
+    await api.put(`/fees/billing/${activeBillingId}/amount`, {
       finalFee: Number(feeAmount),
     });
 
@@ -96,7 +96,7 @@ export default function StudentFee() {
   const handlePayFee = async () => {
     if (!payAmount || payAmount <= 0) return alert("Invalid amount");
 
-    await api.post(`/${academyCode}/fees/billing/${activeBillingId}/pay`, {
+    await api.post(`/fees/billing/${activeBillingId}/pay`, {
       amount: Number(payAmount),
       mode: payMode,
     });
@@ -111,7 +111,7 @@ export default function StudentFee() {
     if (!discountAmount || discountAmount <= 0)
       return alert("Invalid discount");
 
-    await api.put(`/${academyCode}/fees/billing/${activeBillingId}/discount`, {
+    await api.put(`/fees/billing/${activeBillingId}/discount`, {
       discountAmount: Number(discountAmount),
     });
 

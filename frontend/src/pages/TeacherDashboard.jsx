@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import "../styles/dashboardStats.css";
 
@@ -22,14 +23,14 @@ export default function TeacherDashboard() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const activeRes = await axios.get(
-          `/${academyCode}/dashboard/students/active`
+        const activeRes = await api.get(
+          `/dashboard/students/active`
         );
-        const leftRes = await axios.get(
-          `/${academyCode}/dashboard/students/left`
+        const leftRes = await api.get(
+          `/dashboard/students/left`
         );
-        const trainersRes = await axios.get(
-          `/${academyCode}/dashboard/trainers`
+        const trainersRes = await api.get(
+          `/dashboard/trainers`
         );
 
         setStats({
@@ -49,7 +50,7 @@ export default function TeacherDashboard() {
      ROLE GUARD
   ======================= */
   if (role !== "teacher") {
-    return <Navigate to={`/${academyCode}/login`} replace />;
+    return <Navigate to={`/login`} replace />;
   }
 
   return (

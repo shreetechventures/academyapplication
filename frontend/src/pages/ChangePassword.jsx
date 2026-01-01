@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams } from "react-router-dom";
 
@@ -24,11 +25,11 @@ export default function ChangePassword() {
     let endpoint = "";
 
     if (role === "academyAdmin") {
-      endpoint = `/${academyCode}/auth/change-password`;
+      endpoint = `/auth/change-password`;
     } else if (role === "teacher") {
-      endpoint = `/${academyCode}/teachers/change-password`; // ✅ FIX
+      endpoint = `/teachers/change-password`; // ✅ FIX
     } else if (role === "student") {
-      endpoint = `/${academyCode}/students/self/change-password`;
+      endpoint = `/students/self/change-password`;
     }
 
     try {

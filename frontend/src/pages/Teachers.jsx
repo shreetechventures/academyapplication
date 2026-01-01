@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css"; // SAME STYLE
@@ -17,7 +18,7 @@ export default function Teachers() {
 
   // Load Teachers
   const loadTeachers = async () => {
-    const res = await axios.get(`/${academyCode}/teachers`);
+    const res = await api.get(`/teachers`);
     setTeachers(res.data);
     setFiltered(res.data);
   };
@@ -28,7 +29,7 @@ export default function Teachers() {
   }, []);
 
   const markAsLeft = async (id) => {
-    await axios.put(`/${academyCode}/teachers/${id}/leave`);
+    await axios.put(`/teachers/${id}/leave`);
     setFiltered(prev => prev.filter(t => t._id !== id));
   };
 
@@ -73,14 +74,14 @@ export default function Teachers() {
 
             <button 
               className="add-student-btn"
-              onClick={() => navigate(`/${academyCode}/teachers/add`)}
+              onClick={() => navigate(`/teachers/add`)}
             >
               + Add Trainer
             </button>
 
                         <button 
               className="add-student-btn"
-              onClick={() => navigate(`/${academyCode}/teachers/left`)}
+              onClick={() => navigate(`/teachers/left`)}
             >
               Left Trainer
             </button>
@@ -117,7 +118,7 @@ export default function Teachers() {
                   <td>
                     <button 
                       className="student-edit-btn"
-                      onClick={() => navigate(`/${academyCode}/teachers/edit/${t._id}`)}
+                      onClick={() => navigate(`/teachers/edit/${t._id}`)}
                     >
                       Edit
                     </button>

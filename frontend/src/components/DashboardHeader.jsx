@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "../styles/dashboard.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faKey } from "@fortawesome/free-solid-svg-icons";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useParams } from "react-router-dom";
 
 export default function DashboardHeader({ academy, onLogout }) {
@@ -35,11 +36,11 @@ export default function DashboardHeader({ academy, onLogout }) {
     let endpoint = "";
 
     if (role === "academyAdmin") {
-      endpoint = `/${academyCode}/auth/change-password`;
+      endpoint = `/auth/change-password`;
     } else if (role === "teacher") {
-      endpoint = `/${academyCode}/teachers/change-password`;
+      endpoint = `/teachers/change-password`;
     } else if (role === "student") {
-      endpoint = `/${academyCode}/students/self/change-password`;
+      endpoint = `/students/self/change-password`;
     }
 
     try {

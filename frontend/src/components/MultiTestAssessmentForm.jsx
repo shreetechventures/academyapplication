@@ -1,6 +1,7 @@
 // frontend/src/components/MultiTestAssessmentForm.jsx
 import React, { useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 
 export default function MultiTestAssessmentForm({
   academyCode,
@@ -45,7 +46,7 @@ export default function MultiTestAssessmentForm({
     setLoading(true);
     try {
       await axios.post(
-        `/${academyCode}/assessments/multi`,
+        `/assessments/multi`,
         commonPayload(sendWhatsApp)
       );
 

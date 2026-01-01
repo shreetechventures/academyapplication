@@ -1,6 +1,7 @@
 // frontend/src/pages/Lessons.jsx
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams } from "react-router-dom";
 import "../styles/lessons.css";
@@ -29,8 +30,8 @@ export default function Lessons() {
   const loadLessons = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `/${academyCode}/lessons?category=${category}`
+      const res = await api.get(
+        `/lessons?category=${category}`
       );
       setLessons(res.data);
     } catch (err) {
@@ -97,9 +98,9 @@ export default function Lessons() {
       };
 
       if (editMode && editLessonId) {
-        await axios.put(`/${academyCode}/lessons/${editLessonId}`, payload);
+        await axios.put(`/lessons/${editLessonId}`, payload);
       } else {
-        await axios.post(`/${academyCode}/lessons`, payload);
+        await axios.post(`/lessons`, payload);
       }
 
       // Reset
@@ -121,7 +122,7 @@ export default function Lessons() {
     if (!window.confirm("Delete this lesson?")) return;
 
     try {
-      await axios.delete(`/${academyCode}/lessons/${id}`);
+      await axios.delete(`/lessons/${id}`);
       loadLessons();
     } catch (err) {
       alert(err.response?.data?.message || "Delete failed");

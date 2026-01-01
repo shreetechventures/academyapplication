@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import PageWrapper from "../components/PageWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
@@ -13,7 +14,7 @@ export default function LeftTeachers() {
   // Load Left Teachers
   const loadTeachers = async () => {
     try {
-      const res = await axios.get(`/${academyCode}/teachers/left/all`);
+      const res = await api.get(`/teachers/left/all`);
       setTeachers(res.data);
     } catch (err) {
       console.error("Error loading teachers:", err);
@@ -27,7 +28,7 @@ export default function LeftTeachers() {
   // Restore Teacher
   const restoreTeacher = async (id) => {
     try {
-      await axios.put(`/${academyCode}/teachers/${id}/restore`);
+      await axios.put(`/teachers/${id}/restore`);
       alert("Teacher restored to Active!");
       loadTeachers();
     } catch (err) {
@@ -46,7 +47,7 @@ export default function LeftTeachers() {
           <div className="student-search-container">
             <button
               className="add-student-btn"
-              onClick={() => navigate(`/${academyCode}/teachers`)}
+              onClick={() => navigate(`/teachers`)}
             >
               Back to Active Trainers
             </button>

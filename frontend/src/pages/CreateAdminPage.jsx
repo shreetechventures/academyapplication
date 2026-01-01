@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import api from "../api/axios";
+
 import { useNavigate } from "react-router-dom";
 
 export default function CreateAdminPage() {
@@ -17,7 +18,7 @@ export default function CreateAdminPage() {
   const [msg, setMsg] = useState("");
 
   const loadAdmins = async () => {
-    const res = await axios.get("/superadmin/admins");
+    const res = await api.get("/superadmin/admins");
     setAdmins(res.data);
   };
 

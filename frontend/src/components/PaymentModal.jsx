@@ -17,7 +17,7 @@ export default function PaymentModal({ fee, onClose, onSuccess }) {
 
     setLoading(true);
     try {
-      await axios.post(
+      await api.post(
         `/fees/pay/${fee._id}`,
         { amount: Number(amount), mode }
       );

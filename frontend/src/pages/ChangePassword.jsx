@@ -33,7 +33,7 @@ export default function ChangePassword() {
     }
 
     try {
-      await axios.put(endpoint, {
+      await api.put(endpoint, {
         currentPassword: form.currentPassword,
         newPassword: form.newPassword,
       });

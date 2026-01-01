@@ -45,7 +45,7 @@ export default function MultiTestAssessmentForm({
 
     setLoading(true);
     try {
-      await axios.post(
+      await api.post(
         `/assessments/multi`,
         commonPayload(sendWhatsApp)
       );

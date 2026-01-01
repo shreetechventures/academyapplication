@@ -84,7 +84,7 @@ export default function Students() {
   ======================= */
   const markAsLeft = async (id) => {
     try {
-      await axios.put(`/students/${id}/leave`);
+      await api.put(`/students/${id}/leave`);
       loadStudents();
       loadCounts();
     } catch {

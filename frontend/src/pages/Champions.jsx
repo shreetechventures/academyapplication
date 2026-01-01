@@ -74,7 +74,7 @@ export default function Champions() {
       form.append("year", year);
       if (image) form.append("image", image);
 
-      await axios.post(`/champions`, form, {
+      await api.post(`/champions`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -97,7 +97,7 @@ export default function Champions() {
   // ======================
   const deleteChampion = async () => {
     try {
-      await axios.delete(
+      await api.delete(
         `/champions/${deleteModal.id}`
       );
 
@@ -116,7 +116,7 @@ export default function Champions() {
   // ======================
   const updateChampion = async (id, formData) => {
     try {
-      await axios.put(
+      await api.put(
         `/champions/${id}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }

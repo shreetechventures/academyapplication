@@ -76,7 +76,7 @@ export default function Settings() {
     }
 
     try {
-      await axios.put(endpoint, {
+      await api.put(endpoint, {
         currentPassword: form.currentPassword,
         newPassword: form.newPassword,
       });
@@ -97,7 +97,7 @@ export default function Settings() {
     try {
       setPermissions((prev) => ({ ...prev, [key]: value }));
 
-      await axios.put(`/settings/permissions`, {
+      await api.put(`/settings/permissions`, {
         ...permissions,
         [key]: value,
       });

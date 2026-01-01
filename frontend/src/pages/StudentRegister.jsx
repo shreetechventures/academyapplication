@@ -106,7 +106,7 @@ const submit = async () => {
       age: age
     };
 
-    await axios.post(`/students/create`, finalData);
+    await api.post(`/students/create`, finalData);
 
     alert("✅ Student Registered Successfully!");
     navigate(`/students`);

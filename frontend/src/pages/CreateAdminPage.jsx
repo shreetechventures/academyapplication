@@ -32,10 +32,10 @@ export default function CreateAdminPage() {
   const submit = async () => {
     try {
       if (editingId) {
-        await axios.put(`/superadmin/admin/${editingId}`, form);
+        await api.put(`/superadmin/admin/${editingId}`, form);
         setMsg("✅ Admin updated");
       } else {
-        await axios.post("/superadmin/create-admin", form);
+        await api.post("/superadmin/create-admin", form);
         setMsg("✅ Admin created");
       }
 
@@ -49,7 +49,7 @@ export default function CreateAdminPage() {
 
   const remove = async (id) => {
     if (!window.confirm("Delete this admin?")) return;
-    await axios.delete(`/superadmin/admin/${id}`);
+    await api.delete(`/superadmin/admin/${id}`);
     loadAdmins();
   };
 

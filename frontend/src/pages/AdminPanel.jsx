@@ -18,7 +18,7 @@ const password = prompt('Teacher password (min 8 chars)');
 
 
 try{
-await axios.post(`/admin/create-teacher`, { name, email, password });
+await api.post(`/admin/create-teacher`, { name, email, password });
 setMsg('Teacher created');
 }catch(e){ setMsg(e.response?.data?.message || 'Error'); }
 };
@@ -29,7 +29,7 @@ const name = prompt('Student name');
 const email = prompt('Student email');
 const password = prompt('Student password');
 try{
-await axios.post(`/admin/create-student`, { name, email, password });
+await api.post(`/admin/create-student`, { name, email, password });
 setMsg('Student created');
 }catch(e){ setMsg(e.response?.data?.message || 'Error'); }
 };

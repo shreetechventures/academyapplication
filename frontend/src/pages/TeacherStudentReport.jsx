@@ -230,7 +230,7 @@ export default function TeacherAssessmentPage() {
       // updates: [{ _id, value, note, attemptDate }]
       await Promise.all(
         updates.map((u) =>
-          axios.put(`/assessments/result/${u._id}`, {
+          api.put(`/assessments/result/${u._id}`, {
             value: u.value,
             note: u.note,
             attemptDate: u.attemptDate,
@@ -263,7 +263,7 @@ export default function TeacherAssessmentPage() {
     try {
       await Promise.all(
         dayResults.map((r) =>
-          axios.delete(`/assessments/result/${r._id}`)
+          api.delete(`/assessments/result/${r._id}`)
         )
       );
 

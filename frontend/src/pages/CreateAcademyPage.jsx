@@ -65,13 +65,13 @@ export default function CreateAcademyPage() {
     try {
       if (editingId) {
         // Update academy basic info
-        await axios.put(`/superadmin/academy/${editingId}`, {
+        await api.put(`/superadmin/academy/${editingId}`, {
           name: form.name,
           address: form.address,
         });
 
         // Update / extend subscription
-        await axios.post("/superadmin/subscription/mark-paid", {
+        await api.post("/superadmin/subscription/mark-paid", {
           academyCode: form.code,
           durationMonths: subscription.durationMonths,
           maxStudents: subscription.maxStudents,
@@ -82,7 +82,7 @@ export default function CreateAcademyPage() {
         setMsg("✅ Academy & subscription updated successfully");
       } else {
         // Create academy with subscription
-        await axios.post("/superadmin/create-academy", {
+        await api.post("/superadmin/create-academy", {
           ...form,
           durationMonths: subscription.durationMonths,
           maxStudents: subscription.maxStudents,
@@ -194,7 +194,7 @@ export default function CreateAcademyPage() {
   // ===============================
   const deleteAcademy = async (id) => {
     if (!window.confirm("Delete this academy?")) return;
-    await axios.delete(`/superadmin/academy/${id}`);
+    await api.delete(`/superadmin/academy/${id}`);
     loadAcademies();
   };
 
@@ -457,7 +457,7 @@ export default function CreateAcademyPage() {
                   &nbsp;
                   <button
                     onClick={async () => {
-                      await axios.put(`/superadmin/academy/${a._id}/toggle`);
+                      await api.put(`/superadmin/academy/${a._id}/toggle`);
                       loadAcademies();
                     }}
                   >

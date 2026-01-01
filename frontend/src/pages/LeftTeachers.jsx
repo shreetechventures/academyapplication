@@ -28,7 +28,7 @@ export default function LeftTeachers() {
   // Restore Teacher
   const restoreTeacher = async (id) => {
     try {
-      await axios.put(`/teachers/${id}/restore`);
+      await api.put(`/teachers/${id}/restore`);
       alert("Teacher restored to Active!");
       loadTeachers();
     } catch (err) {

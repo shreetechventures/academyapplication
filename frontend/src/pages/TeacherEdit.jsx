@@ -69,7 +69,7 @@ export default function TeacherEdit() {
         age: age,
       };
 
-      await axios.put(`/teachers/${id}`, updated);
+      await api.put(`/teachers/${id}`, updated);
 
       alert("Teacher Updated Successfully!");
       navigate(`/teachers`);

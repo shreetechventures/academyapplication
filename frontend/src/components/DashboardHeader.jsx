@@ -44,7 +44,7 @@ export default function DashboardHeader({ academy, onLogout }) {
     }
 
     try {
-      await axios.put(endpoint, form);
+      await api.put(endpoint, form);
       alert("✅ Password Updated Successfully");
 
       setOpenPassword(false);

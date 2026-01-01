@@ -23,7 +23,7 @@ export default function EnquiryModal({ plan, onClose }) {
     setLoading(true);
 
     try {
-      await axios.post("/public/plan-enquiry", {
+      await api.post("/public/plan-enquiry", {
         ...form,
         plan,
       });

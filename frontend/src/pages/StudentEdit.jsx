@@ -49,7 +49,7 @@ export default function EditStudent() {
   ============================ */
   const updateStudent = async () => {
     try {
-      await axios.put(
+      await api.put(
         `/students/${id}`,
         form,
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }

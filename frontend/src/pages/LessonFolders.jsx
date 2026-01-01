@@ -99,12 +99,12 @@ export default function Lessons() {
       };
 
       if (editMode && editLessonId) {
-        await axios.put(
+        await api.put(
           `/lessons/${editLessonId}`,
           payload
         );
       } else {
-        await axios.post(`/lessons`, payload);
+        await api.post(`/lessons`, payload);
       }
 
       // Reset
@@ -127,7 +127,7 @@ export default function Lessons() {
     if (!window.confirm("Delete this lesson?")) return;
 
     try {
-      await axios.delete(`/lessons/${id}`);
+      await api.delete(`/lessons/${id}`);
       loadLessons();
     } catch (err) {
       alert(err.response?.data?.message || "Delete failed");

@@ -29,7 +29,7 @@ export default function Teachers() {
   }, []);
 
   const markAsLeft = async (id) => {
-    await axios.put(`/teachers/${id}/leave`);
+    await api.put(`/teachers/${id}/leave`);
     setFiltered(prev => prev.filter(t => t._id !== id));
   };
 

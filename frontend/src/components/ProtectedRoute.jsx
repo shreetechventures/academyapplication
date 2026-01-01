@@ -1,14 +1,3 @@
-{/* <Route
-  path="/superadmin/create-admin"
-  element={
-    <ProtectedRoute allowedRoles={["superadmin"]}>
-      <CreateAdminPage />
-    </ProtectedRoute>
-  }
-/> */}
-
-// frontend/src/components/ProtectedRoute.jsx
-
 import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ allowedRoles, children }) {

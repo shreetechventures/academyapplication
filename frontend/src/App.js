@@ -183,6 +183,7 @@
 
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";

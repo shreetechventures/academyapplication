@@ -2,7 +2,7 @@
 
 
 import React, { useState } from 'react';
-import axios from '../api/axios';
+import api from '../api/axios';
 import { useParams } from 'react-router-dom';
 
 

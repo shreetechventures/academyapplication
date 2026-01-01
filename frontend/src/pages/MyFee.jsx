@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
-import { useParams } from "react-router-dom";
 import PaymentHistoryModal from "../components/PaymentHistoryModal";
 import PageWrapper from "../components/PageWrapper";
 import confetti from "canvas-confetti";
@@ -52,7 +51,6 @@ export default function MyFee() {
     const confettiKey = `fee_confetti_${studentId}`;
 
     if (isFullyPaid && !localStorage.getItem(confettiKey)) {
-      // 🎊 FIRE CONFETTI
       confetti({
         particleCount: 120,
         spread: 80,
@@ -60,11 +58,9 @@ export default function MyFee() {
         colors: ["#2e7d32", "#66bb6a", "#ffd166"],
       });
 
-      // ✅ Mark as shown
       localStorage.setItem(confettiKey, "shown");
     }
 
-    // 🔄 Reset confetti if payment is no longer complete
     if (!isFullyPaid) {
       localStorage.removeItem(confettiKey);
     }
@@ -77,25 +73,22 @@ export default function MyFee() {
 
         {loading && <p className="loading">Loading fee details...</p>}
 
-       
         {!loading && summary && (
           <div className="fee-summary-dashboard">
-            {/* TOTAL */}
+
             <div className="summary-card total">
               <span>Total Fee</span>
               <strong>₹{summary.totalFee}</strong>
             </div>
 
-
-            {/* PAID */}
             <div className="summary-card paid">
               <span>Paid</span>
               <strong>₹{summary.paidFee}</strong>
 
-              {/* 🎉 PAID BADGE */}
-              {summary.totalFee > 0 && summary.paidFee === summary.totalFee && (
-                <div className="paid-badge">PAID</div>
-              )}
+              {summary.totalFee > 0 &&
+                summary.paidFee === summary.totalFee && (
+                  <div className="paid-badge">PAID</div>
+                )}
 
               <div className="circle-wrapper">
                 <svg className="progress-ring" width="90" height="90">
@@ -123,14 +116,15 @@ export default function MyFee() {
 
                 <div className="circle-text">
                   {summary.totalFee > 0
-                    ? Math.round((summary.paidFee / summary.totalFee) * 100)
+                    ? Math.round(
+                        (summary.paidFee / summary.totalFee) * 100
+                      )
                     : 0}
                   %
                 </div>
               </div>
             </div>
 
-            {/* PENDING */}
             <div className="summary-card pending">
               <span>Pending</span>
               <strong>₹{summary.pendingFee}</strong>
@@ -159,9 +153,12 @@ export default function MyFee() {
                     }}
                   />
                 </svg>
+
                 <div className="circle-text">
                   {summary.totalFee
-                    ? Math.round((summary.pendingFee / summary.totalFee) * 100)
+                    ? Math.round(
+                        (summary.pendingFee / summary.totalFee) * 100
+                      )
                     : 0}
                   %
                 </div>
@@ -174,7 +171,6 @@ export default function MyFee() {
           <div className="no-fee">No fee records available yet.</div>
         )}
 
-        {/* ===== TRAINER STYLE TABLE ===== */}
         {!loading && billings.length > 0 && (
           <div className="fee-table-wrapper">
             <table className="fee-table">
@@ -226,7 +222,6 @@ export default function MyFee() {
         <PaymentHistoryModal
           open={historyOpen}
           onClose={() => setHistoryOpen(false)}
-          academyCode={academyCode}
           billingId={activeBillingId}
         />
       </div>

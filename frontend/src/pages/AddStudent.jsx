@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
 export default function AddStudent() {
@@ -20,7 +20,7 @@ export default function AddStudent() {
     emergencyContact1: "",
     fatherContact: "",
     admissionDate: "",
-    practiceFor: ""
+    practiceFor: "",
   });
 
   const handleChange = (e) => {
@@ -29,9 +29,9 @@ export default function AddStudent() {
 
   const handleSubmit = async () => {
     try {
-      await api.post(`/students/create`, form);
+      await api.post("/students/create", form);
       alert("✅ Student registered successfully!");
-      navigate(`/students`);
+      navigate("/students");
     } catch (err) {
       alert(err.response?.data?.message || "Error registering student");
     }
@@ -46,7 +46,7 @@ export default function AddStudent() {
         <input name="contactNumber" placeholder="Mobile Number" onChange={handleChange} />
         <input name="email" placeholder="Email" onChange={handleChange} />
         <input type="date" name="dateOfBirth" onChange={handleChange} />
-        
+
         <select name="gender" onChange={handleChange}>
           <option value="">Select Gender</option>
           <option value="Male">Male</option>

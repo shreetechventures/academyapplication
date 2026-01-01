@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
 export default function TeacherRegister() {
-
   const navigate = useNavigate();
 
   const [form, setForm] = useState({});
@@ -19,7 +18,9 @@ export default function TeacherRegister() {
     if (form.dateOfBirth) {
       const dob = new Date(form.dateOfBirth);
       const diff = Date.now() - dob.getTime();
-      const calculatedAge = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+      const calculatedAge = Math.floor(
+        diff / (1000 * 60 * 60 * 24 * 365.25)
+      );
       setAge(calculatedAge);
     }
   }, [form.dateOfBirth]);
@@ -31,18 +32,20 @@ export default function TeacherRegister() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  /* ==========================
+       SUBMIT
+  =========================== */
   const submit = async () => {
     try {
       const finalData = {
         ...form,
-        age: age
+        age: age,
       };
 
       await api.post(`/teachers/create`, finalData);
 
       alert("Trainer Registered Successfully!");
       navigate(`/teachers`);
-
     } catch (err) {
       console.error(err);
       alert("Error registering trainer");
@@ -52,12 +55,10 @@ export default function TeacherRegister() {
   return (
     <PageWrapper>
       <div className="students-content-wrapper">
-
         <h2 className="student-page-title">Register Trainer</h2>
 
         <div className="register-container">
           <div className="register-form">
-
             {/* Name */}
             <div className="form-row">
               <label>Full Name</label>
@@ -105,11 +106,6 @@ export default function TeacherRegister() {
               <label>Emergency Contact</label>
               <input name="emergencyContact1" onChange={handleChange} />
             </div>
-{/* 
-            <div className="form-row">
-              <label>Emergency Contact 2</label>
-              <input name="emergencyContact2" onChange={handleChange} />
-            </div> */}
 
             {/* Father Contact */}
             <div className="form-row">
@@ -135,38 +131,26 @@ export default function TeacherRegister() {
               <input name="experience" onChange={handleChange} />
             </div>
 
-            {/*Designation*/}
+            {/* Designation */}
             <div className="form-row">
-                <label>Designation</label>
-                <input
-                    name="designation"
-                    onChange={handleChange}
-                    required
-                />
+              <label>Designation</label>
+              <input name="designation" onChange={handleChange} required />
             </div>
-
 
             {/* Password */}
-
             <div className="form-row">
-            <label>Password</label>
-            <input
-                type="password"
-                name="password"
-                onChange={handleChange}
-            />
+              <label>Password</label>
+              <input type="password" name="password" onChange={handleChange} />
             </div>
 
-
             {/* Confirm Password */}
-
             <div className="form-row">
-            <label>Confirm Password</label>
-            <input
+              <label>Confirm Password</label>
+              <input
                 type="password"
                 name="confirmPassword"
                 onChange={handleChange}
-            />
+              />
             </div>
 
             {/* Actions */}
@@ -174,6 +158,7 @@ export default function TeacherRegister() {
               <button className="student-search-btn" onClick={submit}>
                 Register Trainer
               </button>
+
               <button
                 className="add-student-btn"
                 onClick={() => navigate(`/teachers`)}
@@ -181,10 +166,8 @@ export default function TeacherRegister() {
                 Cancel
               </button>
             </div>
-
           </div>
         </div>
-
       </div>
     </PageWrapper>
   );

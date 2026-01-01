@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../styles/student.css";
 
 export default function TeacherEdit() {
-  const { academyCode, id } = useParams();
+  const { id } = useParams(); // ✅ FIX: remove academyCode
   const navigate = useNavigate();
- 
+
   const [form, setForm] = useState({});
   const [age, setAge] = useState("");
 
@@ -26,7 +26,6 @@ export default function TeacherEdit() {
         const diff = Date.now() - dob.getTime();
         setAge(Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)));
       }
-
     } catch (err) {
       console.error(err);
       alert("Error loading teacher details");
@@ -48,7 +47,6 @@ export default function TeacherEdit() {
     }
   }, [form.dateOfBirth]);
 
-
   /* ===========================
       HANDLE INPUT
   ============================ */
@@ -56,7 +54,6 @@ export default function TeacherEdit() {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
-
 
   /* ===========================
       UPDATE TEACHER
@@ -72,18 +69,15 @@ export default function TeacherEdit() {
 
       alert("Teacher Updated Successfully!");
       navigate(`/teachers`);
-
     } catch (err) {
       console.error(err);
       alert("Error updating teacher");
     }
   };
 
-
   return (
     <PageWrapper>
       <div className="students-content-wrapper">
-
         {/* HEADER */}
         <div className="student-header-row">
           <h2 className="student-page-title">Edit Teacher</h2>
@@ -92,8 +86,6 @@ export default function TeacherEdit() {
         {/* FORM */}
         <div className="register-container">
           <div className="register-form">
-
-            {/* Name */}
             <div className="form-row">
               <label>Name</label>
               <input
@@ -103,7 +95,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Address */}
             <div className="form-row full">
               <label>Address</label>
               <input
@@ -113,7 +104,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* DOB */}
             <div className="form-row">
               <label>Date of Birth</label>
               <input
@@ -124,13 +114,11 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Age */}
             <div className="form-row">
               <label>Age</label>
               <input value={age} readOnly />
             </div>
 
-            {/* Height */}
             <div className="form-row">
               <label>Height (cm)</label>
               <input
@@ -140,7 +128,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Weight */}
             <div className="form-row">
               <label>Weight (kg)</label>
               <input
@@ -150,7 +137,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Contact */}
             <div className="form-row">
               <label>Contact Number</label>
               <input
@@ -160,9 +146,8 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Emergency 1 */}
             <div className="form-row">
-              <label>Emergency Contact 1</label>
+              <label>Emergency Contact</label>
               <input
                 name="emergencyContact1"
                 value={form.emergencyContact1 || ""}
@@ -170,10 +155,8 @@ export default function TeacherEdit() {
               />
             </div>
 
-
-            {/* Father Contact */}
             <div className="form-row">
-              <label>Father's Contact Number</label>
+              <label>Father's Contact</label>
               <input
                 name="fatherContact"
                 value={form.fatherContact || ""}
@@ -181,7 +164,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Joining Date */}
             <div className="form-row">
               <label>Joining Date</label>
               <input
@@ -192,7 +174,6 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Email */}
             <div className="form-row">
               <label>Email</label>
               <input
@@ -202,9 +183,8 @@ export default function TeacherEdit() {
               />
             </div>
 
-            {/* Experience */}
             <div className="form-row">
-              <label>Experience (years)</label>
+              <label>Experience</label>
               <input
                 name="experience"
                 value={form.experience || ""}
@@ -212,17 +192,15 @@ export default function TeacherEdit() {
               />
             </div>
 
-                        {/*Designation*/}
             <div className="form-row">
-                <label>Designation</label>
-                <input
-                    name="designation"
-                    onChange={handleChange}
-                    required
-                />
+              <label>Designation</label>
+              <input
+                name="designation"
+                value={form.designation || ""}
+                onChange={handleChange}
+              />
             </div>
 
-            {/* Submit Buttons */}
             <div className="form-actions">
               <button className="student-search-btn" onClick={updateTeacher}>
                 Save Changes
@@ -235,10 +213,8 @@ export default function TeacherEdit() {
                 Cancel
               </button>
             </div>
-
           </div>
         </div>
-
       </div>
     </PageWrapper>
   );

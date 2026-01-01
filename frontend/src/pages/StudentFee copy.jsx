@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { useParams, Navigate } from "react-router-dom";
+import {  Navigate } from "react-router-dom";
 import PaymentHistoryModal from "../components/PaymentHistoryModal";
 import PageWrapper from "../components/PageWrapper";
 
@@ -46,7 +46,7 @@ export default function StudentFee() {
     api.get(`/students`).then((res) => {
       setStudents(res.data || []);
     });
-  }, [academyCode]);
+  }, []);
 
   if (role === "student") {
     return <Navigate to={`/fees/my`} replace />;

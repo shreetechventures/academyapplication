@@ -28,7 +28,7 @@
 //       }
 //     }
 //     load();
-//   }, [academyCode]);
+//   }, []);
 
 //   const logout = () => {
 //     localStorage.clear();

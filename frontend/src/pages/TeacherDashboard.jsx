@@ -1,7 +1,7 @@
 // frontend/src/pages/TeacherDashboard.jsx
 
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
@@ -22,15 +22,9 @@ export default function TeacherDashboard() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const activeRes = await api.get(
-          `/dashboard/students/active`
-        );
-        const leftRes = await api.get(
-          `/dashboard/students/left`
-        );
-        const trainersRes = await api.get(
-          `/dashboard/trainers`
-        );
+        const activeRes = await api.get("/dashboard/students/active");
+        const leftRes = await api.get("/dashboard/students/left");
+        const trainersRes = await api.get("/dashboard/trainers");
 
         setStats({
           activeStudents: activeRes.data.count,
@@ -43,19 +37,18 @@ export default function TeacherDashboard() {
     };
 
     loadStats();
-  }, [academyCode]);
+  }, []);
 
   /* =======================
      ROLE GUARD
   ======================= */
   if (role !== "teacher") {
-    return <Navigate to={`/login`} replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
     <PageWrapper>
       <div className="dashboard-stats-container">
-
         <div className="stat-card">
           <h3>{stats.activeStudents}</h3>
           <p>Active Students</p>
@@ -70,7 +63,6 @@ export default function TeacherDashboard() {
           <h3>{stats.totalTrainers}</h3>
           <p>Total Trainers</p>
         </div>
-
       </div>
     </PageWrapper>
   );

@@ -4,11 +4,9 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams } from "react-router-dom";
 import AssessmentChart from "../components/AssessmentChart";
 
 export default function StudentAssessmentDashboard() {
-
   // Student ID from login
   const studentId = localStorage.getItem("userId");
 
@@ -18,30 +16,28 @@ export default function StudentAssessmentDashboard() {
   const [summary, setSummary] = useState([]);
 
   const ALLOWED_TITLES = [
-  "Written Exam Score",
-  "Gola Fek / Shot Put",
-  "High Jump",
-  "Long Jump",
-  "Pull-Ups",
-  "Sit-Ups",
-  "Push-Ups",
-  "1600 Meter",
-  "100 Meter",
-];
+    "Written Exam Score",
+    "Gola Fek / Shot Put",
+    "High Jump",
+    "Long Jump",
+    "Pull-Ups",
+    "Sit-Ups",
+    "Push-Ups",
+    "1600 Meter",
+    "100 Meter",
+  ];
 
+  const normalizeTitle = (title) => {
+    const map = {
+      "Gola Fek": "Gola Fek / Shot Put",
+      "Shot Put": "Gola Fek / Shot Put",
+      "100 Meter Run": "100 Meter",
+      "1600 Meter Run": "1600 Meter",
+    };
 
-const normalizeTitle = (title) => {
-  const map = {
-    "Gola Fek": "Gola Fek / Shot Put",
-    "Shot Put": "Gola Fek / Shot Put",
-    "100 Meter Run": "100 Meter",
-    "1600 Meter Run": "1600 Meter",
+    return map[title] || title;
   };
 
-  return map[title] || title;
-};
-
-  
   useEffect(() => {
     if (!studentId) return;
     loadTypes();
@@ -53,54 +49,39 @@ const normalizeTitle = (title) => {
     loadResults(selectedType._id);
   }, [selectedType, studentId]);
 
-  // const loadTypes = async () => {
-  //   try {
-  //     const res = await api.get(`/assessments`);
-  //     setTypes(res.data);
-
-  //     if (res.data.length > 0 && !selectedType) {
-  //       setSelectedType(res.data[0]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error loading types:", err);
-  //   }
-  // };
-
-
   const loadTypes = async () => {
-  try {
-    const res = await api.get(`/assessments`);
+    try {
+      const res = await api.get("/assessments");
 
-    const cleaned = [];
-    const seen = new Set();
+      const cleaned = [];
+      const seen = new Set();
 
-    res.data.forEach((t) => {
-      const normalizedTitle = normalizeTitle(t.title);
+      res.data.forEach((t) => {
+        const normalizedTitle = normalizeTitle(t.title);
 
-      // ❌ ignore unwanted titles
-      if (!ALLOWED_TITLES.includes(normalizedTitle)) return;
+        // ❌ ignore unwanted titles
+        if (!ALLOWED_TITLES.includes(normalizedTitle)) return;
 
-      // ❌ remove duplicates
-      if (seen.has(normalizedTitle)) return;
+        // ❌ remove duplicates
+        if (seen.has(normalizedTitle)) return;
 
-      seen.add(normalizedTitle);
+        seen.add(normalizedTitle);
 
-      cleaned.push({
-        ...t,
-        title: normalizedTitle, // ✅ overwrite title
+        cleaned.push({
+          ...t,
+          title: normalizedTitle,
+        });
       });
-    });
 
-    setTypes(cleaned);
+      setTypes(cleaned);
 
-    if (cleaned.length > 0 && !selectedType) {
-      setSelectedType(cleaned[0]);
+      if (cleaned.length > 0 && !selectedType) {
+        setSelectedType(cleaned[0]);
+      }
+    } catch (err) {
+      console.error("Error loading types:", err);
     }
-  } catch (err) {
-    console.error("Error loading types:", err);
-  }
-};
-
+  };
 
   const loadResults = async (typeId) => {
     if (!typeId || !studentId) return;
@@ -115,10 +96,10 @@ const normalizeTitle = (title) => {
       // 🔥 Sort by date DESC (latest first)
       list.sort((a, b) => new Date(b.attemptDate) - new Date(a.attemptDate));
 
-      // 🔥 Take ONLY the latest 10 entries
+      // 🔥 Take ONLY latest 10
       list = list.slice(0, 10);
 
-      // 🔥 Reverse for timeline flow (old → new)
+      // 🔥 Reverse for timeline
       list.reverse();
 
       const formatted = list.map((r) => ({
@@ -148,7 +129,7 @@ const normalizeTitle = (title) => {
 
   return (
     <PageWrapper>
-      <div style={{ padding: 18, background: 'white'}}>
+      <div style={{ padding: 18, background: "white" }}>
         <h2>Your Assessments</h2>
 
         {/* TEST BUTTONS */}
@@ -168,7 +149,8 @@ const normalizeTitle = (title) => {
                 padding: "8px 12px",
                 borderRadius: 8,
                 cursor: "pointer",
-                background: selectedType?._id === t._id ? "#2563eb" : "#f2f4f7",
+                background:
+                  selectedType?._id === t._id ? "#2563eb" : "#f2f4f7",
                 color: selectedType?._id === t._id ? "#fff" : "#222",
                 border: "none",
               }}
@@ -178,12 +160,14 @@ const normalizeTitle = (title) => {
           ))}
         </div>
 
-        {/* CHART SECTION */}
+        {/* CHART */}
         {selectedType && (
           <>
             <h3>{selectedType.title} — Progress (Latest 10)</h3>
-
-            <AssessmentChart data={results} testTitle={selectedType.title} />
+            <AssessmentChart
+              data={results}
+              testTitle={selectedType.title}
+            />
 
             <h4 style={{ marginTop: 18 }}>Attempts (Latest 10)</h4>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -197,20 +181,17 @@ const normalizeTitle = (title) => {
                     boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
                   }}
                 >
-                  <div>
-                    <strong>{r.date}</strong>
-                  </div>
+                  <strong>{r.date}</strong>
                   <div>
                     Result: {r.value} {selectedType.unit}
                   </div>
-                  {/* <div>Score: {r.score}</div> */}
                 </div>
               ))}
             </div>
           </>
         )}
 
-        {/* SUMMARY CARDS */}
+        {/* SUMMARY */}
         <h3 style={{ marginTop: 24 }}>Summary</h3>
         <div
           style={{
@@ -222,8 +203,6 @@ const normalizeTitle = (title) => {
           {summary.map((s) => (
             <div key={s.assessmentType._id} className="card">
               <h4>{s.assessmentType.title}</h4>
-         
-
               <div>
                 <strong>Attempts:</strong> {s.stats.attempts}
               </div>

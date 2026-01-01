@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import {  Navigate } from "react-router-dom";
 import api from "../api/axios";
 import PageWrapper from "../components/PageWrapper";
 import "../styles/studentDashboard.css";

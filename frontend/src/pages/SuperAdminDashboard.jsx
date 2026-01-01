@@ -9,29 +9,33 @@ export default function SuperAdminDashboard() {
 
   const [academyCount, setAcademyCount] = useState(0);
 
+  /* =========================
+     LOGOUT
+  ========================= */
   const logout = () => {
     localStorage.clear();
-    navigate("/shreenath/login");
+    navigate("/login"); // ✅ subdomain-safe
   };
 
-  // 🔥 Load academy count
+  /* =========================
+     LOAD ACADEMY COUNT
+  ========================= */
+  const loadAcademyCount = async () => {
+    try {
+      const res = await api.get("/superadmin/academies/count");
+      setAcademyCount(res.data.count || 0);
+    } catch (err) {
+      console.error("Failed to load academy count", err);
+    }
+  };
+
   useEffect(() => {
     loadAcademyCount();
   }, []);
 
-  const loadAcademyCount = async () => {
-    try {
-      const res = await api.get("/superadmin/academies/count");
-      setAcademyCount(res.data.count);
-    } catch (err) {
-      console.error("Failed to load academy count");
-    }
-  };
-
   return (
     <div className="superadmin-container">
-      
-      {/* Header */}
+      {/* ================= HEADER ================= */}
       <div className="superadmin-header">
         <h2 className="superadmin-title">SuperAdmin Control Panel</h2>
         <button className="superadmin-logout" onClick={logout}>
@@ -39,7 +43,7 @@ export default function SuperAdminDashboard() {
         </button>
       </div>
 
-      {/* 📊 Stats Section */}
+      {/* ================= STATS ================= */}
       <div className="superadmin-stats">
         <div className="stat-card">
           <h3>{academyCount}</h3>
@@ -47,7 +51,7 @@ export default function SuperAdminDashboard() {
         </div>
       </div>
 
-      {/* Action Cards */}
+      {/* ================= ACTION CARDS ================= */}
       <div className="superadmin-actions">
         <div
           className="superadmin-card"

@@ -1,8 +1,7 @@
+// frontend/src/pages/Settings.jsx
 import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 import api from "../api/axios";
-
-import { useParams } from "react-router-dom";
 
 import "../styles/settings.css";
 
@@ -25,13 +24,14 @@ export default function Settings() {
 
   /* ============================
      LOAD ACADEMY SETTINGS
+     (academy resolved by subdomain)
   ============================ */
   useEffect(() => {
     const loadSettings = async () => {
       if (role !== "academyAdmin") return;
 
       try {
-        const res = await api.get(`/settings`);
+        const res = await api.get("/settings");
 
         setPermissions({
           allowTrainerFeeManagement:
@@ -45,7 +45,7 @@ export default function Settings() {
     };
 
     loadSettings();
-  }, [academyCode, role]);
+  }, [role]);
 
   /* ============================
      PASSWORD HANDLING
@@ -62,11 +62,11 @@ export default function Settings() {
     let endpoint = "";
 
     if (role === "academyAdmin") {
-      endpoint = `/auth/change-password`;
+      endpoint = "/auth/change-password";
     } else if (role === "teacher") {
-      endpoint = `/teachers/change-password`;
+      endpoint = "/teachers/change-password";
     } else if (role === "student") {
-      endpoint = `/students/self/change-password`;
+      endpoint = "/students/self/change-password";
     }
 
     if (!endpoint) {
@@ -82,6 +82,11 @@ export default function Settings() {
 
       alert("✅ Password Updated");
       setOpenPassword(false);
+      setForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
     } catch (err) {
       alert(err.response?.data?.message || "❌ Error updating password");
     }
@@ -96,7 +101,7 @@ export default function Settings() {
     try {
       setPermissions((prev) => ({ ...prev, [key]: value }));
 
-      await api.put(`/settings/permissions`, {
+      await api.put("/settings/permissions", {
         ...permissions,
         [key]: value,
       });
@@ -109,21 +114,10 @@ export default function Settings() {
   return (
     <PageWrapper>
       <div className="settings-page">
+
         {/* =============================
             CHANGE PASSWORD
         ============================= */}
-        {/* <div
-          className="password-row-header"
-          onClick={() => setOpenPassword(!openPassword)}
-        >
-          <span>Change Password</span>
-        </div> */}
-
-        {/* <button onClick={() => setOpenPassword(!openPassword)}>
-          Change Password
-        </button> */}
-
-         
         {openPassword && (
           <div className="settings-section">
             <input
@@ -147,7 +141,6 @@ export default function Settings() {
 
             <button onClick={updatePassword}>Update Password</button>
           </div>
-
         )}
 
         {/* =============================
@@ -155,7 +148,6 @@ export default function Settings() {
         ============================= */}
         {role === "academyAdmin" && (
           <div className="settings-section">
-            {/* FEE PERMISSION */}
             <div className="toggle-row">
               <span>Allow trainers to manage student fees</span>
               <input
@@ -169,9 +161,9 @@ export default function Settings() {
                 }
               />
             </div>
-            <hr></hr>
 
-            {/* STUDENT REGISTRATION PERMISSION */}
+            <hr />
+
             <div className="toggle-row">
               <span>Allow trainers to register students</span>
               <input
@@ -185,7 +177,6 @@ export default function Settings() {
                 }
               />
             </div>
-            <hr></hr>
           </div>
         )}
       </div>

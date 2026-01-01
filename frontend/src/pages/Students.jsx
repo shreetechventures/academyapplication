@@ -1,14 +1,12 @@
-// frontend/src/pages/Students.jsx
-
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../styles/student.css";
 
 export default function Students() {
-  const { academyCode, type } = useParams();
+  const { type } = useParams(); // ✅ academyCode REMOVED
   const navigate = useNavigate();
 
   const mode = type === "left" ? "left" : "active";
@@ -28,12 +26,8 @@ export default function Students() {
   ======================= */
   const loadCounts = async () => {
     try {
-      const activeRes = await api.get(
-        `/dashboard/students/active`
-      );
-      const leftRes = await api.get(
-        `/dashboard/students/left`
-      );
+      const activeRes = await api.get(`/dashboard/students/active`);
+      const leftRes = await api.get(`/dashboard/students/left`);
 
       setCounts({
         active: activeRes.data.count,
@@ -65,7 +59,7 @@ export default function Students() {
   useEffect(() => {
     loadStudents();
     loadCounts();
-  }, [academyCode, mode]);
+  }, [mode]); // ✅ academyCode REMOVED
 
   /* =======================
      SEARCH
@@ -137,9 +131,7 @@ export default function Students() {
             (role === "academyAdmin" || role === "teacher") && (
               <button
                 className="add-student-btn"
-                onClick={() =>
-                  navigate(`/students/add`)
-                }
+                onClick={() => navigate(`/students/add`)}
               >
                 + Add Student
               </button>
@@ -189,9 +181,7 @@ export default function Students() {
                           <button
                             className="student-edit-btn"
                             onClick={() =>
-                              navigate(
-                                `/students/edit/${s._id}`
-                              )
+                              navigate(`/students/edit/${s._id}`)
                             }
                           >
                             Edit

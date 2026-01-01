@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../styles/student.css";
 
 export default function EditStudent() {
-  const { academyCode, id } = useParams();
+  const { id } = useParams(); // ✅ FIXED (academyCode removed)
   const navigate = useNavigate();
 
   const [form, setForm] = useState(null);
@@ -18,14 +18,7 @@ export default function EditStudent() {
   ============================ */
   const loadStudent = async () => {
     try {
-      const res = await api.get(
-        `/students/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        }
-      );
+      const res = await api.get(`/students/${id}`);
       setForm(res.data);
     } catch (err) {
       console.error("Error loading student:", err);
@@ -49,15 +42,10 @@ export default function EditStudent() {
   ============================ */
   const updateStudent = async () => {
     try {
-      await api.put(
-        `/students/${id}`,
-        form,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      await api.put(`/students/${id}`, form);
 
       alert("Student Updated Successfully!");
       navigate(`/students`);
-
     } catch (err) {
       console.error(err);
       alert("Error updating student");
@@ -69,7 +57,6 @@ export default function EditStudent() {
   return (
     <PageWrapper>
       <div className="students-content-wrapper">
-
         {/* HEADER */}
         <div className="student-header-row">
           <h2 className="student-page-title">Edit Candidate</h2>
@@ -78,7 +65,6 @@ export default function EditStudent() {
         {/* FORM */}
         <div className="register-container">
           <div className="register-form">
-
             {/* Student Code */}
             <div className="form-row">
               <label>Candidate Code</label>
@@ -188,9 +174,6 @@ export default function EditStudent() {
               />
             </div>
 
-
-
-
             {/* ACTION BUTTONS */}
             <div className="form-actions">
               <button className="student-search-btn" onClick={updateStudent}>
@@ -204,10 +187,8 @@ export default function EditStudent() {
                 Cancel
               </button>
             </div>
-
           </div>
         </div>
-
       </div>
     </PageWrapper>
   );

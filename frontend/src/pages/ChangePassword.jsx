@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import api from "../api/axios";
-
 import PageWrapper from "../components/PageWrapper";
-import { useParams } from "react-router-dom";
 
 export default function ChangePassword() {
+  const role = localStorage.getItem("role");
 
   const [form, setForm] = useState({
     currentPassword: "",
@@ -15,6 +14,7 @@ export default function ChangePassword() {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
   const updatePassword = async () => {
     if (form.newPassword !== form.confirmNewPassword) {
       alert("❌ New passwords do not match");
@@ -24,11 +24,11 @@ export default function ChangePassword() {
     let endpoint = "";
 
     if (role === "academyAdmin") {
-      endpoint = `/auth/change-password`;
+      endpoint = "/auth/change-password";
     } else if (role === "teacher") {
-      endpoint = `/teachers/change-password`; // ✅ FIX
+      endpoint = "/teachers/change-password";
     } else if (role === "student") {
-      endpoint = `/students/self/change-password`;
+      endpoint = "/students/self/change-password";
     }
 
     try {
@@ -39,7 +39,6 @@ export default function ChangePassword() {
 
       alert("✅ Password Updated Successfully");
 
-      setOpenPassword(false);
       setForm({
         currentPassword: "",
         newPassword: "",
@@ -64,6 +63,7 @@ export default function ChangePassword() {
               <input
                 type="password"
                 name="currentPassword"
+                value={form.currentPassword}
                 onChange={handleChange}
               />
             </div>
@@ -73,6 +73,7 @@ export default function ChangePassword() {
               <input
                 type="password"
                 name="newPassword"
+                value={form.newPassword}
                 onChange={handleChange}
               />
             </div>
@@ -82,6 +83,7 @@ export default function ChangePassword() {
               <input
                 type="password"
                 name="confirmNewPassword"
+                value={form.confirmNewPassword}
                 onChange={handleChange}
               />
             </div>

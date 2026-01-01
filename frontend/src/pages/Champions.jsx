@@ -1,4 +1,4 @@
-// // frontend/src/pages/Champions.jsx
+// frontend/src/pages/Champions.jsx
 import React, { useState, useEffect } from "react";
 import api from "../api/axios";
 
@@ -6,13 +6,11 @@ import PageWrapper from "../components/PageWrapper";
 import DeleteConfirm from "../components/DeleteConfirm";
 import ChampionCard from "../components/ChampionCard";
 import EditChampionModal from "../components/EditChampionModal";
-import { useParams } from "react-router-dom";
 
 import "../styles/champions.css";
 import "../styles/editModal.css";
 
 export default function Champions() {
-
   // ROLE CHECK
   const role = localStorage.getItem("role");
   const isAdminOrTeacher = role === "academyAdmin" || role === "teacher";
@@ -32,7 +30,7 @@ export default function Champions() {
   // ======================
   const loadChampions = async () => {
     try {
-      const res = await api.get(`/champions`);
+      const res = await api.get("/champions");
 
       const groupedData = res.data.reduce((acc, champ) => {
         const y = champ.year || "Unknown";
@@ -50,9 +48,10 @@ export default function Champions() {
     }
   };
 
+  // ✅ LOAD ONCE (academy resolved by subdomain on backend)
   useEffect(() => {
-    if (academyCode) loadChampions();
-  }, [academyCode]);
+    loadChampions();
+  }, []);
 
   // ======================
   // ADD CHAMPION
@@ -73,7 +72,7 @@ export default function Champions() {
       form.append("year", year);
       if (image) form.append("image", image);
 
-      await api.post(`/champions`, form, {
+      await api.post("/champions", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -96,9 +95,7 @@ export default function Champions() {
   // ======================
   const deleteChampion = async () => {
     try {
-      await api.delete(
-        `/champions/${deleteModal.id}`
-      );
+      await api.delete(`/champions/${deleteModal.id}`);
 
       setDeleteModal({ open: false, id: null });
       loadChampions();
@@ -115,11 +112,9 @@ export default function Champions() {
   // ======================
   const updateChampion = async (id, formData) => {
     try {
-      await api.put(
-        `/champions/${id}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      await api.put(`/champions/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       setEditModal({ open: false, champion: null });
       loadChampions();

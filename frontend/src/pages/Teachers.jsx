@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/student.css"; // SAME STYLE
 
 export default function Teachers() {
-
   const navigate = useNavigate();
 
   const role = localStorage.getItem("role");
@@ -15,51 +14,69 @@ export default function Teachers() {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState([]);
 
-  // Load Teachers
+  /* =======================
+     LOAD TEACHERS
+  ======================= */
   const loadTeachers = async () => {
-    const res = await api.get(`/teachers`);
-    setTeachers(res.data);
-    setFiltered(res.data);
+    try {
+      const res = await api.get(`/teachers`);
+      setTeachers(res.data || []);
+      setFiltered(res.data || []);
+    } catch (err) {
+      console.error("Failed to load teachers", err);
+    }
   };
 
   useEffect(() => {
-    if (role !== "academyAdmin") return; // Only admin can view
+    if (role !== "academyAdmin") return; // Only admin allowed
     loadTeachers();
-  }, []);
+  }, [role]);
 
+  /* =======================
+     MARK AS LEFT
+  ======================= */
   const markAsLeft = async (id) => {
-    await api.put(`/teachers/${id}/leave`);
-    setFiltered(prev => prev.filter(t => t._id !== id));
+    try {
+      await api.put(`/teachers/${id}/leave`);
+      setFiltered((prev) => prev.filter((t) => t._id !== id));
+    } catch (err) {
+      alert("Error updating trainer status");
+    }
   };
 
+  /* =======================
+     SEARCH
+  ======================= */
   const handleSearch = () => {
-    const result = teachers.filter(t =>
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      t.contactNumber.includes(search)
+    const result = teachers.filter(
+      (t) =>
+        t.name.toLowerCase().includes(search.toLowerCase()) ||
+        t.contactNumber.includes(search)
     );
     setFiltered(result);
   };
 
+  /* =======================
+     ROLE GUARD
+  ======================= */
   if (role !== "academyAdmin") {
     return (
       <PageWrapper>
-        <h3>You do not have permission to view Teachers</h3>
+        <h3>You do not have permission to view Trainers</h3>
       </PageWrapper>
     );
   }
 
   return (
     <PageWrapper>
-
       <div className="students-content-wrapper">
 
-        {/* Header */}
+        {/* HEADER */}
         <div className="student-header-row">
           <h2 className="student-page-title">Trainer List</h2>
 
           <div className="student-search-container">
-
-            <input 
+            <input
               type="text"
               placeholder="Search Trainer"
               className="student-search-input"
@@ -71,26 +88,24 @@ export default function Teachers() {
               Search
             </button>
 
-            <button 
+            <button
               className="add-student-btn"
               onClick={() => navigate(`/teachers/add`)}
             >
               + Add Trainer
             </button>
 
-                        <button 
+            <button
               className="add-student-btn"
               onClick={() => navigate(`/teachers/left`)}
             >
               Left Trainer
             </button>
-
           </div>
         </div>
 
-        {/* Table */}
+        {/* TABLE */}
         <div className="student-table-section">
-
           <table className="student-table">
             <thead>
               <tr>
@@ -105,41 +120,43 @@ export default function Teachers() {
             </thead>
 
             <tbody>
-              {filtered.map((t) => (
-                <tr key={t._id}>
-                  <td>{t.name}</td>
-                  <td>{t.contactNumber}</td>
-                  <td>{t.email}</td>
-                  <td>{t.experience} yrs</td>
-                  <td>{t.status}</td>
-                  <td>{t.designation}</td>
-
-                  <td>
-                    <button 
-                      className="student-edit-btn"
-                      onClick={() => navigate(`/teachers/edit/${t._id}`)}
-                    >
-                      Edit
-                    </button>
-
-                    <button 
-                      className="student-leave-btn"
-                      onClick={() => markAsLeft(t._id)}
-                    >
-                      Left
-                    </button>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: "center" }}>
+                    No trainers found
                   </td>
-
                 </tr>
-              ))}
+              ) : (
+                filtered.map((t) => (
+                  <tr key={t._id}>
+                    <td>{t.name}</td>
+                    <td>{t.contactNumber}</td>
+                    <td>{t.email}</td>
+                    <td>{t.experience} yrs</td>
+                    <td>{t.status}</td>
+                    <td>{t.designation}</td>
+                    <td>
+                      <button
+                        className="student-edit-btn"
+                        onClick={() => navigate(`/teachers/edit/${t._id}`)}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="student-leave-btn"
+                        onClick={() => markAsLeft(t._id)}
+                      >
+                        Left
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
-
           </table>
-
         </div>
-
       </div>
-
     </PageWrapper>
   );
 }

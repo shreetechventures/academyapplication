@@ -1,5 +1,5 @@
 // import React, { useEffect, useState } from "react";
-// import { useParams, Navigate } from "react-router-dom";
+// import {  Navigate } from "react-router-dom";
 // import api from "../api/axios";
 
 // import PageWrapper from "../components/PageWrapper";
@@ -213,7 +213,6 @@
 
 
 
-
 // frontend/src/pages/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
@@ -246,8 +245,6 @@ export default function AdminDashboard() {
         const active = await api.get("/dashboard/students/active");
         const left = await api.get("/dashboard/students/left");
         const trainers = await api.get("/dashboard/trainers");
-            const fee = await api.get(`/fees/summary`);
-
 
         setStats({
           totalStudents: active.data.count,

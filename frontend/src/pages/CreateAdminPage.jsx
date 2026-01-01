@@ -53,10 +53,11 @@ export default function CreateAdminPage() {
     loadAdmins();
   };
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/shreenath/login");
-  };
+const logout = () => {
+  localStorage.clear();
+  navigate("/login"); // ✅ correct
+};
+
 
   return (
     <div className="superadmin-form-container">

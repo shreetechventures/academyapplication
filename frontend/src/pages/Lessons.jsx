@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams } from "react-router-dom";
 import "../styles/lessons.css";
 
 export default function Lessons() {
-
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,13 +23,13 @@ export default function Lessons() {
 
   const role = localStorage.getItem("role");
 
+  // ======================
   // LOAD LESSONS
+  // ======================
   const loadLessons = async () => {
     setLoading(true);
     try {
-      const res = await api.get(
-        `/lessons?category=${category}`
-      );
+      const res = await api.get(`/lessons?category=${category}`);
       setLessons(res.data);
     } catch (err) {
       setError("Failed to load lessons");
@@ -40,11 +38,14 @@ export default function Lessons() {
     }
   };
 
+  // 🔥 FIX: academyCode REMOVED (subdomain-based)
   useEffect(() => {
     loadLessons();
-  }, [academyCode, category]);
+  }, [category]);
 
+  // ======================
   // EXTRACT YOUTUBE ID
+  // ======================
   const parseYouTubeId = (input) => {
     if (!input) return null;
     if (/^[A-Za-z0-9_-]{6,20}$/.test(input)) return input;
@@ -67,7 +68,9 @@ export default function Lessons() {
     return null;
   };
 
+  // ======================
   // OPEN EDIT FORM
+  // ======================
   const startEdit = (lesson) => {
     setEditLessonId(lesson._id);
     setTitle(lesson.title);
@@ -78,7 +81,9 @@ export default function Lessons() {
     setShowAdd(true);
   };
 
-  // ADD / EDIT SAVE FUNCTION
+  // ======================
+  // ADD / EDIT SAVE
+  // ======================
   const handleSave = async () => {
     setError("");
 
@@ -116,7 +121,9 @@ export default function Lessons() {
     }
   };
 
+  // ======================
   // DELETE LESSON
+  // ======================
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this lesson?")) return;
 
@@ -178,7 +185,7 @@ export default function Lessons() {
           </button>
         </div>
 
-        {/* ADD LESSON FORM — stays above videos */}
+        {/* ADD / EDIT FORM */}
         {showAdd && (
           <div className="add-lesson-form card">
             {error && <div className="form-error">{error}</div>}
@@ -235,7 +242,7 @@ export default function Lessons() {
           </div>
         )}
 
-        {/* VIDEO LIST — stays ALWAYS displayed */}
+        {/* LESSON LIST */}
         <div className="lessons-list">
           {loading ? (
             <div>Loading...</div>

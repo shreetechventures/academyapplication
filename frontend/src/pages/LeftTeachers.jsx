@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useParams, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
 export default function LeftTeachers() {

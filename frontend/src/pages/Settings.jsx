@@ -119,9 +119,9 @@ export default function Settings() {
           <span>Change Password</span>
         </div> */}
 
-        <button onClick={() => setOpenPassword(!openPassword)}>
+        {/* <button onClick={() => setOpenPassword(!openPassword)}>
           Change Password
-        </button>
+        </button> */}
 
          
         {openPassword && (

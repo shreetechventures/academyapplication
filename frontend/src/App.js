@@ -181,14 +181,123 @@
 // export default App;
 
 
+
+
+
+
+
+// import React from "react";
+// import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+
+// import LandingPage from "./pages/LandingPage";
+// import Login from "./pages/Login";
+// import RoleDashboard from "./pages/RoleDashboard";
+
+// import AdminDashboard from "./pages/AdminDashboard";
+// import TeacherDashboard from "./pages/TeacherDashboard";
+// import StudentDashboard from "./pages/StudentDashboard";
+
+// import AdminPanel from "./pages/AdminPanel";
+// import Students from "./pages/Students";
+// import Teachers from "./pages/Teachers";
+// import Settings from "./pages/Settings";
+// import Classes from "./pages/Classes";
+
+// import StudentRegister from "./pages/StudentRegister";
+// import StudentEdit from "./pages/StudentEdit";
+// import LeftStudents from "./pages/LeftStudents";
+
+// import TeacherRegister from "./pages/TeacherRegister";
+// import TeacherEdit from "./pages/TeacherEdit";
+// import LeftTeachers from "./pages/LeftTeachers";
+
+// import LessonFolders from "./pages/LessonFolders";
+// import Lessons from "./pages/Lessons";
+
+// import StudentAssessmentDashboard from "./pages/StudentAssessmentDashboard";
+// import TeacherStudentReport from "./pages/TeacherStudentReport";
+
+// import Champions from "./pages/Champions";
+// import StudentFee from "./pages/StudentFee";
+// import MyFee from "./pages/MyFee";
+
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+//         {/* PUBLIC */}
+//         <Route path="/" element={<LandingPage />} />
+//         <Route path="/login" element={<Login />} />
+
+//         {/* DASHBOARD */}
+//         <Route path="/dashboard" element={<RoleDashboard />} />
+//         <Route path="/dashboard/admin" element={<AdminDashboard />} />
+//         <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
+//         <Route path="/dashboard/student" element={<StudentDashboard />} />
+//         <Route path="/superadmin" element={<SuperAdminDashboard />} />
+
+
+//         {/* ADMIN */}
+//         <Route path="/admin" element={<AdminPanel />} />
+//         <Route path="/classes" element={<Classes />} />
+//         <Route path="/settings" element={<Settings />} />
+
+//         {/* STUDENTS */}
+//         <Route path="/students" element={<Students />} />
+//         <Route path="/students/add" element={<StudentRegister />} />
+//         <Route path="/students/edit/:id" element={<StudentEdit />} />
+//         <Route path="/students/left" element={<LeftStudents />} />
+
+//         {/* TEACHERS */}
+//         <Route path="/teachers" element={<Teachers />} />
+//         <Route path="/teachers/add" element={<TeacherRegister />} />
+//         <Route path="/teachers/edit/:id" element={<TeacherEdit />} />
+//         <Route path="/teachers/left" element={<LeftTeachers />} />
+
+//         {/* LESSONS */}
+//         <Route path="/lessons" element={<LessonFolders />} />
+//         <Route path="/lessons/:folderId" element={<Lessons />} />
+
+//         {/* ASSESSMENTS */}
+//         <Route path="/student-assessments" element={<StudentAssessmentDashboard />} />
+//         <Route path="/teacher-assessments" element={<TeacherStudentReport />} />
+
+//         {/* CHAMPIONS */}
+//         <Route path="/our-champions" element={<Champions />} />
+
+//         {/* FEES */}
+//         <Route path="/fees/students" element={<StudentFee />} />
+//         <Route path="/fees/my" element={<MyFee />} />
+
+//         {/* FALLBACK */}
+//         <Route path="*" element={<Navigate to="/login" replace />} />
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+
+
+
+
+
+
+//using protected routes
+
+
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import RoleDashboard from "./pages/RoleDashboard";
 
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -225,45 +334,200 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
 
-        {/* DASHBOARD */}
+        {/* ROLE REDIRECT */}
         <Route path="/dashboard" element={<RoleDashboard />} />
-        <Route path="/dashboard/admin" element={<AdminDashboard />} />
-        <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
-        <Route path="/dashboard/student" element={<StudentDashboard />} />
-        <Route path="/superadmin" element={<SuperAdminDashboard />} />
 
+        {/* SUPERADMIN */}
+        <Route
+          path="/superadmin"
+          element={
+            <ProtectedRoute allowedRoles={["superadmin"]}>
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ADMIN */}
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/classes" element={<Classes />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route
+          path="/dashboard/admin"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/classes"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <Classes />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
 
         {/* STUDENTS */}
-        <Route path="/students" element={<Students />} />
-        <Route path="/students/add" element={<StudentRegister />} />
-        <Route path="/students/edit/:id" element={<StudentEdit />} />
-        <Route path="/students/left" element={<LeftStudents />} />
+        <Route
+          path="/students"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <Students />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/students/add"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <StudentRegister />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/students/edit/:id"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <StudentEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/students/left"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <LeftStudents />
+            </ProtectedRoute>
+          }
+        />
 
         {/* TEACHERS */}
-        <Route path="/teachers" element={<Teachers />} />
-        <Route path="/teachers/add" element={<TeacherRegister />} />
-        <Route path="/teachers/edit/:id" element={<TeacherEdit />} />
-        <Route path="/teachers/left" element={<LeftTeachers />} />
+        <Route
+          path="/teachers"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <Teachers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers/add"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <TeacherRegister />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers/edit/:id"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <TeacherEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers/left"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <LeftTeachers />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* TEACHER DASHBOARD */}
+        <Route
+          path="/dashboard/teacher"
+          element={
+            <ProtectedRoute allowedRoles={["teacher"]}>
+              <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* STUDENT DASHBOARD */}
+        <Route
+          path="/dashboard/student"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* LESSONS */}
-        <Route path="/lessons" element={<LessonFolders />} />
-        <Route path="/lessons/:folderId" element={<Lessons />} />
+        <Route
+          path="/lessons"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
+              <LessonFolders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lessons/:folderId"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
+              <Lessons />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ASSESSMENTS */}
-        <Route path="/student-assessments" element={<StudentAssessmentDashboard />} />
-        <Route path="/teacher-assessments" element={<TeacherStudentReport />} />
+        <Route
+          path="/student-assessments"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <StudentAssessmentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-assessments"
+          element={
+            <ProtectedRoute allowedRoles={["teacher"]}>
+              <TeacherStudentReport />
+            </ProtectedRoute>
+          }
+        />
 
         {/* CHAMPIONS */}
         <Route path="/our-champions" element={<Champions />} />
 
         {/* FEES */}
-        <Route path="/fees/students" element={<StudentFee />} />
-        <Route path="/fees/my" element={<MyFee />} />
+        <Route
+          path="/fees/students"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <StudentFee />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fees/my"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <MyFee />
+            </ProtectedRoute>
+          }
+        />
 
         {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/login" replace />} />

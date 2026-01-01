@@ -174,7 +174,6 @@
 // }
 
 
-
 // frontend/src/pages/Login.jsx
 import React, { useState, useEffect } from "react";
 import api from "../api/axios";
@@ -192,7 +191,6 @@ export default function Login() {
 
   /* =====================================================
      🌐 LOAD ACADEMY FROM SUBDOMAIN
-     Backend resolves academy using req.subdomains[0]
   ===================================================== */
   useEffect(() => {
     async function fetchAcademy() {
@@ -203,7 +201,6 @@ export default function Login() {
         console.error("Academy load error:", error);
       }
     }
-
     fetchAcademy();
   }, []);
 
@@ -211,70 +208,60 @@ export default function Login() {
      🔐 LOGIN HANDLER
   ===================================================== */
   const handleLogin = async () => {
-    try {
-      setErr("");
+    setErr("");
 
-      if (!identifier.trim() || !secret.trim()) {
-        setErr("All fields are required");
-        return;
-      }
-
-      const email = identifier;
-      const password = secret;
-
-      /* ================= ADMIN ================= */
-      try {
-        const res = await api.post("/auth/login", {
-          email,
-          password,
-        });
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("role", res.data.role);
-        localStorage.setItem("name", res.data.name);
-        localStorage.setItem("userId", res.data.userId);
-
-        if (res.data.role === "superadmin") {
-          return navigate("/superadmin");
-        }
-
-        return navigate("/dashboard");
-      } catch {}
-
-      /* ================= TEACHER ================= */
-      try {
-        const res = await api.post("/teachers/login", {
-          email,
-          password,
-        });
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("role", "teacher");
-        localStorage.setItem("name", res.data.name);
-        localStorage.setItem("userId", res.data.userId);
-
-        return navigate("/dashboard/teacher");
-      } catch {}
-
-      /* ================= STUDENT ================= */
-      try {
-        const res = await api.post("/students/login", {
-          email,
-          password,
-        });
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("role", "student");
-        localStorage.setItem("name", res.data.name);
-        localStorage.setItem("userId", res.data.userId);
-
-        return navigate("/dashboard/student");
-      } catch {}
-
-      setErr("Invalid email or password");
-    } catch (error) {
-      setErr("Login failed");
+    if (!identifier.trim() || !secret.trim()) {
+      setErr("All fields are required");
+      return;
     }
+
+    const email = identifier;
+    const password = secret;
+
+    /* ================= ADMIN ================= */
+    try {
+      const res = await api.post("/auth/login", { email, password });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("userId", res.data.userId);
+
+      if (res.data.role === "superadmin") {
+        navigate("/superadmin");
+      } else {
+        navigate("/dashboard/admin");
+      }
+      return;
+    } catch {}
+
+    /* ================= TEACHER ================= */
+    try {
+      const res = await api.post("/teachers/login", { email, password });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", "teacher");
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("userId", res.data.userId);
+
+      navigate("/dashboard/teacher");
+      return;
+    } catch {}
+
+    /* ================= STUDENT ================= */
+    try {
+      const res = await api.post("/students/login", { email, password });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", "student");
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("userId", res.data.userId);
+
+      navigate("/dashboard/student");
+      return;
+    } catch {}
+
+    setErr("Invalid email or password");
   };
 
   return (

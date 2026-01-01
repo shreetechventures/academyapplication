@@ -229,6 +229,8 @@ function App() {
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
         <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
         <Route path="/dashboard/student" element={<StudentDashboard />} />
+        <Route path="/superadmin" element={<SuperAdminDashboard />} />
+
 
         {/* ADMIN */}
         <Route path="/admin" element={<AdminPanel />} />

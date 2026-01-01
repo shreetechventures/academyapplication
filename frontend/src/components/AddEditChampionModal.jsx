@@ -30,10 +30,10 @@ export default function AddEditChampionModal({
 
     if (data) {
       // Update
-      await api.put(`${academyCode}/champions/${data._id}`, form);
+      await api.put(`/champions/${data._id}`, form);
     } else {
       // Create
-      await api.post(`${academyCode}/champions`, form);
+      await api.post(`/champions`, form);
     }
 
     refresh();

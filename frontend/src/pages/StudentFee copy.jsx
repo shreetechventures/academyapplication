@@ -5,7 +5,6 @@ import PaymentHistoryModal from "../components/PaymentHistoryModal";
 import PageWrapper from "../components/PageWrapper";
 
 export default function StudentFee() {
-  const { academyCode } = useParams();
   const role = localStorage.getItem("role");
 
   /* =======================

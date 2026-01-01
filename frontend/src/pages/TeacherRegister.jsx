@@ -7,7 +7,6 @@ import "../styles/student.css";
 
 export default function TeacherRegister() {
 
-  const { academyCode } = useParams();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({});

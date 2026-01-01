@@ -6,7 +6,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
 export default function AddStudent() {
-  const { academyCode } = useParams();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({

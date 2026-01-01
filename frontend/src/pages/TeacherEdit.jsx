@@ -8,8 +8,7 @@ import "../styles/student.css";
 export default function TeacherEdit() {
   const { academyCode, id } = useParams();
   const navigate = useNavigate();
-  // const { academyCode } = useParams();
-
+ 
   const [form, setForm] = useState({});
   const [age, setAge] = useState("");
 

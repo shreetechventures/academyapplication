@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom";
 import "../styles/lessons.css";
 
 export default function Lessons() {
-  const { academyCode } = useParams();
 
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(false);

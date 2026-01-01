@@ -8,7 +8,6 @@ import PageWrapper from "../components/PageWrapper";
 import "../styles/dashboardStats.css";
 
 export default function TeacherDashboard() {
-  const { academyCode } = useParams();
   const role = localStorage.getItem("role");
 
   const [stats, setStats] = useState({

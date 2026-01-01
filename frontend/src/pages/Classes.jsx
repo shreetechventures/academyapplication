@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom";
 import "../styles/dashboard.css";
 
 export default function Students() {
-  const { academyCode } = useParams();
 
   return (
 

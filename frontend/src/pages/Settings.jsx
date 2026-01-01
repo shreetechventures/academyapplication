@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom";
 import "../styles/settings.css";
 
 export default function Settings() {
-  const { academyCode } = useParams();
   const role = localStorage.getItem("role");
 
   const [openPassword, setOpenPassword] = useState(false);

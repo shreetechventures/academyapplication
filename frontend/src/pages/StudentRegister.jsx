@@ -10,7 +10,6 @@ import "../styles/student.css";
 
 export default function StudentRegister() {
 
-  const { academyCode } = useParams();
   const navigate = useNavigate();
 
 const [academySettings, setAcademySettings] = useState(null);

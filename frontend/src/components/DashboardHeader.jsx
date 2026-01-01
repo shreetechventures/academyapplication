@@ -10,7 +10,6 @@ export default function DashboardHeader({ academy, onLogout }) {
   const [open, setOpen] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
 
-  const { academyCode } = useParams();
 
   const name = localStorage.getItem("name");
   const role = localStorage.getItem("role");

@@ -12,7 +12,6 @@ import MultiTestAssessmentForm from "../components/MultiTestAssessmentForm";
 import "../styles/teacherAssessment.css";
 
 export default function TeacherAssessmentPage() {
-  const { academyCode } = useParams();
 
   const [students, setStudents] = useState([]);
   const [types, setTypes] = useState([]);

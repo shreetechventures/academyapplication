@@ -12,7 +12,6 @@ import "../styles/champions.css";
 import "../styles/editModal.css";
 
 export default function Champions() {
-  const { academyCode } = useParams();
 
   // ROLE CHECK
   const role = localStorage.getItem("role");

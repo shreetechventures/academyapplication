@@ -7,7 +7,6 @@ import "../styles/student.css"; // SAME STYLE
 
 export default function Teachers() {
 
-  const { academyCode } = useParams();
   const navigate = useNavigate();
 
   const role = localStorage.getItem("role");

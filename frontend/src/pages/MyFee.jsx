@@ -9,7 +9,6 @@ import confetti from "canvas-confetti";
 import "../styles/myFee.css";
 
 export default function MyFee() {
-  const { academyCode } = useParams();
   const studentId = localStorage.getItem("userId");
 
   const [billings, setBillings] = useState([]);

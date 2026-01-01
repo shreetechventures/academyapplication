@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import "../styles/dashboardStats.css";
 
 export default function Dashboard() {
-  const { academyCode } = useParams();
 
   const [stats, setStats] = useState({
     totalStudents: 0,

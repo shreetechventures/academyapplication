@@ -8,7 +8,6 @@ import { useParams } from "react-router-dom";
 import AssessmentChart from "../components/AssessmentChart";
 
 export default function StudentAssessmentDashboard() {
-  const { academyCode } = useParams();
 
   // Student ID from login
   const studentId = localStorage.getItem("userId");

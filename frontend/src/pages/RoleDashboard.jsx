@@ -1,8 +1,7 @@
 // import { Navigate, useParams } from "react-router-dom";
 
 // export default function RoleDashboard() {
-//   const { academyCode } = useParams();
-//   const role = localStorage.getItem("role");
+// //   const role = localStorage.getItem("role");
 
 //   if (!role) {
 //     return <Navigate to={`/login`} replace />;

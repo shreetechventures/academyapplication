@@ -7,7 +7,6 @@ import "../styles/student.css";
 
 
 export default function LeftStudents() {
-  const { academyCode } = useParams();
   const [students, setStudents] = useState([]);
     const [search, setSearch] = useState("");
     const [filtered, setFiltered] = useState([]);

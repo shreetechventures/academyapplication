@@ -4,7 +4,6 @@ import api from "../api/axios";
 import { useParams } from "react-router-dom";
 
 export default function PaymentHistory({ studentFeeId }) {
-  const { academyCode } = useParams();
   const [history, setHistory] = useState([]);
 
   useEffect(() => {

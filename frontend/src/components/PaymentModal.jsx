@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import "../styles/paymentModal.css";
 
 export default function PaymentModal({ fee, onClose, onSuccess }) {
-  const { academyCode } = useParams();
 
   const [amount, setAmount] = useState("");
   const [mode, setMode] = useState("cash");

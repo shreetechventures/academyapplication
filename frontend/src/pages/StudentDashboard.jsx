@@ -55,7 +55,6 @@ function FeeProgressCircle({ label, value, total, color }) {
    🎓 STUDENT DASHBOARD
 ================================ */
 export default function StudentDashboard() {
-  const { academyCode } = useParams();
 
   const role = localStorage.getItem("role");
   const studentId = localStorage.getItem("userId");

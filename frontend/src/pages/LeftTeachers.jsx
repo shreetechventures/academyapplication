@@ -6,7 +6,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
 export default function LeftTeachers() {
-  const { academyCode } = useParams();
   const navigate = useNavigate();
 
   const [teachers, setTeachers] = useState([]);

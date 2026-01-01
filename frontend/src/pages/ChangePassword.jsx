@@ -5,7 +5,6 @@ import PageWrapper from "../components/PageWrapper";
 import { useParams } from "react-router-dom";
 
 export default function ChangePassword() {
-  const { academyCode } = useParams();
 
   const [form, setForm] = useState({
     currentPassword: "",

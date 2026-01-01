@@ -6,8 +6,7 @@
 // import "../styles/dashboardStats.css";
 
 // export default function AdminDashboard() {
-//   const { academyCode } = useParams();
-//   const role = localStorage.getItem("role");
+// //   const role = localStorage.getItem("role");
 
 //   const [stats, setStats] = useState({
 //     totalStudents: 0,
@@ -247,6 +246,8 @@ export default function AdminDashboard() {
         const active = await api.get("/dashboard/students/active");
         const left = await api.get("/dashboard/students/left");
         const trainers = await api.get("/dashboard/trainers");
+            const fee = await api.get(`/fees/summary`);
+
 
         setStats({
           totalStudents: active.data.count,

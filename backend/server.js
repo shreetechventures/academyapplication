@@ -175,7 +175,19 @@ app.use("/api/superadmin", superAdminRoutes);
 // ============================================================================
 // 🏫 TENANT RESOLVER (SUBDOMAIN → academyCode)
 // ============================================================================
+// ============================================================================
+// 🏫 TENANT RESOLVER (SUBDOMAIN → academyCode)
+// SKIP public & superadmin
+// ============================================================================
 app.use("/api", async (req, res, next) => {
+  // ⛔ Skip non-tenant routes
+  if (
+    req.path.startsWith("/public") ||
+    req.path.startsWith("/superadmin")
+  ) {
+    return next();
+  }
+
   const subdomain = req.subdomains[0];
 
   if (!subdomain) {
@@ -193,6 +205,7 @@ app.use("/api", async (req, res, next) => {
 
   next();
 });
+
 
 // ============================================================================
 // 🏫 TENANT ROUTES (NO academyCode in URL anymore)

@@ -10,6 +10,17 @@ const Teacher = require("../models/Teacher"); // Teacher
 const Candidate = require("../models/Candidate"); // Student
 const Academy = require("../models/Academy");
 
+function resolveAcademyCode(req) {
+  const subdomains = req.subdomains || [];
+
+  // www.shreenath.careeracademy.cloud
+  if (subdomains[0] === "www") {
+    return subdomains[1];
+  }
+
+  return subdomains[0];
+}
+
 // ============================================================================
 // 🔐 Helper → Send Login Token
 // ============================================================================

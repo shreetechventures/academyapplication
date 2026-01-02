@@ -1,5 +1,5 @@
 // frontend/src/pages/Login.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import AcademyHeader from "../components/AcademyHeader";
@@ -8,131 +8,36 @@ import "../styles/login.css";
 export default function Login() {
   const navigate = useNavigate();
 
-  const [academy, setAcademy] = useState(null);
   const [identifier, setIdentifier] = useState("");
   const [secret, setSecret] = useState("");
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   /* =====================================================
-     🌐 LOAD ACADEMY FROM SUBDOMAIN
+     🔐 LOGIN HANDLER (ALL ROLES)
   ===================================================== */
-  // useEffect(() => {
-  //   async function fetchAcademy() {
-  //     try {
-  //       const res = await api.get("/academy");
-  //       setAcademy(res.data);
-  //     } catch (error) {
-  //       console.error("Academy load error:", error);
-  //     }
-  //   }
-  //   fetchAcademy();
-  // }, []);
-
-  useEffect(() => {
-    async function fetchAcademy() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return; // ⛔ skip if not logged in
-
-        const res = await api.get("/academy");
-        setAcademy(res.data);
-      } catch (error) {
-        console.error("Academy load error:", error);
-      }
-    }
-    fetchAcademy();
-  }, []);
-
-  /* =====================================================
-     🔐 LOGIN HANDLER
-  ===================================================== */
-  // const handleLogin = async () => {
-  //   setErr("");
-
-  //   if (!identifier.trim() || !secret.trim()) {
-  //     setErr("All fields are required");
-  //     return;
-  //   }
-
-  //   const email = identifier;
-  //   const password = secret;
-
-  //   /* ================= ADMIN ================= */
-  //   try {
-  //     const res = await api.post("/auth/login", { email, password });
-
-  //     localStorage.setItem("token", res.data.token);
-  //     localStorage.setItem("role", res.data.role);
-  //     localStorage.setItem("name", res.data.name);
-  //     localStorage.setItem("userId", res.data.userId);
-
-  //     if (res.data.role === "superadmin") {
-  //       navigate("/superadmin");
-  //     } else {
-  //       navigate("/dashboard/admin");
-  //     }
-  //     return;
-  //   } catch {}
-
-  //   /* ================= TEACHER ================= */
-  //   try {
-  //     const res = await api.post("/teachers/login", { email, password });
-
-  //     localStorage.setItem("token", res.data.token);
-  //     localStorage.setItem("role", "teacher");
-  //     localStorage.setItem("name", res.data.name);
-  //     localStorage.setItem("userId", res.data.userId);
-
-  //     navigate("/dashboard/teacher");
-  //     return;
-  //   } catch {}
-
-  //   /* ================= STUDENT ================= */
-  //   try {
-  //     const res = await api.post("/students/login", { email, password });
-
-  //     localStorage.setItem("token", res.data.token);
-  //     localStorage.setItem("role", "student");
-  //     localStorage.setItem("name", res.data.name);
-  //     localStorage.setItem("userId", res.data.userId);
-
-  //     navigate("/dashboard/student");
-  //     return;
-  //   } catch {}
-
-  //   setErr("Invalid email or password");
-  // };
-
   const handleLogin = async () => {
     setErr("");
 
     if (!identifier.trim() || !secret.trim()) {
-      setErr("All fields are required");
+      setErr("Email and password are required");
       return;
     }
 
     try {
-      let res;
+      setLoading(true);
 
-      /* ================= SUPERADMIN ================= */
-      if (identifier.trim().toLowerCase() === "superadmin@email.com") {
-        res = await api.post("/superadmin/login", {
-          email: identifier,
-          password: secret,
-        });
-      } else {
-      /* ================= ACADEMY USERS ================= */
-        res = await api.post("/auth/login", {
-          email: identifier,
-          password: secret,
-        });
-      }
+      // 🔑 SINGLE LOGIN ENDPOINT (superadmin + academy users)
+      const res = await api.post("/auth/login", {
+        email: identifier.trim(),
+        password: secret,
+      });
 
       const { token, role, name, userId, academyCode } = res.data;
 
       // 🔐 STORE SESSION
       localStorage.setItem("token", token);
-      localStorage.setItem("role", role); // academyAdmin / teacher / student / superadmin
+      localStorage.setItem("role", role);
       localStorage.setItem("name", name);
       localStorage.setItem("userId", userId);
 
@@ -154,13 +59,16 @@ export default function Login() {
       }
     } catch (error) {
       setErr(error.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-card">
-        <AcademyHeader academy={academy} />
+        {/* AcademyHeader is OPTIONAL here */}
+        <AcademyHeader academy={null} />
 
         <div className="login-field">
           <label>Email</label>
@@ -168,6 +76,7 @@ export default function Login() {
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             placeholder="Enter your email"
+            autoComplete="username"
           />
         </div>
 
@@ -178,14 +87,19 @@ export default function Login() {
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
             placeholder="Enter your password"
+            autoComplete="current-password"
           />
         </div>
 
         {err && <div className="error-text">{err}</div>}
 
         <div className="login-buttons">
-          <button onClick={handleLogin} className="login-btn primary">
-            Login
+          <button
+            onClick={handleLogin}
+            className="login-btn primary"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           <button
@@ -200,7 +114,9 @@ export default function Login() {
           </button>
         </div>
 
-        <div className="login-footer">Secure Academy Login System</div>
+        <div className="login-footer">
+          Secure Academy Login System
+        </div>
       </div>
     </div>
   );

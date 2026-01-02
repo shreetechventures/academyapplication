@@ -2,7 +2,7 @@
 import React from "react";
 import "../styles/champions.css";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || "";
 
 export default function ChampionCard({
   data,
@@ -20,7 +20,7 @@ export default function ChampionCard({
             src={`${BASE_URL}${data.imageUrl}`}
             alt={data.name}
             onError={(e) => {
-              e.currentTarget.onerror = null; // ⛔ stop infinite loop
+              e.currentTarget.onerror = null; // stop loop
               e.currentTarget.src = "/placeholder.png";
             }}
           />
@@ -34,12 +34,8 @@ export default function ChampionCard({
 
       {isAdminOrTeacher && (
         <div className="champion-actions">
-          <button className="edit-btn" onClick={onEdit}>
-            ✎
-          </button>
-          <button className="delete-btn" onClick={onDelete}>
-            ✖
-          </button>
+          <button className="edit-btn" onClick={onEdit}>✎</button>
+          <button className="delete-btn" onClick={onDelete}>✖</button>
         </div>
       )}
     </div>

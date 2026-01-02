@@ -11,61 +11,10 @@ const { recalculateStudentFee } = require("../utils/recalculateStudentFee");
 exports.getStudentBillingCycles = async (req, res) => {
   try {
     const { studentId } = req.params;
-    const academyCode = req.academyCode; // ✅ SEED RULE
 
-    const student = await Candidate.findById(studentId);
-    if (!student) {
-      return res.status(404).json({ message: "Student not found" });
-    }
+    // ✅ CORRECT SOURCE (JWT)
+    const academyCode = req.user.academyCode;
 
-    // 1️⃣ Get last billing
-    const lastBilling = await StudentBillingFee.findOne({
-      academyCode,
-      studentId,
-      type: "monthly",
-    }).sort({ periodEnd: -1 });
-
-    const today = new Date();
-
-    // 2️⃣ Auto-create next month if needed
-    if (lastBilling && lastBilling.periodEnd < today) {
-      const nextStart = new Date(lastBilling.periodEnd);
-      nextStart.setDate(nextStart.getDate() + 1);
-
-      const year = nextStart.getFullYear();
-      const month = nextStart.getMonth();
-
-      const alreadyExists = await StudentBillingFee.findOne({
-        academyCode,
-        studentId,
-        type: "monthly",
-        periodStart: {
-          $gte: new Date(year, month, 1),
-          $lte: new Date(year, month + 1, 0),
-        },
-      });
-
-      if (!alreadyExists) {
-        const nextEnd = new Date(nextStart);
-        nextEnd.setMonth(nextEnd.getMonth() + 1);
-        nextEnd.setDate(nextEnd.getDate() - 1);
-
-        await StudentBillingFee.create({
-          academyCode,
-          studentId,
-          periodStart: nextStart,
-          periodEnd: nextEnd,
-          baseFee: student.currentFee,
-          finalFee: student.currentFee,
-          paidAmount: 0,
-          discountAmount: 0,
-          status: "unpaid",
-          type: "monthly",
-        });
-      }
-    }
-
-    // 3️⃣ Return all billings
     const billings = await StudentBillingFee.find({
       academyCode,
       studentId,
@@ -73,10 +22,11 @@ exports.getStudentBillingCycles = async (req, res) => {
 
     res.json({ success: true, data: billings });
   } catch (err) {
-    console.error("getStudentBillingCycles error:", err);
+    console.error(err);
     res.status(500).json({ message: "Failed to load billing cycles" });
   }
 };
+
 
 /* ======================================================
    UPDATE billing fee amount (SET FEE)

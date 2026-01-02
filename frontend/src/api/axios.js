@@ -41,36 +41,60 @@
 //   }
 // );
 
+
+
+
+// export default api;
+
+
+
 import axios from "axios";
 
+/* =====================================================
+   🌐 API INSTANCE (SUBDOMAIN-BASED)
+   - No academyCode in URL
+   - Nginx proxies /api → backend
+===================================================== */
 const api = axios.create({
-  baseURL: "https://www.shreenath.careeracademy.cloud/api",
+  baseURL: "/api",        // ✅ IMPORTANT
+  withCredentials: true,  // safe for future cookies
 });
 
-/* ===============================
-   🔐 Attach JWT
-================================ */
+/* =====================================================
+   🔐 REQUEST → Attach JWT
+===================================================== */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-/* ===============================
-   ⚠️ Handle Auth Errors
-================================ */
+/* =====================================================
+   ⚠️ RESPONSE → Handle auth correctly (SUBDOMAIN SAFE)
+===================================================== */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+
+    // ❌ Logout ONLY on invalid/expired token
+    if (status === 401) {
       localStorage.clear();
+
+      alert("Session expired. Please login again.");
+
+      // ✅ SUBDOMAIN SAFE REDIRECT
       window.location.href = "/login";
     }
+
+    // ❌ DO NOT auto logout on 403
     return Promise.reject(error);
   }
 );

@@ -61,7 +61,7 @@ router.put(
 router.get(
   "/summary",
   authMiddleware,
-  permit("academyAdmin"),
+  canManageFees,
   feeController.getAcademyFeeSummary
 );
 

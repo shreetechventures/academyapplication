@@ -6,6 +6,15 @@ const { canManageFees } = require("../middleware/feePermission");
 
 const feeController = require("../controllers/fee.controller");
 
+
+console.log("authMiddleware =", typeof authMiddleware);
+console.log("canManageFees =", typeof canManageFees);
+console.log(
+  "getAcademyFeeSummary =",
+  typeof feeController.getAcademyFeeSummary
+);
+
+
 /* ===================== STUDENT ===================== */
 
 // 📅 Billing cycles (admin / teacher / student)

@@ -41,56 +41,36 @@
 //   }
 // );
 
-
-
-
-// export default api;
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api", // 🔥 relative, works in prod + dev
+  baseURL: "https://www.shreenath.careeracademy.cloud/api",
 });
 
-/* =====================================================
-   🔐 REQUEST → Attach JWT + academyCode
-===================================================== */
+/* ===============================
+   🔐 Attach JWT
+================================ */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // 🌱 AUTO-ADD academyCode FROM URL
-    // example URL: /shreenath/fees
-    const academyCode = window.location.pathname.split("/")[1];
-
-    if (
-      academyCode &&
-      academyCode !== "login" &&
-      !config.url.startsWith(`/${academyCode}`)
-    ) {
-      config.url = `/${academyCode}${config.url}`;
-    }
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-/* =====================================================
-   ⚠️ RESPONSE → Handle auth safely
-===================================================== */
+/* ===============================
+   ⚠️ Handle Auth Errors
+================================ */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error.response?.status;
-
-    if (status === 401) {
+    if (error.response?.status === 401) {
       localStorage.clear();
-      window.location.href = "/login"; // academy auto-resolved
+      window.location.href = "/login";
     }
-
     return Promise.reject(error);
   }
 );

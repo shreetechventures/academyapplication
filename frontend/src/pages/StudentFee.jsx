@@ -146,7 +146,6 @@
 //         </div>
 //       </div>
 
-
 //       <div className="student-search">
 //         <input
 //           type="text"
@@ -409,7 +408,6 @@
 //   );
 // }
 
-
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 import { Navigate } from "react-router-dom";
@@ -419,6 +417,7 @@ import "../styles/abc.css";
 
 export default function StudentFee() {
   const role = localStorage.getItem("role");
+  const isAdmin = role === "academyAdmin";
 
   /* =======================
      STATE
@@ -435,6 +434,7 @@ export default function StudentFee() {
 
   const [activeBillingId, setActiveBillingId] = useState(null);
 
+  // Modals
   const [setFeeModalOpen, setSetFeeModalOpen] = useState(false);
   const [feeAmount, setFeeAmount] = useState("");
 
@@ -445,20 +445,21 @@ export default function StudentFee() {
   const [discountModalOpen, setDiscountModalOpen] = useState(false);
   const [discountAmount, setDiscountAmount] = useState("");
 
-  const [search, setSearch] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
+
+  const [search, setSearch] = useState("");
 
   /* =======================
      LOAD STUDENTS
   ======================= */
   useEffect(() => {
-    api.get(`/students`).then((res) => {
+    api.get("/students").then((res) => {
       setStudents(res.data || []);
     });
   }, []);
 
   if (role === "student") {
-    return <Navigate to={`/fees/my`} replace />;
+    return <Navigate to="/fees/my" replace />;
   }
 
   /* =======================
@@ -467,9 +468,7 @@ export default function StudentFee() {
   const openStudent = async (student) => {
     setSelectedStudent(student);
 
-    const res = await api.get(
-      `/fees/student/${student._id}/billing`
-    );
+    const res = await api.get(`/fees/student/${student._id}/billing`);
 
     const data = res.data.data || [];
     setBillings(data);
@@ -485,7 +484,7 @@ export default function StudentFee() {
   };
 
   /* =======================
-     API ACTIONS
+     ACTIONS
   ======================= */
   const saveFee = async () => {
     if (!feeAmount || feeAmount <= 0) return alert("Invalid fee");
@@ -553,16 +552,16 @@ export default function StudentFee() {
         </div>
       </div>
 
+      {/* SEARCH */}
       <div className="student-search">
         <input
-          type="text"
           placeholder="Search student by name or code..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* STUDENTS */}
+      {/* STUDENT LIST */}
       <div className="student-list">
         <h3 className="section-title">Students</h3>
 
@@ -612,21 +611,66 @@ export default function StudentFee() {
                       {new Date(b.periodStart).toLocaleDateString()} –{" "}
                       {new Date(b.periodEnd).toLocaleDateString()}
                     </td>
+
                     <td>₹{b.finalFee}</td>
                     <td>₹{b.paidAmount}</td>
                     <td>₹{Math.max(b.finalFee - b.paidAmount, 0)}</td>
+
                     <td>
                       <span className={`status-badge ${b.status}`}>
                         {b.status.toUpperCase()}
                       </span>
                     </td>
+
                     <td>
-                      <button onClick={() => {
-                        setActiveBillingId(b._id);
-                        setHistoryOpen(true);
-                      }}>
-                        History
-                      </button>
+                      <div className="fee-actions">
+                        <button
+                          className="btn btn-set"
+                          onClick={() => {
+                            setActiveBillingId(b._id);
+                            setFeeAmount(b.finalFee);
+                            setSetFeeModalOpen(true);
+                          }}
+                        >
+                          Set Fee
+                        </button>
+
+                        {b.status !== "paid" && (
+                          <button
+                            className="btn btn-pay"
+                            onClick={() => {
+                              setActiveBillingId(b._id);
+                              setPayModalOpen(true);
+                            }}
+                          >
+                            Pay
+                          </button>
+                        )}
+
+                        {isAdmin && (
+                          <button
+                            className="btn btn-discount"
+                            onClick={() => {
+                              setActiveBillingId(b._id);
+                              setDiscountModalOpen(true);
+                            }}
+                          >
+                            Discount
+                          </button>
+                        )}
+
+                        {b.paidAmount > 0 && (
+                          <button
+                            className="btn btn-history"
+                            onClick={() => {
+                              setActiveBillingId(b._id);
+                              setHistoryOpen(true);
+                            }}
+                          >
+                            History
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -636,7 +680,96 @@ export default function StudentFee() {
         </div>
       )}
 
-      {/* HISTORY MODAL — FIXED */}
+      {/* ===== SET FEE MODAL ===== */}
+      {setFeeModalOpen && (
+        <div className="payment-overlay">
+          <div className="payment-modal">
+            <div className="payment-modal-header">Set Fee</div>
+            <input
+              className="fee-input"
+              type="number"
+              value={feeAmount}
+              onChange={(e) => setFeeAmount(e.target.value)}
+            />
+            <div className="payment-modal-footer">
+              <button className="btn btn-pay" onClick={saveFee}>
+                Save
+              </button>
+              <button
+                className="btn btn-history"
+                onClick={() => setSetFeeModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== PAY MODAL ===== */}
+      {payModalOpen && (
+        <div className="payment-overlay">
+          <div className="payment-modal">
+            <div className="payment-modal-header">Pay Fee</div>
+
+            <input
+              className="fee-input"
+              type="number"
+              value={payAmount}
+              onChange={(e) => setPayAmount(e.target.value)}
+            />
+
+            <select
+              value={payMode}
+              onChange={(e) => setPayMode(e.target.value)}
+            >
+              <option value="cash">Cash</option>
+              <option value="online">Online</option>
+              <option value="bank">Bank</option>
+            </select>
+
+            <div className="payment-modal-footer">
+              <button className="btn btn-pay" onClick={handlePayFee}>
+                Confirm
+              </button>
+              <button
+                className="btn btn-history"
+                onClick={() => setPayModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== DISCOUNT MODAL ===== */}
+      {discountModalOpen && (
+        <div className="payment-overlay">
+          <div className="payment-modal">
+            <div className="payment-modal-header">Discount</div>
+            <input
+              className="fee-input"
+              type="number"
+              value={discountAmount}
+              onChange={(e) => setDiscountAmount(e.target.value)}
+            />
+            <div className="payment-modal-footer">
+              <button className="btn btn-pay" onClick={applyDiscount}>
+                Apply
+              </button>
+              <button
+                className="btn btn-history"
+                onClick={() => setDiscountModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== HISTORY ===== */}
       <PaymentHistoryModal
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}

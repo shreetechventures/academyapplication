@@ -1,48 +1,29 @@
+// backend/middleware/feePermission.js
 const Academy = require("../models/Academy");
 
-/**
- * 💰 Fee Management Permission Guard
- * 🌱 SEED SAFE
- */
 const canManageFees = async (req, res, next) => {
   try {
-    /* =========================
-       0️⃣ Ensure auth context exists
-    ========================= */
-    if (!req.user || !req.academyCode) {
-      return res.status(401).json({
-        message: "Unauthorized",
-      });
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
-
-    const { role, permissions = [] } = req.user;
+    
+    const role = req.user.role;
     const academyCode = req.academyCode;
 
-    /* =========================
-       1️⃣ Academy Admin → always allowed (UNCHANGED)
-    ========================= */
+    // ✅ Admin always allowed
     if (role === "academyAdmin") {
       return next();
     }
 
-    /* =========================
-       2️⃣ Teacher → academy setting OR user permission (UNCHANGED)
-    ========================= */
+    // ✅ Teacher depends on academy setting
     if (role === "teacher") {
       const academy = await Academy.findOne({ code: academyCode });
 
       if (!academy) {
-        return res.status(404).json({
-          message: "Academy not found",
-        });
+        return res.status(404).json({ message: "Academy not found" });
       }
 
-      const academyAllows =
-        academy.settings?.allowTrainerFeeManagement === true;
-
-      const userAllows = permissions.includes("fee");
-
-      if (academyAllows || userAllows) {
+      if (academy.settings?.allowTrainerFeeManagement === true) {
         return next();
       }
 
@@ -51,18 +32,13 @@ const canManageFees = async (req, res, next) => {
       });
     }
 
-    /* =========================
-       3️⃣ Students / others (UNCHANGED)
-    ========================= */
     return res.status(403).json({
-      message: "Fee management access denied",
+      message: "Access denied",
     });
   } catch (err) {
     console.error("canManageFees error:", err);
-    return res.status(500).json({
-      message: "Fee permission check failed",
-    });
+    res.status(500).json({ message: "Permission check failed" });
   }
 };
 
-module.exports = { canManageFees };
+module.exports = { canManageFees }; // ✅ THIS LINE IS CRITICAL

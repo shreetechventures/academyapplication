@@ -1,15 +1,27 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
+
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+
 const Champion = require("../models/Champion");
 const { authMiddleware, permit } = require("../middleware/auth");
 
-// =======================
-// MULTER CONFIG
-// =======================
+/* ======================================================
+   📁 ENSURE UPLOAD DIRECTORY EXISTS
+====================================================== */
+const uploadDir = path.join("uploads", "champions");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+/* ======================================================
+   📸 MULTER CONFIG
+====================================================== */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/champions");
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
@@ -18,9 +30,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// =======================
-// ✅ GET ALL CHAMPIONS
-// =======================
+/* ======================================================
+   ✅ GET ALL CHAMPIONS
+====================================================== */
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const champions = await Champion.find({
@@ -34,9 +46,9 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// =======================
-// ✅ CREATE CHAMPION
-// =======================
+/* ======================================================
+   ✅ CREATE CHAMPION
+====================================================== */
 router.post(
   "/",
   authMiddleware,
@@ -77,9 +89,9 @@ router.post(
   }
 );
 
-// =======================
-// ✅ UPDATE CHAMPION
-// =======================
+/* ======================================================
+   ✅ UPDATE CHAMPION
+====================================================== */
 router.put(
   "/:id",
   authMiddleware,
@@ -123,9 +135,9 @@ router.put(
   }
 );
 
-// =======================
-// ✅ DELETE CHAMPION
-// =======================
+/* ======================================================
+   ✅ DELETE CHAMPION
+====================================================== */
 router.delete(
   "/:id",
   authMiddleware,

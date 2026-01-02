@@ -1,13 +1,31 @@
-// backend/utils/studentCodeGenerator.js
 const Candidate = require("../models/Candidate");
 
+/* =====================================================
+   🔢 Generate Unique Student Code (ATOMIC SAFE)
+   Format: ACADEMY-0001
+===================================================== */
 async function generateStudentCode(academyCode) {
-  const lastStudent = await Candidate.findOne({ academyCode })
-    .sort({ createdAt: -1 });
+  if (!academyCode) {
+    throw new Error("academyCode is required to generate student code");
+  }
+
+  // Find highest numeric suffix, not latest document
+  const lastStudent = await Candidate.findOne({
+    academyCode,
+    studentCode: { $exists: true }
+  })
+    .sort({ studentCode: -1 }) // STRING SORT WORKS WITH PADDED NUMBERS
+    .lean();
 
   let number = 1;
+
   if (lastStudent?.studentCode) {
-    number = parseInt(lastStudent.studentCode.split("-")[1]) + 1;
+    const parts = lastStudent.studentCode.split("-");
+    const lastNumber = Number(parts[1]);
+
+    if (!isNaN(lastNumber)) {
+      number = lastNumber + 1;
+    }
   }
 
   return `${academyCode.toUpperCase()}-${String(number).padStart(4, "0")}`;

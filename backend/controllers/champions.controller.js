@@ -1,17 +1,21 @@
 const Champion = require("../models/Champion");
 
+/* ======================================================
+   GET CHAMPIONS
+   🌱 academy resolved from JWT (SEED RULE)
+====================================================== */
 exports.getChampions = async (req, res) => {
   try {
-    const { academyCode } = req.params;
+    const academyCode = req.user.academyCode;
 
     const champions = await Champion.find({ academyCode })
       .sort({ createdAt: -1 }); // newest first
 
-    // Group by Year
+    // Group by Year (UNCHANGED)
     const grouped = {};
 
     champions.forEach((c) => {
-      const year = new Date(c.createdAt).getFullYear();
+      const year = c.year || new Date(c.createdAt).getFullYear();
       if (!grouped[year]) grouped[year] = [];
       grouped[year].push(c);
     });
@@ -23,11 +27,13 @@ exports.getChampions = async (req, res) => {
   }
 };
 
-
+/* ======================================================
+   ADD CHAMPION
+====================================================== */
 exports.addChampion = async (req, res) => {
   try {
-    const { academyCode } = req.params;
-    const { name, examName, year } = req.body; // ⭐ ADD year
+    const academyCode = req.user.academyCode;
+    const { name, examName, year } = req.body;
 
     const imageUrl = req.files?.image
       ? `/uploads/champions/${req.files.image[0].filename}`
@@ -41,24 +47,28 @@ exports.addChampion = async (req, res) => {
       academyCode,
       name,
       examName,
-      year,          // ⭐ ADD THIS
+      year,
       imageUrl,
       videoUrl,
     });
 
     res.json(champ);
   } catch (err) {
+    console.error("Error adding champion:", err);
     res.status(500).json({ error: "Error adding champion" });
   }
 };
 
-
+/* ======================================================
+   UPDATE CHAMPION
+====================================================== */
 exports.updateChampion = async (req, res) => {
   try {
-    const { academyCode, id } = req.params;
-    const { name, examName, year } = req.body; // ⭐ ADD year
+    const academyCode = req.user.academyCode;
+    const { id } = req.params;
+    const { name, examName, year } = req.body;
 
-    const update = { name, examName, year };  // ⭐ include year
+    const update = { name, examName, year };
 
     if (req.files?.image) {
       update.imageUrl = `/uploads/champions/${req.files.image[0].filename}`;
@@ -76,19 +86,24 @@ exports.updateChampion = async (req, res) => {
 
     res.json(updated);
   } catch (err) {
+    console.error("Update champion error:", err);
     res.status(500).json({ error: "Update failed" });
   }
 };
 
-
+/* ======================================================
+   DELETE CHAMPION
+====================================================== */
 exports.deleteChampion = async (req, res) => {
   try {
-    const { id, academyCode } = req.params;
+    const academyCode = req.user.academyCode;
+    const { id } = req.params;
 
     await Champion.findOneAndDelete({ _id: id, academyCode });
 
     res.json({ success: true });
   } catch (err) {
+    console.error("Delete champion error:", err);
     res.status(500).json({ error: "Delete failed" });
   }
 };

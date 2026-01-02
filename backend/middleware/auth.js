@@ -17,12 +17,17 @@ const authMiddleware = async (req, res, next) => {
 
     console.log("JWT PAYLOAD:", payload);
 
-    // SUPERADMIN → skip academy checks
+    /* =========================
+       SUPERADMIN → skip academy checks (UNCHANGED)
+    ========================= */
     if (payload.role === "superadmin") {
       return next();
     }
 
-    const academyCode = req.params.academyCode || payload.academyCode;
+    /* =========================
+       🌱 SEED FIX: academyCode from JWT ONLY
+    ========================= */
+    const academyCode = payload.academyCode;
 
     if (!academyCode) {
       return res.status(403).json({ message: "Academy code missing" });
@@ -30,6 +35,9 @@ const authMiddleware = async (req, res, next) => {
 
     req.academyCode = academyCode;
 
+    /* =========================
+       ACADEMY VALIDATION (UNCHANGED)
+    ========================= */
     const academy = await Academy.findOne({ code: academyCode });
     if (!academy) {
       return res.status(404).json({ message: "Academy not found" });
@@ -39,6 +47,9 @@ const authMiddleware = async (req, res, next) => {
       return res.status(403).json({ message: "Academy disabled" });
     }
 
+    /* =========================
+       SUBSCRIPTION CHECK (UNCHANGED)
+    ========================= */
     const subscription = await AcademySubscription.findOne({ academyCode });
     if (!subscription) {
       return res.status(403).json({ message: "Subscription missing" });
@@ -56,11 +67,14 @@ const authMiddleware = async (req, res, next) => {
 
     next();
   } catch (err) {
+    console.error("AUTH ERROR:", err);
     return res.status(401).json({ message: "Invalid token" });
   }
 };
 
-/* ROLE PERMISSION */
+/* ======================================================
+   ROLE PERMISSION (UNCHANGED)
+====================================================== */
 const permit =
   (...allowed) =>
   (req, res, next) => {
@@ -76,4 +90,3 @@ const permit =
   };
 
 module.exports = { authMiddleware, permit };
-

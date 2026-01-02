@@ -1,9 +1,8 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 const Candidate = require("../models/Candidate");
 const Teacher = require("../models/Teacher");
-const Academy = require("../models/Academy");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -14,15 +13,23 @@ const { authMiddleware, permit } = require("../middleware/auth");
 const { requirePermission } = require("../middleware/permission");
 
 /* ============================================================
-   ✅ STUDENT LOGIN (PUBLIC)
-   POST /api/:academyCode/students/login
+   ✅ STUDENT LOGIN (PUBLIC – SUBDOMAIN BASED)
+   POST /api/students/login
 ============================================================ */
 router.post("/login", async (req, res) => {
   try {
-    const academyCode = req.params.academyCode;
     const { email, password } = req.body;
+    const academyCode = req.academyCode;
 
-    const student = await Candidate.findOne({ academyCode, email });
+    if (!academyCode) {
+      return res.status(400).json({ message: "Academy context missing" });
+    }
+
+    const student = await Candidate.findOne({
+      academyCode,
+      email: email.toLowerCase(),
+    });
+
     if (!student) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -33,7 +40,11 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: student._id, role: "student", academyCode },
+      {
+        id: student._id,
+        role: "student",
+        academyCode,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "8h" }
     );
@@ -42,10 +53,11 @@ router.post("/login", async (req, res) => {
       token,
       role: "student",
       name: student.name,
-      userId: student._id,
+      userId: student._id.toString(),
       academyCode,
     });
   } catch (err) {
+    console.error("STUDENT LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -54,9 +66,6 @@ router.post("/login", async (req, res) => {
    🔐 STUDENT SELF ROUTES (NO requirePermission EVER)
 ============================================================ */
 
-/* 🔑 CHANGE OWN PASSWORD
-   PUT /api/:academyCode/students/self/change-password
-*/
 router.put(
   "/self/change-password",
   authMiddleware,
@@ -82,6 +91,7 @@ router.put(
 
       res.json({ message: "Password updated successfully" });
     } catch (err) {
+      console.error("STUDENT CHANGE PASSWORD ERROR:", err);
       res.status(500).json({ message: err.message });
     }
   }
@@ -93,7 +103,7 @@ router.put(
 
 router.get("/dashboard/students/active", authMiddleware, async (req, res) => {
   const count = await Candidate.countDocuments({
-    academyCode: req.user.academyCode,
+    academyCode: req.academyCode,
     status: "Active",
   });
   res.json({ count });
@@ -101,7 +111,7 @@ router.get("/dashboard/students/active", authMiddleware, async (req, res) => {
 
 router.get("/dashboard/students/left", authMiddleware, async (req, res) => {
   const count = await Candidate.countDocuments({
-    academyCode: req.user.academyCode,
+    academyCode: req.academyCode,
     status: "Left",
   });
   res.json({ count });
@@ -109,7 +119,7 @@ router.get("/dashboard/students/left", authMiddleware, async (req, res) => {
 
 router.get("/dashboard/trainers", authMiddleware, async (req, res) => {
   const count = await Teacher.countDocuments({
-    academyCode: req.user.academyCode,
+    academyCode: req.academyCode,
   });
   res.json({ count });
 });
@@ -125,9 +135,10 @@ router.post(
   checkStudentLimit,
   async (req, res) => {
     try {
-      const academyCode = req.user.academyCode;
+      const academyCode = req.academyCode;
 
       const studentCode = await generateStudentCode(academyCode);
+
       const age =
         new Date().getFullYear() -
         new Date(req.body.dateOfBirth).getFullYear();
@@ -145,6 +156,7 @@ router.post(
       await candidate.save();
       res.json(candidate);
     } catch (err) {
+      console.error("CREATE STUDENT ERROR:", err);
       res.status(500).json({ message: err.message });
     }
   }
@@ -156,7 +168,7 @@ router.get(
   permit("academyAdmin", "teacher"),
   async (req, res) => {
     const students = await Candidate.find({
-      academyCode: req.user.academyCode,
+      academyCode: req.academyCode,
       status: "Active",
     });
     res.json(students);
@@ -169,7 +181,9 @@ router.get(
 
 router.get("/:id", authMiddleware, async (req, res) => {
   const student = await Candidate.findById(req.params.id);
-  if (!student) return res.status(404).json({ message: "Student not found" });
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
   res.json(student);
 });
 
@@ -211,9 +225,10 @@ router.put(
   }
 );
 
-// ============================================================================
-// 📌 GET ALL LEFT STUDENTS
-// ============================================================================
+/* ============================================================
+   📌 GET ALL LEFT STUDENTS
+============================================================ */
+
 router.get(
   "/left/all",
   authMiddleware,

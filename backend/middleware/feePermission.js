@@ -1,21 +1,44 @@
-// middleware/feePermission.js
 const Academy = require("../models/Academy");
 
+/**
+ * 💰 Fee Management Permission Guard
+ * 🌱 SEED SAFE
+ */
 const canManageFees = async (req, res, next) => {
   try {
-    const { role, academyCode, permissions = [] } = req.user;
+    /* =========================
+       0️⃣ Ensure auth context exists
+    ========================= */
+    if (!req.user || !req.academyCode) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
 
-    // ✅ 1. Academy Admin → always allowed
+    const { role, permissions = [] } = req.user;
+    const academyCode = req.academyCode;
+
+    /* =========================
+       1️⃣ Academy Admin → always allowed (UNCHANGED)
+    ========================= */
     if (role === "academyAdmin") {
       return next();
     }
 
-    // ✅ 2. Teacher → check academy setting OR user permission
+    /* =========================
+       2️⃣ Teacher → academy setting OR user permission (UNCHANGED)
+    ========================= */
     if (role === "teacher") {
       const academy = await Academy.findOne({ code: academyCode });
 
+      if (!academy) {
+        return res.status(404).json({
+          message: "Academy not found",
+        });
+      }
+
       const academyAllows =
-        academy?.settings?.allowTrainerFeeManagement === true;
+        academy.settings?.allowTrainerFeeManagement === true;
 
       const userAllows = permissions.includes("fee");
 
@@ -28,13 +51,15 @@ const canManageFees = async (req, res, next) => {
       });
     }
 
-    // ❌ 3. Students / others
+    /* =========================
+       3️⃣ Students / others (UNCHANGED)
+    ========================= */
     return res.status(403).json({
       message: "Fee management access denied",
     });
   } catch (err) {
     console.error("canManageFees error:", err);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Fee permission check failed",
     });
   }

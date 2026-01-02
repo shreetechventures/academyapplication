@@ -1,41 +1,53 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 const Candidate = require("../models/Candidate");
 const Teacher = require("../models/Teacher");
+const AcademySubscription = require("../models/AcademySubscription");
+
 const { authMiddleware, permit } = require("../middleware/auth");
 
-const AcademySubscription = require("../models/AcademySubscription");
+/* =========================================================
+   📊 DASHBOARD COUNTS
+========================================================= */
 
 // Total Active Students
 router.get("/students/active", authMiddleware, async (req, res) => {
+  const academyCode = req.academyCode;
+
   const count = await Candidate.countDocuments({
-    academyCode: req.params.academyCode,
+    academyCode,
     status: "Active",
   });
+
   res.json({ count });
 });
 
 // Total Left Students
 router.get("/students/left", authMiddleware, async (req, res) => {
+  const academyCode = req.academyCode;
+
   const count = await Candidate.countDocuments({
-    academyCode: req.params.academyCode,
+    academyCode,
     status: "Left",
   });
+
   res.json({ count });
 });
 
 // Total Trainers
 router.get("/trainers", authMiddleware, async (req, res) => {
+  const academyCode = req.academyCode;
+
   const count = await Teacher.countDocuments({
-    academyCode: req.params.academyCode,
+    academyCode,
   });
+
   res.json({ count });
 });
 
 /* =========================================================
    📊 ADMIN ONLY – SUBSCRIPTION INFO
-   GET /api/:academyCode/dashboard/subscription-info
 ========================================================= */
 
 router.get(
@@ -55,7 +67,7 @@ router.get(
         return res.json(null);
       }
 
-      const activeStudents= await Candidate.countDocuments({
+      const activeStudents = await Candidate.countDocuments({
         academyCode,
         status: "Active",
       });
@@ -63,7 +75,7 @@ router.get(
       const maxStudents = subscription.maxStudents;
       const remaining = Math.max(maxStudents - activeStudents, 0);
       const usagePercent = Math.round(
-        (activeStudents/ maxStudents) * 100
+        (activeStudents / maxStudents) * 100
       );
 
       res.json({

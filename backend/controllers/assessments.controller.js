@@ -3,13 +3,16 @@ const AssessmentType = require("../models/AssessmentType");
 const AssessmentResult = require("../models/AssessmentResult");
 const { sendWhatsAppMessage } = require("../utils/whatsapp");
 
+/* ======================================================
+   🔁 Get or Create Assessment Type
+====================================================== */
 async function getOrCreateType(academyCode, title, unitHint) {
-  const allowed = ["seconds", "meters", "count"];
-  let unit = unitHint;
+  const allowedUnits = ["seconds", "meters", "count"];
 
+  let unit = unitHint;
   if (unitHint === "time") unit = "seconds";
   if (unitHint === "marks") unit = "count";
-  if (!allowed.includes(unit)) unit = "count";
+  if (!allowedUnits.includes(unit)) unit = "count";
 
   let type = await AssessmentType.findOne({ academyCode, title });
 
@@ -22,12 +25,15 @@ async function getOrCreateType(academyCode, title, unitHint) {
       maxScore: null,
     });
   }
+
   return type;
 }
 
+/* ======================================================
+   ✅ SAVE MULTI TEST ASSESSMENT (SEED SAFE)
+====================================================== */
 exports.saveMultiTestAssessment = async (req, res) => {
   try {
-    const { academyCode } = req.params;
     const {
       studentId,
       testDate,
@@ -43,14 +49,29 @@ exports.saveMultiTestAssessment = async (req, res) => {
       writtenScore,
     } = req.body;
 
-    if (!studentId)
+    /* =========================
+       1️⃣ Validate input
+    ========================= */
+    if (!studentId) {
       return res.status(400).json({ message: "studentId is required" });
+    }
 
-    const student = await Candidate.findOne({ _id: studentId, academyCode });
-    if (!student) return res.status(404).json({ message: "Student not found" });
+    /* =========================
+       2️⃣ Load student (SOURCE OF TRUTH)
+    ========================= */
+    const student = await Candidate.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // 🌱 SEED RULE
+    const academyCode = student.academyCode;
 
     const attemptDate = testDate ? new Date(testDate) : new Date();
 
+    /* =========================
+       3️⃣ Test definitions
+    ========================= */
     const tests = [
       { title: "100 Meter", unit: "time", value: hundredMeterTime },
       { title: "1600 Meter", unit: "time", value: sixteenHundredMeterTime },
@@ -66,8 +87,11 @@ exports.saveMultiTestAssessment = async (req, res) => {
     const createdResults = [];
     const addedBy = req.user?.role || "system";
 
+    /* =========================
+       4️⃣ Save results
+    ========================= */
     for (const t of tests) {
-      if (!t.value && t.value !== 0) continue;
+      if (t.value === undefined || t.value === null) continue;
 
       const typeDoc = await getOrCreateType(academyCode, t.title, t.unit);
 
@@ -84,12 +108,18 @@ exports.saveMultiTestAssessment = async (req, res) => {
       createdResults.push(result);
     }
 
-    // WhatsApp message
+    /* =========================
+       5️⃣ WhatsApp notification
+    ========================= */
     let whatsapp = null;
 
     if (sendWhatsApp && createdResults.length) {
-      const formatted = createdResults
-        .map((r) => `${r.assessmentTypeId?.title}: ${r.value}`)
+      const populated = await AssessmentResult.find({
+        _id: { $in: createdResults.map((r) => r._id) },
+      }).populate("assessmentTypeId", "title");
+
+      const formatted = populated
+        .map((r) => `${r.assessmentTypeId.title}: ${r.value}`)
         .join("\n");
 
       const message =
@@ -98,8 +128,6 @@ exports.saveMultiTestAssessment = async (req, res) => {
         `Date: ${attemptDate.toLocaleDateString()}\n\n` +
         `${formatted}`;
 
-      const sendStatus = [];
-
       const numbers = [
         student.contactNumber,
         student.fatherContact,
@@ -107,14 +135,16 @@ exports.saveMultiTestAssessment = async (req, res) => {
       ].filter(Boolean);
 
       for (const num of numbers) {
-        const result = await sendWhatsAppMessage(num, message);
-        sendStatus.push({ numbers: num, ...result });
+        await sendWhatsAppMessage(num, message);
       }
 
       whatsapp = { sentTo: numbers };
     }
 
-    res.json({
+    /* =========================
+       6️⃣ Response
+    ========================= */
+    return res.json({
       success: true,
       createdCount: createdResults.length,
       results: createdResults,
@@ -122,6 +152,6 @@ exports.saveMultiTestAssessment = async (req, res) => {
     });
   } catch (err) {
     console.error("saveMultiTestAssessment error:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };

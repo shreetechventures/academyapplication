@@ -1,65 +1,78 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 const { authMiddleware, permit } = require("../middleware/auth");
 const Academy = require("../models/Academy");
 
-/**
- * =====================================
- * GET ACADEMY SETTINGS
- * GET /api/:academyCode/settings
- * =====================================
- */
+/* =====================================================
+   ⚙️ GET ACADEMY SETTINGS
+   GET /api/settings
+===================================================== */
 router.get(
   "/",
   authMiddleware,
   permit("academyAdmin"),
   async (req, res) => {
-    const { academyCode } = req.params;
+    try {
+      const academyCode = req.academyCode;
 
-    const academy = await Academy.findOne({ code: academyCode }).select(
-      "settings"
-    );
+      const academy = await Academy.findOne({ code: academyCode }).select(
+        "settings"
+      );
 
-    if (!academy) {
-      return res.status(404).json({ message: "Academy not found" });
+      if (!academy) {
+        return res.status(404).json({ message: "Academy not found" });
+      }
+
+      res.json({
+        success: true,
+        settings: academy.settings || {},
+      });
+    } catch (err) {
+      console.error("GET SETTINGS ERROR:", err);
+      res.status(500).json({ message: "Server error" });
     }
-
-    res.json({ settings: academy.settings || {} });
   }
 );
 
-/**
- * =====================================
- * UPDATE FEE PERMISSION
- * PUT /api/:academyCode/settings/fee-permission
- * =====================================
- */
+/* =====================================================
+   🔐 UPDATE ACADEMY PERMISSIONS
+   PUT /api/settings/permissions
+===================================================== */
 router.put(
   "/permissions",
   authMiddleware,
   permit("academyAdmin"),
   async (req, res) => {
-    const { academyCode } = req.params;
-    const {
-      allowTrainerFeeManagement,
-      allowTrainerStudentRegistration,
-    } = req.body;
+    try {
+      const academyCode = req.academyCode;
 
-    await Academy.updateOne(
-      { code: academyCode },
-      {
-        $set: {
-          "settings.allowTrainerFeeManagement": allowTrainerFeeManagement,
-          "settings.allowTrainerStudentRegistration":
-            allowTrainerStudentRegistration,
-        },
-      }
-    );
+      const {
+        allowTrainerFeeManagement = false,
+        allowTrainerStudentRegistration = false,
+      } = req.body;
 
-    res.json({ message: "Permissions updated successfully" });
+      await Academy.updateOne(
+        { code: academyCode },
+        {
+          $set: {
+            "settings.allowTrainerFeeManagement":
+              Boolean(allowTrainerFeeManagement),
+            "settings.allowTrainerStudentRegistration":
+              Boolean(allowTrainerStudentRegistration),
+          },
+        }
+      );
+
+      res.json({
+        success: true,
+        message: "Permissions updated successfully",
+      });
+    } catch (err) {
+      console.error("UPDATE SETTINGS ERROR:", err);
+      res.status(500).json({ message: "Server error" });
+    }
   }
 );
-
 
 module.exports = router;

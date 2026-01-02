@@ -1,24 +1,21 @@
-// backend/routes/fee.routes.js
-
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 const { authMiddleware, permit } = require("../middleware/auth");
 const { canManageFees } = require("../middleware/feePermission");
 
 const feeController = require("../controllers/fee.controller");
 
-
 /* ===================== STUDENT ===================== */
 
-// billing cycles
+// 📅 Billing cycles (admin / teacher / student)
 router.get(
   "/student/:studentId/billing",
   authMiddleware,
   feeController.getStudentBillingCycles
 );
 
-// billing summary (optional, if you use it)
+// 📊 Billing summary (optional)
 router.get(
   "/student/:studentId/summary",
   authMiddleware,
@@ -27,7 +24,7 @@ router.get(
 
 /* ===================== ADMIN / TEACHER ===================== */
 
-// set / update billing fee
+// ✏️ Set / update billing fee
 router.put(
   "/billing/:billingId/amount",
   authMiddleware,
@@ -35,7 +32,7 @@ router.put(
   feeController.updateBillingFeeAmount
 );
 
-// pay billing fee
+// 💰 Pay billing fee
 router.post(
   "/billing/:billingId/pay",
   authMiddleware,
@@ -43,13 +40,14 @@ router.post(
   feeController.payBillingFee
 );
 
-// payment history
+// 📜 Payment history
 router.get(
   "/billing/:billingId/history",
   authMiddleware,
   feeController.getBillingPaymentHistory
 );
 
+// 💸 Apply discount
 router.put(
   "/billing/:billingId/discount",
   authMiddleware,
@@ -59,14 +57,12 @@ router.put(
 
 /* ===================== SUMMARY ===================== */
 
-// academy fee summary
+// 🧾 Academy fee summary (ADMIN only)
 router.get(
   "/summary",
   authMiddleware,
-  // canManageFees, // or 
   permit("academyAdmin"),
   feeController.getAcademyFeeSummary
 );
-
 
 module.exports = router;

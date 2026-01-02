@@ -14,15 +14,13 @@ export default function ChampionCard({
     <div className="champion-card">
       <div className="champion-media">
         {data.videoUrl ? (
-          <video
-            src={`${BASE_URL}${data.videoUrl}`}
-            controls
-          />
+          <video src={`${BASE_URL}${data.videoUrl}`} controls />
         ) : (
           <img
             src={`${BASE_URL}${data.imageUrl}`}
             alt={data.name}
             onError={(e) => {
+              e.currentTarget.onerror = null; // ⛔ stop infinite loop
               e.currentTarget.src = "/placeholder.png";
             }}
           />
@@ -36,8 +34,12 @@ export default function ChampionCard({
 
       {isAdminOrTeacher && (
         <div className="champion-actions">
-          <button className="edit-btn" onClick={onEdit}>✎</button>
-          <button className="delete-btn" onClick={onDelete}>✖</button>
+          <button className="edit-btn" onClick={onEdit}>
+            ✎
+          </button>
+          <button className="delete-btn" onClick={onDelete}>
+            ✖
+          </button>
         </div>
       )}
     </div>

@@ -1,4 +1,3 @@
-// frontend/src/pages/Login.jsx
 import React, { useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
@@ -24,10 +23,17 @@ export default function Login() {
       return;
     }
 
+    // 🚫 BLOCK LOGIN ON www (CRITICAL FIX)
+    const host = window.location.hostname;
+    if (host.startsWith("www.")) {
+      setErr("Invalid academy URL. Please use your academy subdomain.");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // 🔑 SINGLE LOGIN ENDPOINT (superadmin + academy users)
+      // ✅ SINGLE LOGIN ENDPOINT (backend decides role)
       const res = await api.post("/auth/login", {
         email: identifier.trim(),
         password: secret,
@@ -67,7 +73,7 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* AcademyHeader is OPTIONAL here */}
+        {/* Academy header optional */}
         <AcademyHeader academy={null} />
 
         <div className="login-field">

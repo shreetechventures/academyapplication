@@ -283,10 +283,6 @@
 
 
 
-
-
-//using protected routes
-
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -383,7 +379,7 @@ function App() {
           }
         />
 
-        {/* STUDENTS (ADMIN) */}
+        {/* STUDENTS */}
         <Route
           path="/students"
           element={
@@ -417,7 +413,7 @@ function App() {
           }
         />
 
-        {/* TEACHERS (ADMIN) */}
+        {/* TEACHERS */}
         <Route
           path="/teachers"
           element={
@@ -426,32 +422,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/teachers/add"
-          element={
-            <ProtectedRoute allowedRoles={["academyAdmin"]}>
-              <TeacherRegister />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/teachers/edit/:id"
-          element={
-            <ProtectedRoute allowedRoles={["academyAdmin"]}>
-              <TeacherEdit />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/teachers/left"
-          element={
-            <ProtectedRoute allowedRoles={["academyAdmin"]}>
-              <LeftTeachers />
-            </ProtectedRoute>
-          }
-        />
 
-        {/* TEACHER DASHBOARD */}
+        {/* TEACHER */}
         <Route
           path="/dashboard/teacher"
           element={
@@ -461,7 +433,7 @@ function App() {
           }
         />
 
-        {/* STUDENT DASHBOARD */}
+        {/* STUDENT */}
         <Route
           path="/dashboard/student"
           element={
@@ -471,11 +443,11 @@ function App() {
           }
         />
 
-        {/* LESSONS (READ: student | WRITE: admin/teacher handled in UI) */}
+        {/* LESSONS */}
         <Route
           path="/lessons"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin", "teacher", "student"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <LessonFolders />
             </ProtectedRoute>
           }
@@ -483,32 +455,11 @@ function App() {
         <Route
           path="/lessons/:folderId"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin", "teacher", "student"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <Lessons />
             </ProtectedRoute>
           }
         />
-
-        {/* ASSESSMENTS */}
-        <Route
-          path="/student-assessments"
-          element={
-            <ProtectedRoute allowedRoles={["student"]}>
-              <StudentAssessmentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/teacher-assessments"
-          element={
-            <ProtectedRoute allowedRoles={["teacher"]}>
-              <TeacherStudentReport />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* CHAMPIONS */}
-        <Route path="/our-champions" element={<Champions />} />
 
         {/* FEES */}
         <Route

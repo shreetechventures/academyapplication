@@ -6,15 +6,11 @@ const { recalculateStudentFee } = require("../utils/recalculateStudentFee");
 
 /* ======================================================
    GET billing cycles for a student (ADMIN / TEACHER)
-   🌱 academy resolved from middleware
 ====================================================== */
 exports.getStudentBillingCycles = async (req, res) => {
   try {
     const { studentId } = req.params;
 
-    /* ================================
-       1️⃣ Get student (SOURCE OF TRUTH)
-    ================================= */
     const student = await Candidate.findById(studentId);
     if (!student) {
       return res.status(404).json({
@@ -23,22 +19,14 @@ exports.getStudentBillingCycles = async (req, res) => {
       });
     }
 
-    // ✅ IMPORTANT FIX
-    // DO NOT trust token / req.academyCode
-    // TRUST student record
+    // ✅ TRUST student record
     const academyCode = student.academyCode;
 
-    /* ================================
-       2️⃣ Fetch billing cycles
-    ================================= */
     const billings = await StudentBillingFee.find({
       academyCode,
       studentId,
     }).sort({ periodStart: 1 });
 
-    /* ================================
-       3️⃣ Return response
-    ================================= */
     return res.json({
       success: true,
       data: billings,
@@ -53,13 +41,13 @@ exports.getStudentBillingCycles = async (req, res) => {
 };
 
 /* ======================================================
-   UPDATE billing fee amount (SET FEE)
+   UPDATE billing fee amount
 ====================================================== */
 exports.updateBillingFeeAmount = async (req, res) => {
   try {
     const { billingId } = req.params;
-
     const { finalFee } = req.body;
+
     if (typeof finalFee !== "number" || finalFee < 0) {
       return res.status(400).json({ message: "Invalid fee amount" });
     }
@@ -250,5 +238,42 @@ exports.applyDiscount = async (req, res) => {
   } catch (err) {
     console.error("applyDiscount error:", err);
     res.status(500).json({ message: "Failed to apply discount" });
+  }
+};
+
+/* ======================================================
+   🧾 ACADEMY FEE SUMMARY (ADMIN / TEACHER)
+====================================================== */
+exports.getAcademyFeeSummary = async (req, res) => {
+  try {
+    const academyCode = req.academyCode;
+
+    const result = await StudentFee.aggregate([
+      { $match: { academyCode } },
+      {
+        $group: {
+          _id: null,
+          totalFee: { $sum: "$totalFee" },
+          paidFee: { $sum: "$paidFee" },
+          pendingFee: { $sum: "$pendingFee" },
+          students: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const summary =
+      result.length > 0
+        ? result[0]
+        : {
+            totalFee: 0,
+            paidFee: 0,
+            pendingFee: 0,
+            students: 0,
+          };
+
+    res.json({ success: true, data: summary });
+  } catch (err) {
+    console.error("getAcademyFeeSummary error:", err);
+    res.status(500).json({ message: "Failed to load academy summary" });
   }
 };

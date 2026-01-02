@@ -1,5 +1,3 @@
-// controllers/fee.controller.js
-
 const StudentBillingFee = require("../models/StudentBillingFee");
 const StudentFee = require("../models/StudentFee");
 const FeePayment = require("../models/FeePayment");
@@ -7,11 +5,13 @@ const Candidate = require("../models/Candidate");
 const { recalculateStudentFee } = require("../utils/recalculateStudentFee");
 
 /* ======================================================
-   GET billing cycles for a student
+   GET billing cycles for a student (ADMIN / TEACHER)
+   🌱 academy resolved from middleware
 ====================================================== */
 exports.getStudentBillingCycles = async (req, res) => {
   try {
-    const { academyCode, studentId } = req.params;
+    const { studentId } = req.params;
+    const academyCode = req.academyCode; // ✅ SEED RULE
 
     const student = await Candidate.findById(studentId);
     if (!student) {
@@ -28,15 +28,13 @@ exports.getStudentBillingCycles = async (req, res) => {
     const today = new Date();
 
     // 2️⃣ Auto-create next month if needed
-    // 2️⃣ Auto-create next month if needed
     if (lastBilling && lastBilling.periodEnd < today) {
       const nextStart = new Date(lastBilling.periodEnd);
       nextStart.setDate(nextStart.getDate() + 1);
 
       const year = nextStart.getFullYear();
-      const month = nextStart.getMonth(); // 0-based
+      const month = nextStart.getMonth();
 
-      // 🔐 STRONG duplicate check (month-level)
       const alreadyExists = await StudentBillingFee.findOne({
         academyCode,
         studentId,
@@ -57,10 +55,8 @@ exports.getStudentBillingCycles = async (req, res) => {
           studentId,
           periodStart: nextStart,
           periodEnd: nextEnd,
-
           baseFee: student.currentFee,
           finalFee: student.currentFee,
-
           paidAmount: 0,
           discountAmount: 0,
           status: "unpaid",
@@ -69,7 +65,7 @@ exports.getStudentBillingCycles = async (req, res) => {
       }
     }
 
-    // 3️⃣ Return updated list
+    // 3️⃣ Return all billings
     const billings = await StudentBillingFee.find({
       academyCode,
       studentId,
@@ -88,8 +84,8 @@ exports.getStudentBillingCycles = async (req, res) => {
 exports.updateBillingFeeAmount = async (req, res) => {
   try {
     const { billingId } = req.params;
-    const { finalFee } = req.body;
 
+    const { finalFee } = req.body;
     if (typeof finalFee !== "number" || finalFee < 0) {
       return res.status(400).json({ message: "Invalid fee amount" });
     }
@@ -105,12 +101,10 @@ exports.updateBillingFeeAmount = async (req, res) => {
       });
     }
 
-    // 1️⃣ Update current billing
     billing.baseFee = finalFee;
-    billing.discountAmount = 0; // reset discount
+    billing.discountAmount = 0;
     billing.finalFee = finalFee;
 
-    // 2️⃣ Update status
     billing.status =
       billing.paidAmount === 0
         ? "unpaid"
@@ -118,14 +112,12 @@ exports.updateBillingFeeAmount = async (req, res) => {
         ? "partial"
         : "paid";
 
-    // 3️⃣ Update future month default fee
     await Candidate.findByIdAndUpdate(billing.studentId, {
       currentFee: finalFee,
     });
 
     await billing.save();
 
-    // 4️⃣ Recalculate student fee summary
     await recalculateStudentFee({
       academyCode: billing.academyCode,
       studentId: billing.studentId,
@@ -139,7 +131,7 @@ exports.updateBillingFeeAmount = async (req, res) => {
 };
 
 /* ======================================================
-   PAY billing fee (ADMIN / TEACHER)
+   PAY billing fee
 ====================================================== */
 exports.payBillingFee = async (req, res) => {
   try {
@@ -150,17 +142,11 @@ exports.payBillingFee = async (req, res) => {
       return res.status(400).json({ message: "Invalid payment amount" });
     }
 
-    if (!mode) {
-      return res.status(400).json({ message: "Payment mode required" });
-    }
-
-    // 1️⃣ Billing
     const billing = await StudentBillingFee.findById(billingId);
     if (!billing) {
       return res.status(404).json({ message: "Billing not found" });
     }
 
-    // 2️⃣ StudentFee summary
     const studentFee = await StudentFee.findOne({
       academyCode: billing.academyCode,
       studentId: billing.studentId,
@@ -175,7 +161,6 @@ exports.payBillingFee = async (req, res) => {
       return res.status(400).json({ message: "Payment exceeds remaining fee" });
     }
 
-    // 3️⃣ Payment entry
     const payment = await FeePayment.create({
       studentFeeId: studentFee._id,
       billingId,
@@ -184,13 +169,11 @@ exports.payBillingFee = async (req, res) => {
       receivedBy: req.user?._id,
     });
 
-    // 4️⃣ Update billing
     billing.paidAmount += amount;
     billing.status =
       billing.paidAmount >= billing.finalFee ? "paid" : "partial";
     await billing.save();
 
-    // 5️⃣ Update summary
     studentFee.paidFee += amount;
     studentFee.pendingFee = Math.max(
       studentFee.totalFee - studentFee.paidFee,
@@ -198,11 +181,7 @@ exports.payBillingFee = async (req, res) => {
     );
     await studentFee.save();
 
-    res.json({
-      success: true,
-      message: "Payment recorded successfully",
-      data: payment,
-    });
+    res.json({ success: true, data: payment });
   } catch (err) {
     console.error("payBillingFee error:", err);
     res.status(500).json({ message: "Payment failed" });
@@ -210,7 +189,7 @@ exports.payBillingFee = async (req, res) => {
 };
 
 /* ======================================================
-   PAYMENT HISTORY (per billing)
+   PAYMENT HISTORY
 ====================================================== */
 exports.getBillingPaymentHistory = async (req, res) => {
   try {
@@ -232,7 +211,8 @@ exports.getBillingPaymentHistory = async (req, res) => {
 ====================================================== */
 exports.getStudentFeeSummary = async (req, res) => {
   try {
-    const { academyCode, studentId } = req.params;
+    const { studentId } = req.params;
+    const academyCode = req.academyCode;
 
     const summary = await StudentFee.findOne({
       academyCode,
@@ -247,12 +227,12 @@ exports.getStudentFeeSummary = async (req, res) => {
 };
 
 /* ======================================================
-   APPLY DISCOUNT (MONTH-WISE)
+   APPLY DISCOUNT
 ====================================================== */
 exports.applyDiscount = async (req, res) => {
   try {
-    const { discountAmount } = req.body;
     const { billingId } = req.params;
+    const { discountAmount } = req.body;
 
     if (typeof discountAmount !== "number" || discountAmount < 0) {
       return res.status(400).json({ message: "Invalid discount amount" });
@@ -263,42 +243,30 @@ exports.applyDiscount = async (req, res) => {
       return res.status(404).json({ message: "Billing not found" });
     }
 
-    // 1️⃣ Apply discount on billing
     billing.discountAmount = discountAmount;
-
     billing.finalFee = Math.max(
       billing.baseFee - discountAmount,
-      billing.paidAmount // prevent finalFee < paid
+      billing.paidAmount
     );
 
-    // 2️⃣ Update status
-    if (billing.paidAmount >= billing.finalFee) {
-      billing.status = "paid";
-    } else if (billing.paidAmount > 0) {
-      billing.status = "partial";
-    } else {
-      billing.status = "unpaid";
-    }
+    billing.status =
+      billing.paidAmount >= billing.finalFee
+        ? "paid"
+        : billing.paidAmount > 0
+        ? "partial"
+        : "unpaid";
 
     await billing.save();
 
-    // 3️⃣ Get student fee summary (optional link)
-    const studentFee = await StudentFee.findOne({
-      academyCode: billing.academyCode,
-      studentId: billing.studentId,
-    });
-
-    // 4️⃣ Create DISCOUNT history entry (NO mode ❗)
     await FeePayment.create({
-      studentFeeId: studentFee?._id,
-      billingId: billing._id,
+      studentFeeId: null,
+      billingId,
       amount: discountAmount,
       type: "discount",
       note: `Discount of ₹${discountAmount} applied`,
       receivedBy: req.user?._id,
     });
 
-    // 5️⃣ Recalculate totals
     await recalculateStudentFee({
       academyCode: billing.academyCode,
       studentId: billing.studentId,
@@ -308,38 +276,5 @@ exports.applyDiscount = async (req, res) => {
   } catch (err) {
     console.error("applyDiscount error:", err);
     res.status(500).json({ message: "Failed to apply discount" });
-  }
-};
-
-
-
-/* =====================================================
-   🧾 ACADEMY FEE SUMMARY
-===================================================== */
-exports.getAcademyFeeSummary = async (req, res) => {
-  try {
-    const academyCode = req.academyCode;
-
-    const result = await StudentBillingFee.aggregate([
-      { $match: { academyCode } },
-      {
-        $group: {
-          _id: null,
-          totalFee: { $sum: "$finalFee" },
-          totalPaid: { $sum: "$paidAmount" },
-        },
-      },
-    ]);
-
-    const summary = result[0] || { totalFee: 0, totalPaid: 0 };
-
-    res.json({
-      total: summary.totalFee,
-      received: summary.totalPaid,
-      pending: Math.max(summary.totalFee - summary.totalPaid, 0),
-    });
-  } catch (err) {
-    console.error("ACADEMY FEE SUMMARY ERROR:", err);
-    res.status(500).json({ message: "Server error" });
   }
 };

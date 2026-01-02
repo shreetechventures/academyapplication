@@ -12,21 +12,135 @@ exports.getStudentBillingCycles = async (req, res) => {
   try {
     const { studentId } = req.params;
 
-    // ✅ CORRECT SOURCE (JWT)
+    // 🌱 SEED RULE: academy from JWT
     const academyCode = req.user.academyCode;
 
-    const billings = await StudentBillingFee.find({
+    /* ======================================
+       1️⃣ Validate student
+    ====================================== */
+    const student = await Candidate.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    /* ======================================
+       2️⃣ Fetch existing billings
+    ====================================== */
+    let billings = await StudentBillingFee.find({
       academyCode,
       studentId,
+      type: "monthly",
     }).sort({ periodStart: 1 });
 
-    res.json({ success: true, data: billings });
+    /* ======================================
+       3️⃣ IF NO BILLINGS → CREATE FROM SUMMARY
+    ====================================== */
+    if (billings.length === 0) {
+      const summary = await StudentFee.findOne({
+        academyCode,
+        studentId,
+      });
+
+      if (summary) {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+
+        const end = new Date(start);
+        end.setMonth(end.getMonth() + 1);
+        end.setDate(end.getDate() - 1);
+
+        const billing = await StudentBillingFee.create({
+          academyCode,
+          studentId,
+          periodStart: start,
+          periodEnd: end,
+
+          baseFee: summary.totalFee,
+          finalFee: summary.totalFee,
+
+          paidAmount: summary.paidFee,
+          discountAmount: 0,
+
+          status:
+            summary.paidFee >= summary.totalFee
+              ? "paid"
+              : summary.paidFee > 0
+              ? "partial"
+              : "unpaid",
+
+          type: "monthly",
+        });
+
+        billings = [billing];
+      }
+    }
+
+    /* ======================================
+       4️⃣ AUTO-CREATE NEXT MONTH (IF NEEDED)
+    ====================================== */
+    const lastBilling = billings[billings.length - 1];
+    const today = new Date();
+
+    if (lastBilling && lastBilling.periodEnd < today) {
+      const nextStart = new Date(lastBilling.periodEnd);
+      nextStart.setDate(nextStart.getDate() + 1);
+      nextStart.setHours(0, 0, 0, 0);
+
+      const year = nextStart.getFullYear();
+      const month = nextStart.getMonth();
+
+      const alreadyExists = await StudentBillingFee.findOne({
+        academyCode,
+        studentId,
+        type: "monthly",
+        periodStart: {
+          $gte: new Date(year, month, 1),
+          $lte: new Date(year, month + 1, 0),
+        },
+      });
+
+      if (!alreadyExists) {
+        const nextEnd = new Date(nextStart);
+        nextEnd.setMonth(nextEnd.getMonth() + 1);
+        nextEnd.setDate(nextEnd.getDate() - 1);
+
+        const newBilling = await StudentBillingFee.create({
+          academyCode,
+          studentId,
+          periodStart: nextStart,
+          periodEnd: nextEnd,
+
+          baseFee: student.currentFee,
+          finalFee: student.currentFee,
+
+          paidAmount: 0,
+          discountAmount: 0,
+          status: "unpaid",
+          type: "monthly",
+        });
+
+        billings.push(newBilling);
+      }
+    }
+
+    /* ======================================
+       5️⃣ FINAL RESPONSE
+    ====================================== */
+    return res.json({
+      success: true,
+      data: billings,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to load billing cycles" });
+    console.error("getStudentBillingCycles error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load billing cycles",
+    });
   }
 };
-
 
 /* ======================================================
    UPDATE billing fee amount (SET FEE)

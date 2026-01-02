@@ -56,27 +56,28 @@ export default function StudentDashboard() {
   const [lastExam, setLastExam] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        if (!studentId || role !== "student") return;
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      if (!studentId || role !== "student") return;
 
-        const [feeRes, examRes] = await Promise.all([
-          api.get(`/fees/student/${studentId}/summary`),
-          api.get(`/assessments/students/${studentId}/last-exam`),
-        ]);
+      const [feeRes, examRes] = await Promise.all([
+        api.get(`/fees/student/${studentId}/summary`),
+        api.get(`/assessments/students/${studentId}/last-exam`),
+      ]);
 
-        setFeeSummary(feeRes.data.data);
-        setLastExam(examRes.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setFeeSummary(feeRes.data.data);
+      setLastExam(examRes.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadData();
-  }, [studentId, role]); // ✅ FIXED
+  loadData();
+}, [studentId, role]); // ✅ FIXED
+
 
   if (role !== "student") {
     return <Navigate to="/login" replace />;

@@ -1,6 +1,8 @@
-// // frontend/src/components/ChampionCard.jsx
+// frontend/src/components/ChampionCard.jsx
 import React from "react";
 import "../styles/champions.css";
+
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function ChampionCard({
   data,
@@ -8,15 +10,22 @@ export default function ChampionCard({
   onDelete,
   onEdit,
 }) {
-  const BASE_URL = "http://localhost:5000";
-
   return (
     <div className="champion-card">
       <div className="champion-media">
         {data.videoUrl ? (
-          <video src={BASE_URL + data.videoUrl} controls />
+          <video
+            src={`${BASE_URL}${data.videoUrl}`}
+            controls
+          />
         ) : (
-          <img src={BASE_URL + data.imageUrl} alt={data.name} />
+          <img
+            src={`${BASE_URL}${data.imageUrl}`}
+            alt={data.name}
+            onError={(e) => {
+              e.currentTarget.src = "/placeholder.png";
+            }}
+          />
         )}
       </div>
 
@@ -34,4 +43,3 @@ export default function ChampionCard({
     </div>
   );
 }
-

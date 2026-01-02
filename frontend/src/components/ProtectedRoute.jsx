@@ -11,7 +11,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
 
   // ❌ Logged in but role not allowed
   if (allowedRoles && !allowedRoles.includes(role)) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
   // ✅ Authorized

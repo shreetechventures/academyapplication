@@ -16,77 +16,133 @@ export default function Login() {
   /* =====================================================
      🌐 LOAD ACADEMY FROM SUBDOMAIN
   ===================================================== */
+  // useEffect(() => {
+  //   async function fetchAcademy() {
+  //     try {
+  //       const res = await api.get("/academy");
+  //       setAcademy(res.data);
+  //     } catch (error) {
+  //       console.error("Academy load error:", error);
+  //     }
+  //   }
+  //   fetchAcademy();
+  // }, []);
+
   useEffect(() => {
-    async function fetchAcademy() {
-      try {
-        const res = await api.get("/academy");
-        setAcademy(res.data);
-      } catch (error) {
-        console.error("Academy load error:", error);
-      }
+  async function fetchAcademy() {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return; // ⛔ skip if not logged in
+
+      const res = await api.get("/academy");
+      setAcademy(res.data);
+    } catch (error) {
+      console.error("Academy load error:", error);
     }
-    fetchAcademy();
-  }, []);
+  }
+  fetchAcademy();
+}, []);
+
 
   /* =====================================================
      🔐 LOGIN HANDLER
   ===================================================== */
+  // const handleLogin = async () => {
+  //   setErr("");
+
+  //   if (!identifier.trim() || !secret.trim()) {
+  //     setErr("All fields are required");
+  //     return;
+  //   }
+
+  //   const email = identifier;
+  //   const password = secret;
+
+  //   /* ================= ADMIN ================= */
+  //   try {
+  //     const res = await api.post("/auth/login", { email, password });
+
+  //     localStorage.setItem("token", res.data.token);
+  //     localStorage.setItem("role", res.data.role);
+  //     localStorage.setItem("name", res.data.name);
+  //     localStorage.setItem("userId", res.data.userId);
+
+  //     if (res.data.role === "superadmin") {
+  //       navigate("/superadmin");
+  //     } else {
+  //       navigate("/dashboard/admin");
+  //     }
+  //     return;
+  //   } catch {}
+
+  //   /* ================= TEACHER ================= */
+  //   try {
+  //     const res = await api.post("/teachers/login", { email, password });
+
+  //     localStorage.setItem("token", res.data.token);
+  //     localStorage.setItem("role", "teacher");
+  //     localStorage.setItem("name", res.data.name);
+  //     localStorage.setItem("userId", res.data.userId);
+
+  //     navigate("/dashboard/teacher");
+  //     return;
+  //   } catch {}
+
+  //   /* ================= STUDENT ================= */
+  //   try {
+  //     const res = await api.post("/students/login", { email, password });
+
+  //     localStorage.setItem("token", res.data.token);
+  //     localStorage.setItem("role", "student");
+  //     localStorage.setItem("name", res.data.name);
+  //     localStorage.setItem("userId", res.data.userId);
+
+  //     navigate("/dashboard/student");
+  //     return;
+  //   } catch {}
+
+  //   setErr("Invalid email or password");
+  // };
+
+
   const handleLogin = async () => {
-    setErr("");
+  setErr("");
 
-    if (!identifier.trim() || !secret.trim()) {
-      setErr("All fields are required");
-      return;
-    }
+  if (!identifier.trim() || !secret.trim()) {
+    setErr("All fields are required");
+    return;
+  }
 
-    const email = identifier;
-    const password = secret;
+  try {
+    const res = await api.post("/auth/login", {
+      email: identifier,
+      password: secret,
+    });
 
-    /* ================= ADMIN ================= */
-    try {
-      const res = await api.post("/auth/login", { email, password });
+    const { token, role, name, userId, academyCode } = res.data;
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("name", res.data.name);
-      localStorage.setItem("userId", res.data.userId);
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+    localStorage.setItem("name", name);
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("academyCode", academyCode);
 
-      if (res.data.role === "superadmin") {
-        navigate("/superadmin");
-      } else {
-        navigate("/dashboard/admin");
-      }
-      return;
-    } catch {}
-
-    /* ================= TEACHER ================= */
-    try {
-      const res = await api.post("/teachers/login", { email, password });
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", "teacher");
-      localStorage.setItem("name", res.data.name);
-      localStorage.setItem("userId", res.data.userId);
-
+    // ✅ ROLE-BASED REDIRECT
+    if (role === "superadmin") {
+      navigate("/superadmin");
+    } else if (role === "academyAdmin") {
+      navigate("/dashboard/admin");
+    } else if (role === "teacher") {
       navigate("/dashboard/teacher");
-      return;
-    } catch {}
-
-    /* ================= STUDENT ================= */
-    try {
-      const res = await api.post("/students/login", { email, password });
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", "student");
-      localStorage.setItem("name", res.data.name);
-      localStorage.setItem("userId", res.data.userId);
-
+    } else if (role === "student") {
       navigate("/dashboard/student");
-      return;
-    } catch {}
-
+    } else {
+      setErr("Unknown role");
+    }
+  } catch (error) {
     setErr("Invalid email or password");
-  };
+  }
+};
 
   return (
     <div className="login-container">

@@ -26,7 +26,10 @@ export default function Login() {
     // 🚫 BLOCK LOGIN ON www (CRITICAL FIX)
     const host = window.location.hostname;
     if (host.startsWith("www.")) {
-      setErr("Invalid academy URL. Please use your academy subdomain.");
+      const fixedHost = host.replace("www.", "");
+      window.location.replace(
+        window.location.protocol + "//" + fixedHost + window.location.pathname
+      );
       return;
     }
 
@@ -120,9 +123,7 @@ export default function Login() {
           </button>
         </div>
 
-        <div className="login-footer">
-          Secure Academy Login System
-        </div>
+        <div className="login-footer">Secure Academy Login System</div>
       </div>
     </div>
   );

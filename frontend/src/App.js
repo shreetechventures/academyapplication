@@ -287,7 +287,6 @@
 
 //using protected routes
 
-
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -347,7 +346,7 @@ function App() {
           }
         />
 
-        {/* ADMIN */}
+        {/* ACADEMY ADMIN */}
         <Route
           path="/dashboard/admin"
           element={
@@ -384,7 +383,7 @@ function App() {
           }
         />
 
-        {/* STUDENTS */}
+        {/* STUDENTS (ADMIN) */}
         <Route
           path="/students"
           element={
@@ -418,7 +417,7 @@ function App() {
           }
         />
 
-        {/* TEACHERS */}
+        {/* TEACHERS (ADMIN) */}
         <Route
           path="/teachers"
           element={
@@ -472,11 +471,11 @@ function App() {
           }
         />
 
-        {/* LESSONS */}
+        {/* LESSONS (READ: student | WRITE: admin/teacher handled in UI) */}
         <Route
           path="/lessons"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher", "student"]}>
               <LessonFolders />
             </ProtectedRoute>
           }
@@ -484,7 +483,7 @@ function App() {
         <Route
           path="/lessons/:folderId"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher", "student"]}>
               <Lessons />
             </ProtectedRoute>
           }

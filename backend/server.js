@@ -126,7 +126,6 @@
 // start();
 
 
-
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -135,9 +134,7 @@ const path = require("path");
 const connectDB = require("./utils/db");
 const Academy = require("./models/Academy");
 
-// ===============================
 // ROUTES
-// ===============================
 const publicRoutes = require("./routes/public.routes");
 const superAdminRoutes = require("./routes/superAdmin.routes");
 
@@ -154,70 +151,26 @@ const feeRoutes = require("./routes/fee.routes");
 const settingsRoutes = require("./routes/settings.routes");
 const academyRoutes = require("./routes/academy.routes");
 
-// ===============================
-// CREATE APP
-// ===============================
 const app = express();
 
-// ===============================
-// GLOBAL MIDDLEWARES
-// ===============================
 app.use(cors());
 app.use(express.json());
 
-app.set("subdomain offset", 2); // 👈 REQUIRED
+app.set("subdomain offset", 2);
 
-// ============================================================================
-// 🌍 PUBLIC & SUPERADMIN (NO TENANT)
-// ============================================================================
+// 🌍 PUBLIC & SUPERADMIN
 app.use("/api/public", publicRoutes);
 app.use("/api/superadmin", superAdminRoutes);
 
-
-// ============================================================================
-// 🏫 TENANT RESOLVER (SUBDOMAIN → academyCode)
-// SKIP public & superadmin
-// ============================================================================
-// app.use("/api", async (req, res, next) => {
-//   // ⛔ Skip non-tenant routes
-//   if (
-//     req.path.startsWith("/public") ||
-//     req.path.startsWith("/superadmin")
-//   ) {
-//     return next();
-//   }
-
-//   const subdomain = req.subdomains[0];
-
-//   if (!subdomain) {
-//     return res.status(400).json({ message: "Academy subdomain missing" });
-//   }
-
-//   const academy = await Academy.findOne({ code: subdomain });
-
-//   if (!academy) {
-//     return res.status(404).json({ message: "Academy not found" });
-//   }
-
-//   req.academyCode = academy.code;
-//   req.academy = academy;
-
-//   next();
-// });
-
-
-
-
+// 🏫 TENANT RESOLVER
 app.use("/api", async (req, res, next) => {
   if (
     req.path.startsWith("/public") ||
-    req.path.startsWith("/superadmin")
+    req.path.startsWith("/superadmin") ||
+    req.path.startsWith("/auth") // 🔥 CRITICAL FIX
   ) {
     return next();
   }
-
-  console.log("HOST:", req.headers.host);
-  console.log("SUBDOMAINS:", req.subdomains);
 
   const subdomain =
     req.subdomains[0] === "www"
@@ -229,20 +182,16 @@ app.use("/api", async (req, res, next) => {
   }
 
   const academy = await Academy.findOne({ code: subdomain });
-
   if (!academy) {
     return res.status(404).json({ message: "Academy not found" });
   }
 
   req.academy = academy;
   req.academyCode = academy.code;
-
   next();
 });
 
-// ============================================================================
-// 🏫 TENANT ROUTES (NO academyCode in URL anymore)
-// ============================================================================
+// 🏫 TENANT ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
@@ -256,14 +205,10 @@ app.use("/api/fees", feeRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/academy", academyRoutes);
 
-// ============================================================================
-// 📁 STATIC FILES
-// ============================================================================
+// STATIC
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ============================================================================
-// 🚀 START SERVER
-// ============================================================================
+// START
 const start = async () => {
   await connectDB(process.env.MONGO_URI);
   console.log("✅ Mongo connected");

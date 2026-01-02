@@ -29,20 +29,19 @@ export default function Login() {
   // }, []);
 
   useEffect(() => {
-  async function fetchAcademy() {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return; // ⛔ skip if not logged in
+    async function fetchAcademy() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return; // ⛔ skip if not logged in
 
-      const res = await api.get("/academy");
-      setAcademy(res.data);
-    } catch (error) {
-      console.error("Academy load error:", error);
+        const res = await api.get("/academy");
+        setAcademy(res.data);
+      } catch (error) {
+        console.error("Academy load error:", error);
+      }
     }
-  }
-  fetchAcademy();
-}, []);
-
+    fetchAcademy();
+  }, []);
 
   /* =====================================================
      🔐 LOGIN HANDLER
@@ -104,45 +103,59 @@ export default function Login() {
   //   setErr("Invalid email or password");
   // };
 
-
   const handleLogin = async () => {
-  setErr("");
+    setErr("");
 
-  if (!identifier.trim() || !secret.trim()) {
-    setErr("All fields are required");
-    return;
-  }
-
-  try {
-    const res = await api.post("/auth/login", {
-      email: identifier,
-      password: secret,
-    });
-
-    const { token, role, name, userId, academyCode } = res.data;
-
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", role);
-    localStorage.setItem("name", name);
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("academyCode", academyCode);
-
-    // ✅ ROLE-BASED REDIRECT
-    if (role === "superadmin") {
-      navigate("/superadmin");
-    } else if (role === "academyAdmin") {
-      navigate("/dashboard/admin");
-    } else if (role === "teacher") {
-      navigate("/dashboard/teacher");
-    } else if (role === "student") {
-      navigate("/dashboard/student");
-    } else {
-      setErr("Unknown role");
+    if (!identifier.trim() || !secret.trim()) {
+      setErr("All fields are required");
+      return;
     }
-  } catch (error) {
-    setErr("Invalid email or password");
-  }
-};
+
+    try {
+      let res;
+
+      /* ================= SUPERADMIN ================= */
+      if (identifier.trim().toLowerCase() === "superadmin@email.com") {
+        res = await api.post("/superadmin/login", {
+          email: identifier,
+          password: secret,
+        });
+      } else {
+      /* ================= ACADEMY USERS ================= */
+        res = await api.post("/auth/login", {
+          email: identifier,
+          password: secret,
+        });
+      }
+
+      const { token, role, name, userId, academyCode } = res.data;
+
+      // 🔐 STORE SESSION
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role); // academyAdmin / teacher / student / superadmin
+      localStorage.setItem("name", name);
+      localStorage.setItem("userId", userId);
+
+      if (academyCode) {
+        localStorage.setItem("academyCode", academyCode);
+      }
+
+      // 🚦 ROLE-BASED REDIRECT
+      if (role === "superadmin") {
+        navigate("/superadmin");
+      } else if (role === "academyAdmin") {
+        navigate("/dashboard/admin");
+      } else if (role === "teacher") {
+        navigate("/dashboard/teacher");
+      } else if (role === "student") {
+        navigate("/dashboard/student");
+      } else {
+        setErr("Unknown role");
+      }
+    } catch (error) {
+      setErr(error.response?.data?.message || "Invalid email or password");
+    }
+  };
 
   return (
     <div className="login-container">
@@ -187,9 +200,7 @@ export default function Login() {
           </button>
         </div>
 
-        <div className="login-footer">
-          Secure Academy Login System
-        </div>
+        <div className="login-footer">Secure Academy Login System</div>
       </div>
     </div>
   );

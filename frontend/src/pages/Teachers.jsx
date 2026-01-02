@@ -59,7 +59,7 @@ export default function Teachers() {
   /* =======================
      ROLE GUARD
   ======================= */
-  if (role !== "teacher") {
+  if (role !== "academyAdmin") {
     return (
       <PageWrapper>
         <h3>You do not have permission to view Trainers</h3>

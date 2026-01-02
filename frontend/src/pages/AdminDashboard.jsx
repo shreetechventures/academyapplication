@@ -70,7 +70,6 @@
 //     // <PageWrapper>
 //     //   {/* <div className="dashboard-stats-container"> */}
 
-
 //     //     <div className="dashboard-fee-summary">
 //     //       <div className="stat-card">
 //     //         <span>Total Fees</span>
@@ -209,10 +208,6 @@
 //   );
 // }
 
-
-
-
-
 // frontend/src/pages/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
@@ -245,6 +240,7 @@ export default function AdminDashboard() {
         const active = await api.get("/dashboard/students/active");
         const left = await api.get("/dashboard/students/left");
         const trainers = await api.get("/dashboard/trainers");
+        const feeRes = await api.get("/fees/summary");
 
         setStats({
           totalStudents: active.data.count,
@@ -259,8 +255,11 @@ export default function AdminDashboard() {
         }
 
         // 💰 FEE SUMMARY
-        const feeRes = await api.get("/fees/summary");
-        setFeeSummary(feeRes.data);
+        setFeeSummary({
+          total: feeRes.data.data.totalFee,
+          received: feeRes.data.data.paidFee,
+          pending: feeRes.data.data.pendingFee,
+        });
       } catch (err) {
         console.error("Dashboard loading error:", err);
       }
@@ -272,7 +271,6 @@ export default function AdminDashboard() {
   return (
     <PageWrapper>
       <div className="dashboard-stats-container">
-
         {/* ===== FEE SUMMARY ===== */}
         <div className="stat-card fee total">
           <span>Total Fees</span>
@@ -318,8 +316,7 @@ export default function AdminDashboard() {
                 className="plan-bar-fill"
                 style={{
                   width: `${plan.usagePercent}%`,
-                  background:
-                    plan.usagePercent >= 90 ? "#ef4444" : "#22c55e",
+                  background: plan.usagePercent >= 90 ? "#ef4444" : "#22c55e",
                 }}
               />
             </div>

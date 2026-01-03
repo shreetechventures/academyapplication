@@ -161,8 +161,8 @@ app.set("subdomain offset", 2);
 // 🌍 PUBLIC & SUPERADMIN
 app.use("/api/public", publicRoutes);
 // app.use("/api/superadmin", superAdminRoutes);
-app.use("/api/auth/superadmin", superAdminAuthRoutes);
 
+app.use("/api/superadmin", superAdminRoutes);
 
 // 🏫 TENANT RESOLVER
 app.use("/api", async (req, res, next) => {

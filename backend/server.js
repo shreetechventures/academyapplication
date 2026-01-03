@@ -166,22 +166,27 @@ app.use("/api/superadmin", superAdminRoutes);
 app.use("/api", async (req, res, next) => {
   if (
     req.path.startsWith("/public") ||
-    req.path.startsWith("/superadmin") ||
-    req.path.startsWith("/auth") // 🔥 CRITICAL FIX
+    req.path.startsWith("/superadmin")
   ) {
     return next();
   }
 
-  const subdomain =
-    req.subdomains[0] === "www"
-      ? req.subdomains[1]
-      : req.subdomains[0];
+  console.log("HOST:", req.headers.host);
+  console.log("SUBDOMAINS:", req.subdomains);
+
+  let subdomain = req.subdomains[0];
+  if (subdomain === "www") subdomain = req.subdomains[1];
+
+  console.log("RESOLVED ACADEMY CODE:", subdomain);
 
   if (!subdomain) {
     return res.status(400).json({ message: "Academy subdomain missing" });
   }
 
   const academy = await Academy.findOne({ code: subdomain });
+
+  console.log("ACADEMY FOUND:", !!academy);
+
   if (!academy) {
     return res.status(404).json({ message: "Academy not found" });
   }
@@ -190,6 +195,7 @@ app.use("/api", async (req, res, next) => {
   req.academyCode = academy.code;
   next();
 });
+
 
 // 🏫 TENANT ROUTES
 app.use("/api/auth", authRoutes);

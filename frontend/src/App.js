@@ -281,8 +281,6 @@
 
 
 
-
-
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -413,7 +411,7 @@ function App() {
           }
         />
 
-        {/* TEACHERS */}
+        {/* TEACHERS (ADMIN ONLY) */}
         <Route
           path="/teachers"
           element={
@@ -422,8 +420,32 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/teachers/add"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <TeacherRegister />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers/edit/:id"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <TeacherEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers/left"
+          element={
+            <ProtectedRoute allowedRoles={["academyAdmin"]}>
+              <LeftTeachers />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* TEACHER */}
+        {/* TEACHER DASHBOARD */}
         <Route
           path="/dashboard/teacher"
           element={
@@ -433,7 +455,7 @@ function App() {
           }
         />
 
-        {/* STUDENT */}
+        {/* STUDENT DASHBOARD */}
         <Route
           path="/dashboard/student"
           element={
@@ -461,6 +483,24 @@ function App() {
           }
         />
 
+        {/* ASSESSMENTS */}
+        <Route
+          path="/student-assessments"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <StudentAssessmentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-assessments"
+          element={
+            <ProtectedRoute allowedRoles={["teacher"]}>
+              <TeacherStudentReport />
+            </ProtectedRoute>
+          }
+        />
+
         {/* FEES */}
         <Route
           path="/fees/students"
@@ -478,6 +518,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* OUR CHAMPIONS (PUBLIC) */}
+        <Route path="/our-champions" element={<Champions />} />
 
         {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/login" replace />} />

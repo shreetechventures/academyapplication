@@ -21,7 +21,8 @@ export default function Lessons() {
   // ⭐ main category state
   const [category, setCategory] = useState("army");
 
-  const role = localStorage.getItem("role");
+  const role = (localStorage.getItem("role") || "").toLowerCase();
+  const canManage = role === "academyadmin" || role === "teacher";
 
   // ======================
   // LOAD LESSONS

@@ -37,8 +37,8 @@ const canManageFees = async (req, res, next) => {
     });
   } catch (err) {
     console.error("canManageFees error:", err);
-    res.status(500).json({ message: "Permission check failed" });
+    return res.status(500).json({ message: "Permission check failed" });
   }
 };
 
-module.exports = { canManageFees }; // ✅ THIS LINE IS CRITICAL
+module.exports = { canManageFees };

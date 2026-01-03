@@ -66,12 +66,12 @@ router.put(
 
 /* ===================== SUMMARY ===================== */
 
-// 🧾 Academy fee summary (ADMIN only)
 router.get(
   "/summary",
   authMiddleware,
   canManageFees,
-  feeController.getAcademyFeeSummary
+  (req, res) => feeController.getAcademyFeeSummary(req, res)
 );
+
 
 module.exports = router;

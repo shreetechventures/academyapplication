@@ -155,19 +155,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.set("subdomain offset", 2);
-
 // 🌍 PUBLIC
 app.use("/api/public", publicRoutes);
 
-// 🔐 AUTH (includes /login + /superadmin/login)
+// 🔐 AUTH (NO TENANT CHECK)
 app.use("/api/auth", authRoutes);
 
-// 🧑‍💼 SUPERADMIN (after login)
+// 🧑‍💼 SUPERADMIN (NO TENANT CHECK)
 app.use("/api/superadmin", superAdminRoutes);
 
-// 🏫 TENANT RESOLVER
+// 🏫 TENANT RESOLVER (ONLY FOR ACADEMY ROUTES)
 app.use("/api", async (req, res, next) => {
-  if (req.path.startsWith("/public") || req.path.startsWith("/superadmin")) {
+  // ❌ DO NOT block auth & superadmin
+  if (
+    req.path.startsWith("/auth") ||
+    req.path.startsWith("/superadmin") ||
+    req.path.startsWith("/public")
+  ) {
     return next();
   }
 

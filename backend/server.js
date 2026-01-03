@@ -124,17 +124,16 @@
 // };
 
 // start();
-
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
 const connectDB = require("./utils/db");
-const Academy = require("./models/Academy");
+const tenantResolver = require("./middleware/tenantResolver");
 
 // ROUTES
-// const publicRoutes = require("./routes/public.routes");
+const publicRoutes = require("./routes/public.routes");
 const authRoutes = require("./routes/auth.routes");
 const superAdminRoutes = require("./routes/superAdmin.routes");
 
@@ -156,48 +155,15 @@ app.use(cors());
 app.use(express.json());
 app.set("subdomain offset", 2);
 
-/* =====================================================
-   🌍 PUBLIC & AUTH (NO TENANT)
-===================================================== */
-// app.use("/api/public", publicRoutes);
+// 🌍 PUBLIC & AUTH (NO TENANT)
+app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
-
-/* =====================================================
-   🧑‍💼 SUPERADMIN (NO TENANT)
-===================================================== */
 app.use("/api/superadmin", superAdminRoutes);
 
-/* =====================================================
-   🏫 TENANT RESOLVER (ACADEMY ONLY)
-===================================================== */
-app.use("/api", async (req, res, next) => {
-  if (
-    req.path.startsWith("/auth") ||
-    req.path.startsWith("/superadmin")
-  ) {
-    return next();
-  }
+// 🏫 TENANT RESOLVER (ONLY FOR TENANT ROUTES)
+app.use("/api", tenantResolver);
 
-  let subdomain = req.subdomains[0];
-  if (subdomain === "www") subdomain = req.subdomains[1];
-
-  if (!subdomain) {
-    return res.status(400).json({ message: "Academy subdomain missing" });
-  }
-
-  const academy = await Academy.findOne({ code: subdomain });
-  if (!academy) {
-    return res.status(404).json({ message: "Academy not found" });
-  }
-
-  req.academy = academy;
-  req.academyCode = academy.code;
-  next();
-});
-
-/* =====================================================
-   🏫 TENANT ROUTES
-===================================================== */
+// 🏫 TENANT ROUTES
 app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);

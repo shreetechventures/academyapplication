@@ -87,7 +87,7 @@ router.put("/change-password", authMiddleware, async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-const academyCode = req.academyCode || resolveAcademyCode(req);
+    const academyCode = req.academyCode || resolveAcademyCode(req);
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
@@ -108,19 +108,63 @@ const academyCode = req.academyCode || resolveAcademyCode(req);
         token,
         role: "superadmin",
         name: "SuperAdmin",
-        userId: "superadmin"
+        userId: "superadmin",
       });
     }
 
+    /**
+     * ============================================================
+     * 🔐 SUPERADMIN LOGIN (GLOBAL)
+     * POST /api/auth/superadmin/login
+     * ============================================================
+     */
+    router.post("/superadmin/login", async (req, res) => {
+      try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({
+          email: email.toLowerCase(),
+          role: "superadmin",
+        });
+
+        if (!user) {
+          return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        const match = await bcrypt.compare(password, user.passwordHash);
+        if (!match) {
+          return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        const token = jwt.sign(
+          {
+            id: user._id,
+            role: "superadmin",
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: "8h" }
+        );
+
+        res.json({
+          token,
+          role: "superadmin",
+          name: user.name,
+          userId: user._id.toString(),
+        });
+      } catch (err) {
+        console.error("SUPERADMIN LOGIN ERROR:", err);
+        res.status(500).json({ message: "Server error" });
+      }
+    });
+
     // 1️⃣ Check academy exists
     const academy = await Academy.findOne({ code: academyCode });
-    if (!academy)
-      return res.status(400).json({ message: "Academy not found" });
+    if (!academy) return res.status(400).json({ message: "Academy not found" });
 
     // 2️⃣ Academy Admin Login
     let user = await User.findOne({
       email: email.toLowerCase(),
-      academyCode
+      academyCode,
     }).select("+passwordHash");
 
     if (user) {
@@ -131,9 +175,10 @@ const academyCode = req.academyCode || resolveAcademyCode(req);
     }
 
     // 3️⃣ Teacher Login
-    let teacherUser = await Teacher
-      .findOne({ email: email.toLowerCase(), academyCode })
-      .select("+password");
+    let teacherUser = await Teacher.findOne({
+      email: email.toLowerCase(),
+      academyCode,
+    }).select("+password");
 
     if (teacherUser) {
       const valid = await bcrypt.compare(password, teacherUser.password);
@@ -143,9 +188,10 @@ const academyCode = req.academyCode || resolveAcademyCode(req);
     }
 
     // 4️⃣ Student Login (Candidate)
-    let student = await Candidate
-      .findOne({ email: email.toLowerCase(), academyCode })
-      .select("+password");
+    let student = await Candidate.findOne({
+      email: email.toLowerCase(),
+      academyCode,
+    }).select("+password");
 
     if (student) {
       const valid = await bcrypt.compare(password, student.password);
@@ -156,12 +202,10 @@ const academyCode = req.academyCode || resolveAcademyCode(req);
 
     // 5️⃣ No user found
     return res.status(404).json({ message: "User not found" });
-
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 module.exports = router;

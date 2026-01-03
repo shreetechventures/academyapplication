@@ -1,3 +1,4 @@
+// frontend/src/pages/Login.jsx
 import React, { useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   /* =====================================================
-     🔐 LOGIN HANDLER (ALL ROLES)
+     🔐 LOGIN HANDLER (SUPERADMIN + ACADEMY USERS)
   ===================================================== */
   const handleLogin = async () => {
     setErr("");
@@ -23,12 +24,14 @@ export default function Login() {
       return;
     }
 
-    // 🚫 BLOCK LOGIN ON www (CRITICAL FIX)
+    // 🚫 BLOCK www usage
     const host = window.location.hostname;
     if (host.startsWith("www.")) {
-      const fixedHost = host.replace("www.", "");
       window.location.replace(
-        window.location.protocol + "//" + fixedHost + window.location.pathname
+        window.location.protocol +
+          "//" +
+          host.replace("www.", "") +
+          window.location.pathname
       );
       return;
     }
@@ -36,8 +39,16 @@ export default function Login() {
     try {
       setLoading(true);
 
-      // ✅ SINGLE LOGIN ENDPOINT (backend decides role)
-      const res = await api.post("/auth/login", {
+      // 🔍 Detect subdomain
+      const parts = host.split(".");
+      const isSubdomainLogin = parts.length > 2; // shreenath.careeracademy.cloud
+
+      // 🎯 Choose correct endpoint
+      const url = isSubdomainLogin
+        ? "/auth/login" // academy users
+        : "/auth/superadmin/login"; // superadmin
+
+      const res = await api.post(url, {
         email: identifier.trim(),
         password: secret,
       });
@@ -52,9 +63,11 @@ export default function Login() {
 
       if (academyCode) {
         localStorage.setItem("academyCode", academyCode);
+      } else {
+        localStorage.removeItem("academyCode");
       }
 
-      // 🚦 ROLE-BASED REDIRECT
+      // 🚦 ROLE BASED REDIRECT
       if (role === "superadmin") {
         navigate("/superadmin");
       } else if (role === "academyAdmin") {
@@ -76,7 +89,6 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* Academy header optional */}
         <AcademyHeader academy={null} />
 
         <div className="login-field">

@@ -124,6 +124,7 @@
 // };
 
 // start();
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -156,16 +157,28 @@ app.use(express.json());
 app.set("subdomain offset", 2);
 
 /* =====================================================
-   🌍 PUBLIC + AUTH (NO TENANT)
+   🌍 PUBLIC & AUTH (NO TENANT)
 ===================================================== */
 app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
+
+/* =====================================================
+   🧑‍💼 SUPERADMIN (NO TENANT)
+===================================================== */
 app.use("/api/superadmin", superAdminRoutes);
 
 /* =====================================================
    🏫 TENANT RESOLVER (ACADEMY ONLY)
 ===================================================== */
 app.use("/api", async (req, res, next) => {
+  if (
+    req.path.startsWith("/public") ||
+    req.path.startsWith("/auth") ||
+    req.path.startsWith("/superadmin")
+  ) {
+    return next();
+  }
+
   let subdomain = req.subdomains[0];
   if (subdomain === "www") subdomain = req.subdomains[1];
 

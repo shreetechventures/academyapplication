@@ -26,6 +26,7 @@ export default function Login() {
 
     // 🚫 BLOCK www usage
     const host = window.location.hostname;
+
     if (host.startsWith("www.")) {
       window.location.replace(
         window.location.protocol +
@@ -39,15 +40,18 @@ export default function Login() {
     try {
       setLoading(true);
 
-      const isSuperAdmin = identifier === "superadmin@careeracademy.com";
+      // superadmin domain OR root domain
+      const isSuperAdmin =
+        host === "careeracademy.cloud" ||
+        host === "www.careeracademy.cloud" ||
+        host.startsWith("superadmin.");
 
-      const res = await api.post(
-        isSuperAdmin ? "/auth/superadmin/login" : "/auth/login",
-        {
-          email: identifier.trim(),
-          password: secret,
-        }
-      );
+      const endpoint = isSuperAdmin ? "/auth/superadmin/login" : "/auth/login";
+
+      const res = await api.post(endpoint, {
+        email: identifier.trim(),
+        password: secret,
+      });
 
       const { token, role, name, userId, academyCode } = res.data;
 

@@ -567,6 +567,7 @@
 // }
 
 // frontend/src/pages/TeacherAssessmentPage.jsx
+// frontend/src/pages/TeacherAssessmentPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../api/axios";
 
@@ -576,6 +577,7 @@ import DeleteConfirm from "../components/DeleteConfirm";
 import EditResultModal from "../components/EditResultModal";
 import PerformanceSummary from "../components/PerformanceSummary";
 import MultiTestAssessmentForm from "../components/MultiTestAssessmentForm";
+
 import "../styles/teacherAssessment.css";
 
 export default function TeacherAssessmentPage() {
@@ -591,18 +593,15 @@ export default function TeacherAssessmentPage() {
   const [filter, setFilter] = useState("all");
   const [avgScore, setAvgScore] = useState(null);
 
-  const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
+  const [deleteModal, setDeleteModal] = useState({ open: false, dayResults: [] });
   const [editModal, setEditModal] = useState({ open: false, dayResults: [] });
 
   const [search, setSearch] = useState("");
 
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 2;
-
   const selectedStudent = students.find((s) => s._id === selectedStudentId);
 
   /* =============================
-     LOAD STUDENTS & TYPES
+     LOAD STUDENTS & TEST TYPES
   ============================== */
   useEffect(() => {
     loadStudents();
@@ -611,7 +610,7 @@ export default function TeacherAssessmentPage() {
 
   const loadStudents = async () => {
     try {
-      const res = await api.get(`/students`);
+      const res = await api.get("/students");
       setStudents(res.data || []);
     } catch (err) {
       console.error("loadStudents error", err);
@@ -620,24 +619,31 @@ export default function TeacherAssessmentPage() {
 
   const loadTypes = async () => {
     try {
-      const res = await api.get(`/assessments`);
+      const res = await api.get("/assessments");
       setTypes(res.data || []);
     } catch (err) {
       console.error("loadTypes error", err);
     }
   };
 
+  /* =============================
+     LOAD STUDENT RESULTS
+  ============================== */
   const loadStudentResults = async (studentId) => {
     if (!studentId) return;
     try {
-      const res = await api.get(`/assessments/students/${studentId}/results`);
+      const res = await api.get(
+        `/assessments/students/${studentId}/results`
+      );
       setResults(res.data || []);
-      setPage(1);
     } catch (err) {
       console.error("loadStudentResults error", err);
     }
   };
 
+  /* =============================
+     LOAD CHART DATA
+  ============================== */
   const loadChartForType = async (studentId, typeId) => {
     if (!studentId || !typeId) {
       setChartData([]);
@@ -654,16 +660,17 @@ export default function TeacherAssessmentPage() {
       list.sort((a, b) => new Date(b.attemptDate) - new Date(a.attemptDate));
       list = list.slice(0, 10).reverse();
 
-      const formatted = list.map((r) => ({
-        date: new Date(r.attemptDate).toLocaleDateString(),
-        value: r.value,
-        score: r.score,
-      }));
-
-      setChartData(formatted);
+      setChartData(
+        list.map((r) => ({
+          date: new Date(r.attemptDate).toLocaleDateString(),
+          value: r.value,
+          score: r.score,
+        }))
+      );
 
       const avg =
-        list.reduce((acc, curr) => acc + curr.score, 0) / (list.length || 1);
+        list.reduce((sum, r) => sum + (r.score || 0), 0) /
+        (list.length || 1);
 
       setAvgScore(Number(avg.toFixed(1)));
     } catch (err) {
@@ -671,54 +678,36 @@ export default function TeacherAssessmentPage() {
     }
   };
 
-  const refreshAfterMultiSave = async () => {
-    if (selectedStudentId) {
-      await loadStudentResults(selectedStudentId);
-      if (selectedTypeId) {
-        await loadChartForType(selectedStudentId, selectedTypeId);
-      }
-    }
-  };
+  /* =============================
+     PERFORMANCE SUMMARY
+  ============================== */
+  const performanceMetrics = useMemo(() => {
+    if (!results.length) return null;
 
+    const avg =
+      results.reduce((a, b) => a + (b.score || 0), 0) / results.length;
+
+    const best = Math.max(...results.map((r) => r.score || 0));
+
+    return {
+      avg: Number(avg.toFixed(1)),
+      best,
+      attempts: results.length,
+    };
+  }, [results]);
+
+  /* =============================
+     FILTERED STUDENTS
+  ============================== */
   const filteredStudents = useMemo(() => {
     return students.filter((s) =>
       s.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [students, search]);
 
-  const filteredResults = useMemo(() => {
-    const now = new Date();
-    return (results || [])
-      .filter((r) => {
-        const diff = (now - new Date(r.attemptDate)) / (1000 * 3600 * 24);
-        if (filter === "7") return diff <= 7;
-        if (filter === "30") return diff <= 30;
-        return true;
-      })
-      .sort((a, b) => new Date(b.attemptDate) - new Date(a.attemptDate));
-  }, [results, filter]);
-
-  const groupedByDay = useMemo(() => {
-    const map = {};
-    filteredResults.forEach((r) => {
-      const key = new Date(r.attemptDate).toISOString().slice(0, 10);
-      if (!map[key]) map[key] = [];
-      map[key].push(r);
-    });
-    return map;
-  }, [filteredResults]);
-
-  const sortedDayKeys = Object.keys(groupedByDay).sort(
-    (a, b) => new Date(b) - new Date(a)
-  );
-
-  const totalPages = Math.max(1, Math.ceil(sortedDayKeys.length / PAGE_SIZE));
-
-  const pageDayKeys = sortedDayKeys.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  );
-
+  /* =============================
+     UNIQUE TEST TYPES
+  ============================== */
   const uniqueTypes = useMemo(() => {
     const seen = new Set();
     return types.filter((t) => {
@@ -728,16 +717,99 @@ export default function TeacherAssessmentPage() {
     });
   }, [types]);
 
+  /* =============================
+     JSX
+  ============================== */
   return (
     <PageWrapper>
       <div className="teacher-assessment-wrapper">
-        <h2>Teacher — Student Assessment</h2>
+        <h2>Student Assessment</h2>
 
-        {/* UI untouched */}
+        {/* STUDENT SELECT */}
+        <div className="assessment-controls">
+          <input
+            placeholder="Search student..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
+          <select
+            value={selectedStudentId}
+            onChange={(e) => {
+              const id = e.target.value;
+              setSelectedStudentId(id);
+              setSelectedTypeId("");
+              setChartData([]);
+              loadStudentResults(id);
+            }}
+          >
+            <option value="">Select Student</option>
+            {filteredStudents.map((s) => (
+              <option key={s._id} value={s._id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* TEST TYPE SELECT */}
+        {selectedStudentId && (
+          <select
+            value={selectedTypeId}
+            onChange={(e) => {
+              const typeId = e.target.value;
+              setSelectedTypeId(typeId);
+              loadChartForType(selectedStudentId, typeId);
+            }}
+          >
+            <option value="">Select Test</option>
+            {uniqueTypes.map((t) => (
+              <option key={t._id} value={t._id}>
+                {t.title}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {/* PERFORMANCE SUMMARY */}
+        {performanceMetrics && (
+          <PerformanceSummary
+            metrics={performanceMetrics}
+            chartData={chartData}
+          />
+        )}
+
+        {/* CHART */}
+        {chartData.length > 0 && (
+          <AssessmentChart
+            data={chartData}
+            testTitle={
+              types.find((t) => t._id === selectedTypeId)?.title || ""
+            }
+          />
+        )}
+
+        {/* ADD NEW ASSESSMENT */}
         <MultiTestAssessmentForm
           selectedStudent={selectedStudent}
-          onAfterSave={refreshAfterMultiSave}
+          onAfterSave={() => {
+            loadStudentResults(selectedStudentId);
+            loadChartForType(selectedStudentId, selectedTypeId);
+          }}
+        />
+
+        {/* MODALS (READY FOR USE) */}
+        <EditResultModal
+          open={editModal.open}
+          dayResults={editModal.dayResults}
+          onClose={() => setEditModal({ open: false, dayResults: [] })}
+          onSave={() => {}}
+        />
+
+        <DeleteConfirm
+          open={deleteModal.open}
+          onClose={() => setDeleteModal({ open: false, dayResults: [] })}
+          onConfirm={() => {}}
         />
       </div>
     </PageWrapper>

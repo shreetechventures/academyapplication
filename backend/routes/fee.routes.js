@@ -66,7 +66,6 @@ router.put(
 
 /* ===================== SUMMARY ===================== */
 
-const feeController = require("../controllers/fee.controller");
 
 router.get(
   "/summary",

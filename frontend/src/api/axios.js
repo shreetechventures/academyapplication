@@ -41,11 +41,7 @@
 //   }
 // );
 
-
-
-
 // export default api;
-
 
 import axios from "axios";
 
@@ -76,6 +72,9 @@ api.interceptors.response.use(
         alert("Session expired. Please login again.");
         window.location.href = "/login";
       }
+    }
+    if (error.response?.status === 403) {
+      alert("You don't have permission to perform this action");
     }
 
     return Promise.reject(error);

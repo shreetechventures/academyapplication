@@ -125,7 +125,6 @@
 
 // start();
 
-
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -137,8 +136,8 @@ const Academy = require("./models/Academy");
 // ROUTES
 const publicRoutes = require("./routes/public.routes");
 const superAdminRoutes = require("./routes/superAdmin.routes");
-
 const authRoutes = require("./routes/auth.routes");
+
 const adminRoutes = require("./routes/admin.routes");
 const studentRoutes = require("./routes/candidate.routes");
 const teacherRoutes = require("./routes/teachers.routes");
@@ -155,40 +154,31 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 app.set("subdomain offset", 2);
 
-// 🌍 PUBLIC & SUPERADMIN
+// 🌍 PUBLIC
 app.use("/api/public", publicRoutes);
-// app.use("/api/superadmin", superAdminRoutes);
 
+// 🔐 AUTH (includes /login + /superadmin/login)
+app.use("/api/auth", authRoutes);
+
+// 🧑‍💼 SUPERADMIN (after login)
 app.use("/api/superadmin", superAdminRoutes);
 
 // 🏫 TENANT RESOLVER
 app.use("/api", async (req, res, next) => {
-  if (
-    req.path.startsWith("/public") ||
-    req.path.startsWith("/superadmin")
-  ) {
+  if (req.path.startsWith("/public") || req.path.startsWith("/superadmin")) {
     return next();
   }
 
-  console.log("HOST:", req.headers.host);
-  console.log("SUBDOMAINS:", req.subdomains);
-
   let subdomain = req.subdomains[0];
   if (subdomain === "www") subdomain = req.subdomains[1];
-
-  console.log("RESOLVED ACADEMY CODE:", subdomain);
 
   if (!subdomain) {
     return res.status(400).json({ message: "Academy subdomain missing" });
   }
 
   const academy = await Academy.findOne({ code: subdomain });
-
-  console.log("ACADEMY FOUND:", !!academy);
-
   if (!academy) {
     return res.status(404).json({ message: "Academy not found" });
   }
@@ -198,9 +188,7 @@ app.use("/api", async (req, res, next) => {
   next();
 });
 
-
 // 🏫 TENANT ROUTES
-app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);

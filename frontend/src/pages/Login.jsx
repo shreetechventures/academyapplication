@@ -14,7 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   /* =====================================================
-     🔐 LOGIN HANDLER (SUPERADMIN + ACADEMY USERS)
+     🔐 LOGIN HANDLER (ALL ROLES – SINGLE ENDPOINT)
   ===================================================== */
   const handleLogin = async () => {
     setErr("");
@@ -24,31 +24,11 @@ export default function Login() {
       return;
     }
 
-    // 🚫 BLOCK www usage
-    const host = window.location.hostname;
-
-    if (host.startsWith("www.")) {
-      window.location.replace(
-        window.location.protocol +
-          "//" +
-          host.replace("www.", "") +
-          window.location.pathname
-      );
-      return;
-    }
-
     try {
       setLoading(true);
 
-      // superadmin domain OR root domain
-      const isSuperAdmin =
-        host === "careeracademy.cloud" ||
-        host === "www.careeracademy.cloud" ||
-        host.startsWith("superadmin.");
-
-      const endpoint = isSuperAdmin ? "/auth/superadmin/login" : "/auth/login";
-
-      const res = await api.post(endpoint, {
+      // ✅ SINGLE LOGIN ENDPOINT
+      const res = await api.post("/auth/login", {
         email: identifier.trim(),
         password: secret,
       });

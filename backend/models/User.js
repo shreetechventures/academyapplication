@@ -8,7 +8,7 @@ name: { type: String },
 email: { type: String, required: true, index: true },
 passwordHash: { type: String, required: true },
 role: { type: String, enum: ['superadmin','academyAdmin','teacher','student'], required: true },
-academyCode: { type: String, required: true, index: true },
+academyCode: { type: String, default: null },
 createdBy: { type: String, ref: 'User' },
 createdAt: { type: Date, default: Date.now }
 });

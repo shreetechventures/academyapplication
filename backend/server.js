@@ -134,7 +134,7 @@ const connectDB = require("./utils/db");
 const Academy = require("./models/Academy");
 
 // ROUTES
-const publicRoutes = require("./routes/public.routes");
+// const publicRoutes = require("./routes/public.routes");
 const authRoutes = require("./routes/auth.routes");
 const superAdminRoutes = require("./routes/superAdmin.routes");
 
@@ -159,7 +159,7 @@ app.set("subdomain offset", 2);
 /* =====================================================
    🌍 PUBLIC & AUTH (NO TENANT)
 ===================================================== */
-app.use("/api/public", publicRoutes);
+// app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
 
 /* =====================================================
@@ -172,7 +172,6 @@ app.use("/api/superadmin", superAdminRoutes);
 ===================================================== */
 app.use("/api", async (req, res, next) => {
   if (
-    req.path.startsWith("/public") ||
     req.path.startsWith("/auth") ||
     req.path.startsWith("/superadmin")
   ) {

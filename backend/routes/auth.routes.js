@@ -33,62 +33,44 @@ function sendToken(user, role, academyCode, res) {
   });
 }
 
-/* =====================================================
-   🔐 SUPERADMIN LOGIN (ENV BASED – NO DB)
-   POST /api/auth/superadmin/login
-===================================================== */
-router.post("/superadmin/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (
-      email !== process.env.SUPERADMIN_EMAIL ||
-      password !== process.env.SUPERADMIN_PASSWORD
-    ) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const token = jwt.sign(
-      { role: "superadmin" },
-      process.env.JWT_SECRET,
-      { expiresIn: "12h" }
-    );
-
-    return res.json({
-      token,
-      role: "superadmin",
-      name: "Super Admin",
-      userId: "superadmin",
-    });
-  } catch (err) {
-    console.error("SUPERADMIN LOGIN ERROR:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 /* =====================================================
    🔐 ACADEMY USERS LOGIN
    POST /api/auth/login
 ===================================================== */
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const academyCode = req.academyCode;
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
     }
 
-    // 1️⃣ Validate academy
-    const academy = await Academy.findOne({ code: academyCode });
-    if (!academy) {
-      return res.status(400).json({ message: "Academy not found" });
+    // 🔐 1️⃣ SUPERADMIN (NO TENANT)
+    const superAdmin = await User.findOne({
+      email: email.toLowerCase(),
+      role: "superadmin"
+    }).select("+passwordHash");
+
+    if (superAdmin) {
+      const ok = await bcrypt.compare(password, superAdmin.passwordHash);
+      if (!ok) return res.status(401).json({ message: "Invalid password" });
+
+      return sendToken(superAdmin, "superadmin", null, res);
     }
 
-    // 2️⃣ Academy Admin
+    // 🏫 2️⃣ TENANT USERS (academy required)
+    const academyCode = req.academyCode;
+    const academy = await Academy.findOne({ code: academyCode });
+    if (!academy) {
+      return res.status(404).json({ message: "Academy not found" });
+    }
+
+    // Admin
     const admin = await User.findOne({
       email: email.toLowerCase(),
-      academyCode,
+      academyCode
     }).select("+passwordHash");
 
     if (admin) {
@@ -98,10 +80,10 @@ router.post("/login", async (req, res) => {
       return sendToken(admin, "academyAdmin", academyCode, res);
     }
 
-    // 3️⃣ Teacher
+    // Teacher
     const teacher = await Teacher.findOne({
       email: email.toLowerCase(),
-      academyCode,
+      academyCode
     }).select("+password");
 
     if (teacher) {
@@ -111,10 +93,10 @@ router.post("/login", async (req, res) => {
       return sendToken(teacher, "teacher", academyCode, res);
     }
 
-    // 4️⃣ Student
+    // Student
     const student = await Candidate.findOne({
       email: email.toLowerCase(),
-      academyCode,
+      academyCode
     }).select("+password");
 
     if (student) {
@@ -125,12 +107,12 @@ router.post("/login", async (req, res) => {
     }
 
     return res.status(404).json({ message: "User not found" });
+
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 /* =====================================================
    🔐 CHANGE PASSWORD (ADMIN / TEACHER / STUDENT)
 ===================================================== */

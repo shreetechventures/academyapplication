@@ -39,19 +39,15 @@ export default function Login() {
     try {
       setLoading(true);
 
-      // 🔍 Detect subdomain
-      const parts = host.split(".");
-      const isSubdomainLogin = parts.length > 2; // shreenath.careeracademy.cloud
+      const isSuperAdmin = identifier === "superadmin@academy.com";
 
-      // 🎯 Choose correct endpoint
-      const url = isSubdomainLogin
-        ? "/auth/login" // academy users
-        : "/auth/superadmin/login"; // superadmin
-
-      const res = await api.post(url, {
-        email: identifier.trim(),
-        password: secret,
-      });
+      const res = await api.post(
+        isSuperAdmin ? "/auth/superadmin/login" : "/auth/login",
+        {
+          email: identifier.trim(),
+          password: secret,
+        }
+      );
 
       const { token, role, name, userId, academyCode } = res.data;
 

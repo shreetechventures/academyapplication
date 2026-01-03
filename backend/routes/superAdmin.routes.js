@@ -15,6 +15,39 @@ const { authMiddleware, permit } = require("../middleware/auth");
  * ============================================================================
  */
 
+
+router.post("/superadmin/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (
+      email !== process.env.SUPERADMIN_EMAIL ||
+      password !== process.env.SUPERADMIN_PASSWORD
+    ) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: "superadmin",
+        role: "superadmin",
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+
+    res.json({
+      token,
+      role: "superadmin",
+      name: "Super Admin",
+    });
+  } catch (err) {
+    console.error("SUPERADMIN LOGIN ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // MARK SUBSCRIPTION PAID
 router.post(
   "/subscription/mark-paid",

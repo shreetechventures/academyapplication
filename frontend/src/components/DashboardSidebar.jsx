@@ -263,7 +263,7 @@ export default function DashboardSidebar({ open, close }) {
               <Item
                 icon="📝"
                 label="Assessments"
-                link="/teacher-assessments"
+                link="/assessments"
               />
               <Item
                 icon="🧾"

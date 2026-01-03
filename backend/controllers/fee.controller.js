@@ -277,13 +277,3 @@ exports.getAcademyFeeSummary = async (req, res) => {
     res.status(500).json({ message: "Failed to load academy summary" });
   }
 };
-
-module.exports = {
-  getStudentBillingCycles,
-  updateBillingFeeAmount,
-  payBillingFee,
-  getBillingPaymentHistory,
-  getStudentFeeSummary,
-  applyDiscount,
-  getAcademyFeeSummary,
-};

@@ -66,12 +66,15 @@ router.put(
 
 /* ===================== SUMMARY ===================== */
 
+const feeController = require("../controllers/fee.controller");
+
 router.get(
   "/summary",
   authMiddleware,
   canManageFees,
-  (req, res) => feeController.getAcademyFeeSummary(req, res)
+  feeController.getAcademyFeeSummary
 );
+
 
 
 module.exports = router;

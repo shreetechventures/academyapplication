@@ -39,7 +39,7 @@ export default function Login() {
     try {
       setLoading(true);
 
-      const isSuperAdmin = identifier === "superadmin@academy.com";
+      const isSuperAdmin = identifier === "superadmin@careeracademy.com";
 
       const res = await api.post(
         isSuperAdmin ? "/auth/superadmin/login" : "/auth/login",

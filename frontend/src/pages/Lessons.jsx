@@ -254,7 +254,7 @@ export default function Lessons() {
                 <div className="lesson-meta">
                   <h3>{lesson.title}</h3>
 
-                  {(role === "academyAdmin" || role === "teacher") && (
+                  {canManage && (
                     <div className="lesson-controls">
                       <button
                         className="btn secondary small"

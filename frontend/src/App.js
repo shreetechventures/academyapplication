@@ -300,6 +300,7 @@ import TeacherRegister from "./pages/TeacherRegister";
 import TeacherEdit from "./pages/TeacherEdit";
 import LeftTeachers from "./pages/LeftTeachers";
 
+// import LessonFolders from "./pages/LessonFolders";
 import Lessons from "./pages/Lessons";
 
 import StudentAssessmentDashboard from "./pages/StudentAssessmentDashboard";
@@ -487,14 +488,14 @@ function App() {
         />
 
         {/* LESSONS */}
-        {/* <Route
+        <Route
           path="/lessons"
           element={
             <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
-              <LessonFolders />
+              <Lessons />
             </ProtectedRoute>
           }
-        /> */}
+        />
         <Route
           path="/lessons/:folderId"
           element={

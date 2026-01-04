@@ -39,6 +39,85 @@ function sendToken(user, role, academyCode, res) {
    POST /api/auth/login
 ===================================================== */
 
+// router.post("/login", async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password) {
+//       return res.status(400).json({ message: "Email and password required" });
+//     }
+
+//     // 🔐 1️⃣ SUPERADMIN (NO TENANT)
+//     const superAdmin = await User.findOne({
+//       email: email.toLowerCase(),
+//       role: "superadmin"
+//     }).select("+passwordHash");
+
+//     if (superAdmin) {
+//       const ok = await bcrypt.compare(password, superAdmin.passwordHash);
+//       if (!ok) return res.status(401).json({ message: "Invalid password" });
+
+//       return sendToken(superAdmin, "superadmin", null, res);
+//     }
+
+//     // 🏫 2️⃣ TENANT USERS (academy required)
+//     const academyCode = req.academyCode;
+//     const academy = await Academy.findOne({ code: academyCode });
+//     if (!academy) {
+//       return res.status(404).json({ message: "Academy not found" });
+//     }
+
+//     // Admin
+//     const admin = await User.findOne({
+//       email: email.toLowerCase(),
+//       academyCode
+//     }).select("+passwordHash");
+
+//     if (admin) {
+//       const ok = await bcrypt.compare(password, admin.passwordHash);
+//       if (!ok) return res.status(401).json({ message: "Invalid password" });
+
+//       return sendToken(admin, "academyAdmin", academyCode, res);
+//     }
+
+//     // Teacher
+//     const teacher = await Teacher.findOne({
+//       email: email.toLowerCase(),
+//       academyCode
+//     }).select("+password");
+
+//     if (teacher) {
+//       const ok = await bcrypt.compare(password, teacher.password);
+//       if (!ok) return res.status(401).json({ message: "Invalid password" });
+
+//       return sendToken(teacher, "teacher", academyCode, res);
+//     }
+
+//     // Student
+//     const student = await Candidate.findOne({
+//       email: email.toLowerCase(),
+//       academyCode
+//     }).select("+password");
+
+//     if (student) {
+//       const ok = await bcrypt.compare(password, student.password);
+//       if (!ok) return res.status(401).json({ message: "Invalid password" });
+
+//       return sendToken(student, "student", academyCode, res);
+//     }
+
+//     return res.status(404).json({ message: "User not found" });
+
+//   } catch (err) {
+//     console.error("LOGIN ERROR:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+
+
+
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -47,10 +126,12 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
     }
 
-    // 🔐 1️⃣ SUPERADMIN (NO TENANT)
+    /* =========================
+       SUPERADMIN (NO TENANT)
+    ========================= */
     const superAdmin = await User.findOne({
       email: email.toLowerCase(),
-      role: "superadmin"
+      role: "superadmin",
     }).select("+passwordHash");
 
     if (superAdmin) {
@@ -60,17 +141,21 @@ router.post("/login", async (req, res) => {
       return sendToken(superAdmin, "superadmin", null, res);
     }
 
-    // 🏫 2️⃣ TENANT USERS (academy required)
-    const academyCode = req.academyCode;
-    const academy = await Academy.findOne({ code: academyCode });
-    if (!academy) {
-      return res.status(404).json({ message: "Academy not found" });
+    /* =========================
+       TENANT USERS (USE DOMAIN)
+    ========================= */
+    const academyCode = req.subdomains[0] === "www"
+      ? req.subdomains[1]
+      : req.subdomains[0];
+
+    if (!academyCode) {
+      return res.status(400).json({ message: "Academy subdomain missing" });
     }
 
     // Admin
     const admin = await User.findOne({
       email: email.toLowerCase(),
-      academyCode
+      academyCode,
     }).select("+passwordHash");
 
     if (admin) {
@@ -83,7 +168,7 @@ router.post("/login", async (req, res) => {
     // Teacher
     const teacher = await Teacher.findOne({
       email: email.toLowerCase(),
-      academyCode
+      academyCode,
     }).select("+password");
 
     if (teacher) {
@@ -96,7 +181,7 @@ router.post("/login", async (req, res) => {
     // Student
     const student = await Candidate.findOne({
       email: email.toLowerCase(),
-      academyCode
+      academyCode,
     }).select("+password");
 
     if (student) {
@@ -107,12 +192,12 @@ router.post("/login", async (req, res) => {
     }
 
     return res.status(404).json({ message: "User not found" });
-
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 /* =====================================================
    🔐 CHANGE PASSWORD (ADMIN / TEACHER / STUDENT)
 ===================================================== */

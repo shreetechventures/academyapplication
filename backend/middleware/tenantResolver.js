@@ -1,7 +1,7 @@
 const Academy = require("../models/Academy");
 
 module.exports = async function tenantResolver(req, res, next) {
-  // ✅ SKIP tenant for public & auth routes
+  // 🚫 NEVER apply tenant to auth & public
   if (
     req.originalUrl.startsWith("/api/auth") ||
     req.originalUrl.startsWith("/api/public")

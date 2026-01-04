@@ -148,6 +148,7 @@ const championsRoutes = require("./routes/champions.routes");
 const feeRoutes = require("./routes/fee.routes");
 const settingsRoutes = require("./routes/settings.routes");
 const academyRoutes = require("./routes/academy.routes");
+const superAdminRoutes = require("./routes/superAdmin.routes");
 
 const app = express();
 
@@ -160,6 +161,8 @@ app.set("subdomain offset", 2);
 ============================ */
 app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/superadmin", superAdminRoutes);
+
 
 /* ============================
    🏫 TENANT RESOLVER

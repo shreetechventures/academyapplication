@@ -407,71 +407,76 @@ export default function CreateAcademyPage() {
         =============================== */}
         <h3>All Academies</h3>
 
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Code</th>
-              <th>Subscription</th>
-              <th>Max Students</th>
-              <th>Remark</th>
-              <th>Expiry</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {academies.map((a) => (
-              <tr key={a._id}>
-                <td data-label="Name">
-                  {a.name}
-                  {!a.isActive && (
-                    <span style={{ color: "red", fontSize: 12 }}>
-                      {" "}
-                      (Disabled)
-                    </span>
-                  )}
-                </td>
-
-                <td data-label="Code">{a.code}</td>
-
-                <td data-label="Subscription">
-                  {subscriptionMap?.[a.code]?.status
-                    ? subscriptionMap[a.code].status.toUpperCase()
-                    : "—"}
-                </td>
-
-                <td data-label="Max Students">
-                  {subscriptionMap?.[a.code]?.maxStudents ?? "—"}
-                </td>
-
-                <td data-label="Remark">
-                  {subscriptionMap?.[a.code]?.remark || "—"}
-                </td>
-
-                <td data-label="Expiry">
-                  {subscriptionMap?.[a.code]?.endDate
-                    ? new Date(
-                        subscriptionMap[a.code].endDate
-                      ).toLocaleDateString()
-                    : "—"}
-                </td>
-
-                <td data-label="Actions" className="actions">
-                  <button onClick={() => editAcademy(a)}>✏️ Edit</button>
-                  <button onClick={() => deleteAcademy(a._id)}>🗑 Delete</button>
-                  <button
-                    onClick={async () => {
-                      await api.put(`/superadmin/academy/${a._id}/toggle`);
-                      loadAcademies();
-                    }}
-                  >
-                    {a.isActive ? "🚫 Disable" : "✅ Enable"}
-                  </button>
-                </td>
+        <div className="table-responsive">
+          <table className="admin-table" border="1" cellPadding="10">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Subscription</th>
+                <th>Max Students</th>
+                <th>Remark</th>
+                <th>Expiry</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {academies.map((a) => (
+                <tr key={a._id}>
+                  <td data-label="Name">
+                    {a.name}
+                    {!a.isActive && (
+                      <span style={{ color: "red", fontSize: 12 }}>
+                        {" "}
+                        (Disabled)
+                      </span>
+                    )}
+                  </td>
+
+                  <td data-label="Code">{a.code}</td>
+
+                  <td data-label="Subscription">
+                    {subscriptionMap?.[a.code]?.status
+                      ? subscriptionMap[a.code].status.toUpperCase()
+                      : "—"}
+                  </td>
+
+                  <td data-label="Max Students">
+                    {subscriptionMap?.[a.code]?.maxStudents ?? "—"}
+                  </td>
+
+                  <td data-label="Remark">
+                    {subscriptionMap?.[a.code]?.remark || "—"}
+                  </td>
+
+                  <td data-label="Expiry">
+                    {subscriptionMap?.[a.code]?.endDate
+                      ? new Date(
+                          subscriptionMap[a.code].endDate
+                        ).toLocaleDateString()
+                      : "—"}
+                  </td>
+
+                  <td data-label="Actions" className="actions">
+                    <button onClick={() => editAcademy(a)}>✏️ Edit</button>
+                    <button onClick={() => deleteAcademy(a._id)}>
+                      🗑 Delete
+                    </button>
+                    <button
+                      onClick={async () => {
+                        await api.put(`/superadmin/academy/${a._id}/toggle`);
+                        loadAcademies();
+                      }}
+                    >
+                      {a.isActive ? "🚫 Disable" : "✅ Enable"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <br />
         <button onClick={() => navigate("/superadmin")}>⬅ Back</button>

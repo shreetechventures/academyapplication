@@ -1,11 +1,10 @@
-// backend/middleware/tenantResolver.js
 const Academy = require("../models/Academy");
 
 module.exports = async function tenantResolver(req, res, next) {
-  // 🚫 Skip tenant for public & auth & superadmin
+  // ❌ Skip tenant for auth & public & superadmin
   if (
-    req.path.startsWith("/public") ||
     req.path.startsWith("/auth") ||
+    req.path.startsWith("/public") ||
     req.path.startsWith("/superadmin")
   ) {
     return next();
@@ -19,7 +18,6 @@ module.exports = async function tenantResolver(req, res, next) {
   }
 
   const academy = await Academy.findOne({ code: subdomain });
-
   if (!academy) {
     return res.status(404).json({ message: "Academy not found" });
   }

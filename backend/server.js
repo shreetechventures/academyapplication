@@ -124,6 +124,8 @@
 // };
 
 // start();
+
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -155,15 +157,21 @@ app.use(cors());
 app.use(express.json());
 app.set("subdomain offset", 2);
 
-// 🌍 PUBLIC & AUTH (NO TENANT)
+/* =====================================================
+   🌍 PUBLIC + AUTH (NO TENANT)
+===================================================== */
 app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/superadmin", superAdminRoutes);
 
-// 🏫 TENANT RESOLVER (ONLY FOR TENANT ROUTES)
+/* =====================================================
+   🏫 TENANT RESOLVER (AFTER AUTH)
+===================================================== */
 app.use("/api", tenantResolver);
 
-// 🏫 TENANT ROUTES
+/* =====================================================
+   🏫 TENANT ROUTES
+===================================================== */
 app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);

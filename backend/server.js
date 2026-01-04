@@ -125,7 +125,6 @@
 
 // start();
 
-
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -137,7 +136,6 @@ const tenantResolver = require("./middleware/tenantResolver");
 // ROUTES
 const publicRoutes = require("./routes/public.routes");
 const authRoutes = require("./routes/auth.routes");
-const superAdminRoutes = require("./routes/superAdmin.routes");
 
 const adminRoutes = require("./routes/admin.routes");
 const studentRoutes = require("./routes/candidate.routes");
@@ -157,21 +155,20 @@ app.use(cors());
 app.use(express.json());
 app.set("subdomain offset", 2);
 
-/* =====================================================
+/* ============================
    🌍 PUBLIC + AUTH (NO TENANT)
-===================================================== */
+============================ */
 app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/superadmin", superAdminRoutes);
 
-/* =====================================================
-   🏫 TENANT RESOLVER (AFTER AUTH)
-===================================================== */
+/* ============================
+   🏫 TENANT RESOLVER
+============================ */
 app.use("/api", tenantResolver);
 
-/* =====================================================
+/* ============================
    🏫 TENANT ROUTES
-===================================================== */
+============================ */
 app.use("/api/admin", adminRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);

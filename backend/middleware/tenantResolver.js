@@ -1,11 +1,10 @@
 const Academy = require("../models/Academy");
 
 module.exports = async function tenantResolver(req, res, next) {
-  // ❌ Skip tenant for auth & public & superadmin
+  // ✅ SKIP tenant for public & auth routes
   if (
-    req.path.startsWith("/auth") ||
-    req.path.startsWith("/public") ||
-    req.path.startsWith("/superadmin")
+    req.originalUrl.startsWith("/api/auth") ||
+    req.originalUrl.startsWith("/api/public")
   ) {
     return next();
   }

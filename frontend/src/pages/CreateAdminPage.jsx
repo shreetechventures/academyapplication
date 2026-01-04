@@ -10,7 +10,7 @@ export default function CreateAdminPage() {
     name: "",
     email: "",
     password: "",
-    academyCode: ""
+    academyCode: "",
   });
 
   const [admins, setAdmins] = useState([]);
@@ -53,45 +53,66 @@ export default function CreateAdminPage() {
     loadAdmins();
   };
 
-const logout = () => {
-  localStorage.clear();
-  navigate("/login"); // ✅ correct
-};
-
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login"); // ✅ correct
+  };
 
   return (
     <div className="superadmin-form-container">
-    <div>
       <div>
-        <h2>Manage Academy Admins</h2>
-        {/* <button onClick={logout}>Logout</button> */}
-      </div>
+        <div>
+          <h2>Manage Academy Admins</h2>
+          {/* <button onClick={logout}>Logout</button> */}
+        </div>
 
-      <hr />
+        <hr />
 
-      <input name="name" placeholder="Name" value={form.name} onChange={handleChange} /><br /><br />
-      <input name="email" placeholder="Email" value={form.email} onChange={handleChange} /><br /><br />
-      <input name="password" type="password" placeholder="Password" onChange={handleChange} /><br /><br />
-      {!editingId && (
-        <>
-          <input
-            name="academyCode"
-            placeholder="Academy Code"
-            value={form.academyCode}
-            onChange={handleChange}
-          />
-          <br /><br />
-        </>
-      )}
+        <input
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+        />
+        <br />
+        <br />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+        />
+        <br />
+        <br />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          onChange={handleChange}
+        />
+        <br />
+        <br />
+        {!editingId && (
+          <>
+            <input
+              name="academyCode"
+              placeholder="Academy Code"
+              value={form.academyCode}
+              onChange={handleChange}
+            />
+            <br />
+            <br />
+          </>
+        )}
 
-      <button onClick={submit}>
-        {editingId ? "Update Admin" : "Create Admin"}
-      </button>
+        <button onClick={submit}>
+          {editingId ? "Update Admin" : "Create Admin"}
+        </button>
 
-      {msg && <p>{msg}</p>}
+        {msg && <p>{msg}</p>}
 
-      <hr />
-
+        <hr />
+        {/* 
       <h3>Existing Admins</h3>
       <table border="1" cellPadding="8">
         <thead>
@@ -127,8 +148,59 @@ const logout = () => {
       </table>
 
       <br />
-      <button onClick={() => navigate("/superadmin")}>⬅ Back</button>
-    </div>
+      <button onClick={() => navigate("/superadmin")}>⬅ Back</button> */}
+
+        <h3>Existing Admins</h3>
+
+        <div className="table-responsive">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Academy</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {admins.map((a) => (
+                <tr key={a._id}>
+                  <td>{a.name}</td>
+                  <td>{a.email}</td>
+                  <td>{a.academyCode}</td>
+                  <td className="actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => {
+                        setEditingId(a._id);
+                        setForm({
+                          name: a.name,
+                          email: a.email,
+                          password: "",
+                          academyCode: a.academyCode,
+                        });
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => remove(a._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <br />
+        <button className="back-btn" onClick={() => navigate("/superadmin")}>
+          ⬅ Back
+        </button>
+      </div>
     </div>
   );
 }

@@ -609,13 +609,14 @@
 }
 
 .assessment-controls {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  flex: 1 1;
-  font-size: 14px;
-  min-width: 180px;
-  outline: none;
-  padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 17px;
+    flex: 1 1;
+    font-size: 13px;
+    min-width: 170px;
+    outline: none;
+    padding: 9px;
+    margin-bottom: 19px;
 }
 
 @media (max-width: 500px) {

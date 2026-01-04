@@ -21,12 +21,15 @@ export default function Lessons() {
   // ⭐ main category state
   const [category, setCategory] = useState("army");
 
-  const role = (localStorage.getItem("role") || "").toLowerCase();
-  const canManage = role === "academyadmin" || role === "teacher";
+  // ✅ FIX: DO NOT lowercase role
+  const role = localStorage.getItem("role") || "";
 
-  // ======================
-  // LOAD LESSONS
-  // ======================
+  // ✅ Single source of truth for permissions
+  const canManage = role === "academyAdmin" || role === "teacher";
+
+  /* ======================
+     LOAD LESSONS
+  ====================== */
   const loadLessons = async () => {
     setLoading(true);
     try {
@@ -39,14 +42,13 @@ export default function Lessons() {
     }
   };
 
-  // 🔥 FIX: academyCode REMOVED (subdomain-based)
   useEffect(() => {
     loadLessons();
   }, [category]);
 
-  // ======================
-  // EXTRACT YOUTUBE ID
-  // ======================
+  /* ======================
+     EXTRACT YOUTUBE ID
+  ====================== */
   const parseYouTubeId = (input) => {
     if (!input) return null;
     if (/^[A-Za-z0-9_-]{6,20}$/.test(input)) return input;
@@ -69,9 +71,9 @@ export default function Lessons() {
     return null;
   };
 
-  // ======================
-  // OPEN EDIT FORM
-  // ======================
+  /* ======================
+     OPEN EDIT FORM
+  ====================== */
   const startEdit = (lesson) => {
     setEditLessonId(lesson._id);
     setTitle(lesson.title);
@@ -82,9 +84,9 @@ export default function Lessons() {
     setShowAdd(true);
   };
 
-  // ======================
-  // ADD / EDIT SAVE
-  // ======================
+  /* ======================
+     ADD / EDIT SAVE
+  ====================== */
   const handleSave = async () => {
     setError("");
 
@@ -122,9 +124,9 @@ export default function Lessons() {
     }
   };
 
-  // ======================
-  // DELETE LESSON
-  // ======================
+  /* ======================
+     DELETE LESSON
+  ====================== */
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this lesson?")) return;
 
@@ -142,7 +144,8 @@ export default function Lessons() {
         <div className="lessons-header">
           <h2>Lessons</h2>
 
-          {(role === "academyAdmin" || role === "teacher") && (
+          {/* ✅ FIXED */}
+          {canManage && (
             <button
               className="btn add-btn"
               onClick={() => {
@@ -255,6 +258,7 @@ export default function Lessons() {
                 <div className="lesson-meta">
                   <h3>{lesson.title}</h3>
 
+                  {/* ✅ FIXED */}
                   {canManage && (
                     <div className="lesson-controls">
                       <button

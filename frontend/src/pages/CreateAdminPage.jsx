@@ -105,7 +105,7 @@ export default function CreateAdminPage() {
           </>
         )}
 
-        <button onClick={submit}>
+        <button className="create-btn" onClick={submit}>
           {editingId ? "Update Admin" : "Create Admin"}
         </button>
 

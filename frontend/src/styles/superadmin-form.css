@@ -89,6 +89,8 @@
   border-collapse: collapse;
   background: #fff;
   min-width: 600px; /* enables scroll on small screens */
+      min-width: 396px;
+
 }
 
 .admin-table th,
@@ -121,6 +123,18 @@
   cursor: pointer;
   font-size: 13px;
 }
+
+
+.create-btn {
+  background: #e09915;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
 
 .delete-btn {
   background: #dc2626;

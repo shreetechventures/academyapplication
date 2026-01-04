@@ -1,7 +1,5 @@
-// frontend/src/pages/Lessons.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-
 import PageWrapper from "../components/PageWrapper";
 import "../styles/lessons.css";
 
@@ -18,13 +16,11 @@ export default function Lessons() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [description, setDescription] = useState("");
 
-  // ⭐ main category state
+  // category
   const [category, setCategory] = useState("army");
 
-  // ✅ FIX: DO NOT lowercase role
+  // ✅ ROLE (DO NOT lowercase)
   const role = localStorage.getItem("role") || "";
-
-  // ✅ Single source of truth for permissions
   const canManage = role === "academyAdmin" || role === "teacher";
 
   /* ======================
@@ -47,7 +43,7 @@ export default function Lessons() {
   }, [category]);
 
   /* ======================
-     EXTRACT YOUTUBE ID
+     PARSE YOUTUBE ID
   ====================== */
   const parseYouTubeId = (input) => {
     if (!input) return null;
@@ -57,7 +53,6 @@ export default function Lessons() {
       /youtu\.be\/([A-Za-z0-9_-]{6,20})/,
       /v=([A-Za-z0-9_-]{6,20})/,
       /embed\/([A-Za-z0-9_-]{6,20})/,
-      /\/v\/([A-Za-z0-9_-]{6,20})/,
     ];
 
     for (const p of patterns) {
@@ -65,14 +60,11 @@ export default function Lessons() {
       if (m && m[1]) return m[1];
     }
 
-    const q = input.match(/[?&]v=([A-Za-z0-9_-]{6,20})/);
-    if (q && q[1]) return q[1];
-
     return null;
   };
 
   /* ======================
-     OPEN EDIT FORM
+     START EDIT
   ====================== */
   const startEdit = (lesson) => {
     setEditLessonId(lesson._id);
@@ -85,32 +77,32 @@ export default function Lessons() {
   };
 
   /* ======================
-     ADD / EDIT SAVE
+     SAVE
   ====================== */
   const handleSave = async () => {
     setError("");
 
     const youtubeId = parseYouTubeId(youtubeUrl);
     if (!title.trim() || !youtubeId) {
-      setError("Provide a title and valid YouTube URL or ID.");
+      setError("Provide title and valid YouTube URL or ID");
       return;
     }
 
-    try {
-      const payload = {
-        title: title.trim(),
-        youtubeUrlOrId: youtubeUrl.trim(),
-        description,
-        category,
-      };
+    const payload = {
+      title: title.trim(),
+      youtubeUrlOrId: youtubeUrl.trim(),
+      description,
+      category,
+    };
 
+    try {
       if (editMode && editLessonId) {
         await api.put(`/lessons/${editLessonId}`, payload);
       } else {
         await api.post(`/lessons`, payload);
       }
 
-      // Reset
+      // reset
       setTitle("");
       setYoutubeUrl("");
       setDescription("");
@@ -120,12 +112,12 @@ export default function Lessons() {
 
       loadLessons();
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to save lesson");
+      setError(err.response?.data?.message || "Save failed");
     }
   };
 
   /* ======================
-     DELETE LESSON
+     DELETE
   ====================== */
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this lesson?")) return;
@@ -144,7 +136,6 @@ export default function Lessons() {
         <div className="lessons-header">
           <h2>Lessons</h2>
 
-          {/* ✅ FIXED */}
           {canManage && (
             <button
               className="btn add-btn"
@@ -163,61 +154,44 @@ export default function Lessons() {
           )}
         </div>
 
-        {/* CATEGORY BUTTONS */}
+        {/* CATEGORY */}
         <div className="lesson-category-buttons">
-          <button
-            className={`lesson-cat-btn ${category === "army" ? "active" : ""}`}
-            onClick={() => setCategory("army")}
-          >
-            Army
-          </button>
-
-          <button
-            className={`lesson-cat-btn ${category === "navy" ? "active" : ""}`}
-            onClick={() => setCategory("navy")}
-          >
-            Navy
-          </button>
-
-          <button
-            className={`lesson-cat-btn ${
-              category === "airforce" ? "active" : ""
-            }`}
-            onClick={() => setCategory("airforce")}
-          >
-            Airforce
-          </button>
+          {["army", "navy", "airforce"].map((c) => (
+            <button
+              key={c}
+              className={`lesson-cat-btn ${category === c ? "active" : ""}`}
+              onClick={() => setCategory(c)}
+            >
+              {c.toUpperCase()}
+            </button>
+          ))}
         </div>
 
-        {/* ADD / EDIT FORM */}
+        {/* FORM */}
         {showAdd && (
           <div className="add-lesson-form card">
             {error && <div className="form-error">{error}</div>}
 
-            <label>Title</label>
             <input
+              placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter video title"
             />
 
-            <label>YouTube URL or ID</label>
             <input
+              placeholder="YouTube URL or ID"
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
-              placeholder="https://youtube.com/watch?v=..."
             />
 
-            <label>Description</label>
             <textarea
+              rows="3"
+              placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows="3"
             />
 
-            <label>Category</label>
             <select
-              className="select"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
@@ -226,39 +200,24 @@ export default function Lessons() {
               <option value="airforce">Airforce</option>
             </select>
 
-            <div className="form-actions">
-              <button className="btn primary" onClick={handleSave}>
-                {editMode ? "Update" : "Save"}
-              </button>
-
-              <button
-                className="btn secondary"
-                onClick={() => {
-                  setShowAdd(false);
-                  setEditMode(false);
-                  setEditLessonId(null);
-                  setError("");
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <button className="btn primary" onClick={handleSave}>
+              {editMode ? "Update" : "Save"}
+            </button>
           </div>
         )}
 
-        {/* LESSON LIST */}
+        {/* LIST */}
         <div className="lessons-list">
           {loading ? (
             <div>Loading...</div>
           ) : lessons.length === 0 ? (
-            <div className="empty">No lessons found.</div>
+            <div className="empty">No lessons found</div>
           ) : (
             lessons.map((lesson) => (
               <div className="lesson-card" key={lesson._id}>
                 <div className="lesson-meta">
                   <h3>{lesson.title}</h3>
 
-                  {/* ✅ FIXED */}
                   {canManage && (
                     <div className="lesson-controls">
                       <button
@@ -267,7 +226,6 @@ export default function Lessons() {
                       >
                         Edit
                       </button>
-
                       <button
                         className="btn danger small"
                         onClick={() => handleDelete(lesson._id)}
@@ -278,17 +236,13 @@ export default function Lessons() {
                   )}
                 </div>
 
-                <div className="lesson-player">
-                  <iframe
-                    title={lesson.title}
-                    src={`https://www.youtube.com/embed/${lesson.youtubeId}`}
-                    allowFullScreen
-                  />
-                </div>
+                <iframe
+                  title={lesson.title}
+                  src={`https://www.youtube.com/embed/${lesson.youtubeId}`}
+                  allowFullScreen
+                />
 
-                {lesson.description && (
-                  <p className="lesson-desc">{lesson.description}</p>
-                )}
+                {lesson.description && <p>{lesson.description}</p>}
               </div>
             ))
           )}

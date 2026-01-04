@@ -136,6 +136,7 @@ const tenantResolver = require("./middleware/tenantResolver");
 // ROUTES
 const publicRoutes = require("./routes/public.routes");
 const authRoutes = require("./routes/auth.routes");
+const superAdminRoutes = require("./routes/superAdmin.routes");
 
 const adminRoutes = require("./routes/admin.routes");
 const studentRoutes = require("./routes/candidate.routes");
@@ -148,7 +149,6 @@ const championsRoutes = require("./routes/champions.routes");
 const feeRoutes = require("./routes/fee.routes");
 const settingsRoutes = require("./routes/settings.routes");
 const academyRoutes = require("./routes/academy.routes");
-const superAdminRoutes = require("./routes/superAdmin.routes");
 
 const app = express();
 

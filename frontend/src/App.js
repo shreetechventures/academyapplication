@@ -180,12 +180,6 @@
 
 // export default App;
 
-
-
-
-
-
-
 // import React from "react";
 // import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // import SuperAdminDashboard from "./pages/SuperAdminDashboard";
@@ -237,7 +231,6 @@
 //         <Route path="/dashboard/student" element={<StudentDashboard />} />
 //         <Route path="/superadmin" element={<SuperAdminDashboard />} />
 
-
 //         {/* ADMIN */}
 //         <Route path="/admin" element={<AdminPanel />} />
 //         <Route path="/classes" element={<Classes />} />
@@ -279,8 +272,6 @@
 
 // export default App;
 
-
-
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -319,6 +310,9 @@ import Champions from "./pages/Champions";
 import StudentFee from "./pages/StudentFee";
 import MyFee from "./pages/MyFee";
 
+import CreateAcademy from "./pages/CreateAcademyPage";
+import CreateAdmin from "./pages/CreateAdminPage";
+
 function App() {
   return (
     <BrowserRouter>
@@ -336,6 +330,34 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["superadmin"]}>
               <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* SUPERADMIN */}
+        <Route
+          path="/superadmin"
+          element={
+            <ProtectedRoute allowedRoles={["superadmin"]}>
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/superadmin/create-academy"
+          element={
+            <ProtectedRoute allowedRoles={["superadmin"]}>
+              <CreateAcademy />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/superadmin/create-admin"
+          element={
+            <ProtectedRoute allowedRoles={["superadmin"]}>
+              <CreateAdmin />
             </ProtectedRoute>
           }
         />
@@ -381,7 +403,7 @@ function App() {
         <Route
           path="/students"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin","teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <Students />
             </ProtectedRoute>
           }
@@ -389,7 +411,7 @@ function App() {
         <Route
           path="/students/add"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin","teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <StudentRegister />
             </ProtectedRoute>
           }
@@ -397,7 +419,7 @@ function App() {
         <Route
           path="/students/edit/:id"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin","teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <StudentEdit />
             </ProtectedRoute>
           }
@@ -405,7 +427,7 @@ function App() {
         <Route
           path="/students/left"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin","teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <LeftStudents />
             </ProtectedRoute>
           }
@@ -477,7 +499,9 @@ function App() {
         <Route
           path="/lessons/:folderId"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin", "teacher","student"]}>
+            <ProtectedRoute
+              allowedRoles={["academyAdmin", "teacher", "student"]}
+            >
               <Lessons />
             </ProtectedRoute>
           }
@@ -495,7 +519,7 @@ function App() {
         <Route
           path="/assessments"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin","teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <TeacherStudentReport />
             </ProtectedRoute>
           }
@@ -505,7 +529,7 @@ function App() {
         <Route
           path="/fees/students"
           element={
-            <ProtectedRoute allowedRoles={["academyAdmin","teacher"]}>
+            <ProtectedRoute allowedRoles={["academyAdmin", "teacher"]}>
               <StudentFee />
             </ProtectedRoute>
           }

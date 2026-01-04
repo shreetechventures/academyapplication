@@ -726,8 +726,8 @@ export default function TeacherAssessmentPage() {
         <h2>Student Assessment</h2>
 
         {/* STUDENT SELECT */}
-        <div className="assessment-controls">
-          <input
+        <div >
+          <input className="assessment-controls"
             placeholder="Search student..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

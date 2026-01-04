@@ -58,8 +58,7 @@
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   /* width: 100%; */
-      max-width: 87%;
-
+  max-width: 87%;
 }
 
 .teacher-right-panel h4 {
@@ -134,7 +133,6 @@
   }
 }
 
-
 .teacher-assessment-wrapper {
   padding: 0px;
 }
@@ -145,7 +143,7 @@
 }
 
 .teacher-student-list {
-    width: 25%;
+  width: 25%;
 }
 
 .teacher-student-btn {
@@ -203,9 +201,15 @@
   font-weight: bold;
 }
 
-.score-badge.green { background: #16a34a; }
-.score-badge.orange { background: #f59e0b; }
-.score-badge.red { background: #dc2626; }
+.score-badge.green {
+  background: #16a34a;
+}
+.score-badge.orange {
+  background: #f59e0b;
+}
+.score-badge.red {
+  background: #dc2626;
+}
 
 .delete-btn {
   margin-top: 8px;
@@ -254,7 +258,6 @@
   border: none;
 }
 
-
 .teacher-results-list {
   display: grid;
   gap: 12px;
@@ -264,7 +267,7 @@
   padding: 14px;
   background: white;
   border-radius: 10px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   position: relative;
   transition: 0.2s ease;
 }
@@ -296,7 +299,6 @@
   animation: fadeIn 0.4s ease;
 }
 
-
 /* ===============================
    MOBILE: Input row goes vertical
 ================================= */
@@ -305,16 +307,12 @@
     flex-direction: column !important;
     gap: 12px;
   }
-
-  
 }
-
 
 /* ===============================
    MOBILE GRAPH FIXED SIZE
 ================================= */
 @media (max-width: 768px) {
-
   .chart-wrapper {
     position: relative !important;
     cursor: default !important;
@@ -331,7 +329,6 @@
     min-height: 31px !important;
   }
 }
-
 
 /* chart wrapper to fix recharts width/height error */
 .chart-wrapper {
@@ -350,36 +347,65 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 4000;
 }
 .modal-card {
-    width: 84%;
+  width: 84%;
   max-width: 520px;
   background: #fff;
   padding: 18px;
   border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
-.modal-card h3 { margin-top: 0; }
-.modal-card label { display:block; margin-top: 8px; font-size: 13px; color:#333; }
-.modal-card input { width:97%; padding:10px; margin-top:6px; border-radius:6px; border:1px solid #ddd; }
+.modal-card h3 {
+  margin-top: 0;
+}
+.modal-card label {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #333;
+}
+.modal-card input {
+  width: 97%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
 
 /* modal actions */
 .modal-actions {
-  display:flex; gap:8px; justify-content:flex-end; margin-top:12px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
-.btn { padding:8px 12px; border-radius:6px; border:none; cursor:pointer;    margin-left: 2px;
- background-color: #d45d1a;    color: #ffffff;
+.btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-left: 2px;
+  background-color: #d45d1a;
+  color: #ffffff;
 }
-.btn-muted { background:#f3f4f6; color:#111; }
-.btn-primary { background:#2563eb; color:#fff; }
+.btn-muted {
+  background: #f3f4f6;
+  color: #111;
+}
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
 
 /* Edit + Delete small buttons */
-.tr-edit-btn, .tr-delete-btn {
+.tr-edit-btn,
+.tr-delete-btn {
   border: none;
   background: transparent;
   cursor: pointer;
@@ -387,31 +413,68 @@
   font-size: 16px;
 }
 
-.tr-edit-btn { color: #0ea5e9; }
-.tr-delete-btn { color: #ef4444; }
+.tr-edit-btn {
+  color: #0ea5e9;
+}
+.tr-delete-btn {
+  color: #ef4444;
+}
 
 /* Pagination row */
 .pagination-row {
-  display:flex; gap:12px; align-items:center; margin-top:12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
 }
 
 /* Performance summary */
 .performance-summary {
-  display:flex; gap:12px; flex-wrap:wrap; margin: 10px 0 12px;
-  background:#f8fafc; padding:10px; border-radius:8px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 10px 0 12px;
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
 }
-.ps-item { min-width:110px; padding:6px 8px; background:#fff; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.04); }
-.ps-label { font-size:12px; color:#666; }
-.ps-value { font-size:18px; font-weight:700; }
-.ps-value.up { color: #059669; }
-.ps-value.down { color: #ef4444; }
+.ps-item {
+  min-width: 110px;
+  padding: 6px 8px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.ps-label {
+  font-size: 12px;
+  color: #666;
+}
+.ps-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+.ps-value.up {
+  color: #059669;
+}
+.ps-value.down {
+  color: #ef4444;
+}
 
 /* small responsive tweaks */
 @media (max-width: 768px) {
-  .teacher-assessment-layout { flex-direction: column; }
-  .teacher-student-list { width: 92% !important; }
-  .teacher-right-panel { max-width: 100% !important; padding: 15px; }
-  .chart-wrapper { min-height: 220px; }
+  .teacher-assessment-layout {
+    flex-direction: column;
+  }
+  .teacher-student-list {
+    width: 92% !important;
+  }
+  .teacher-right-panel {
+    max-width: 100% !important;
+    padding: 15px;
+  }
+  .chart-wrapper {
+    min-height: 220px;
+  }
 }
 
 .student-search-box {
@@ -427,7 +490,7 @@
 }
 
 .student-list-grid {
-  max-height: 240px;   /* 5 students x 48px */
+  max-height: 240px; /* 5 students x 48px */
   overflow-y: auto;
   display: grid;
   gap: 8px;
@@ -442,7 +505,6 @@
   background: #cbd5e1;
   border-radius: 4px;
 }
-
 
 /* Multi-test assessment card */
 .multi-test-card {
@@ -544,4 +606,20 @@
 .edit-day-table input {
   width: 100%;
   padding: 4px;
+}
+
+.assessment-controls {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  flex: 1 1;
+  font-size: 14px;
+  min-width: 180px;
+  outline: none;
+  padding: 10px;
+}
+
+@media (max-width: 500px) {
+  .student-search-input {
+    font-size: 13px;
+  }
 }

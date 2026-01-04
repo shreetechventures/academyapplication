@@ -4,7 +4,9 @@ module.exports = async function tenantResolver(req, res, next) {
   // 🚫 NEVER apply tenant to auth & public
   if (
     req.originalUrl.startsWith("/api/auth") ||
-    req.originalUrl.startsWith("/api/public")
+    req.originalUrl.startsWith("/api/public") ||
+    req.originalUrl.startsWith("/api/superadmin")
+
   ) {
     return next();
   }

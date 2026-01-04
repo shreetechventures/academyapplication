@@ -147,9 +147,7 @@ export default function CreateAcademyPage() {
 
     // 🔹 Load subscription
     try {
-      const subRes = await api.get(
-        `/superadmin/subscription/${academy.code}`
-      );
+      const subRes = await api.get(`/superadmin/subscription/${academy.code}`);
 
       setSubscription({
         durationMonths: subRes.data.durationMonths || 3,
@@ -424,25 +422,33 @@ export default function CreateAcademyPage() {
           <tbody>
             {academies.map((a) => (
               <tr key={a._id}>
-                <td>
+                <td data-label="Name">
                   {a.name}
                   {!a.isActive && (
                     <span style={{ color: "red", fontSize: 12 }}>
+                      {" "}
                       (Disabled)
                     </span>
                   )}
                 </td>
-                <td>{a.code}</td>
-                <td>
+
+                <td data-label="Code">{a.code}</td>
+
+                <td data-label="Subscription">
                   {subscriptionMap?.[a.code]?.status
                     ? subscriptionMap[a.code].status.toUpperCase()
                     : "—"}
                 </td>
 
-                <td>{subscriptionMap?.[a.code]?.maxStudents ?? "—"}</td>
-                <td>{subscriptionMap?.[a.code]?.remark || "—"}</td>
+                <td data-label="Max Students">
+                  {subscriptionMap?.[a.code]?.maxStudents ?? "—"}
+                </td>
 
-                <td>
+                <td data-label="Remark">
+                  {subscriptionMap?.[a.code]?.remark || "—"}
+                </td>
+
+                <td data-label="Expiry">
                   {subscriptionMap?.[a.code]?.endDate
                     ? new Date(
                         subscriptionMap[a.code].endDate
@@ -450,11 +456,9 @@ export default function CreateAcademyPage() {
                     : "—"}
                 </td>
 
-                <td>
+                <td data-label="Actions" className="actions">
                   <button onClick={() => editAcademy(a)}>✏️ Edit</button>
-                  &nbsp;
                   <button onClick={() => deleteAcademy(a._id)}>🗑 Delete</button>
-                  &nbsp;
                   <button
                     onClick={async () => {
                       await api.put(`/superadmin/academy/${a._id}/toggle`);

@@ -4,15 +4,15 @@ import React, { useState, useEffect } from "react";
 import api from "../api/axios";
 
 import PageWrapper from "../components/PageWrapper";
-import { useNavigate, useParams } from "react-router-dom"; // ✅ FIX
+import { useNavigate } from "react-router-dom";
 import "../styles/student.css";
 
 export default function StudentRegister() {
   const navigate = useNavigate();
-  const { academyCode } = useParams(); // ✅ FIX
+
+  const role = localStorage.getItem("role");
 
   const [academySettings, setAcademySettings] = useState(null);
-  const role = localStorage.getItem("role");
 
   const [form, setForm] = useState({
     studentCode: "",
@@ -21,19 +21,9 @@ export default function StudentRegister() {
 
   const [age, setAge] = useState("");
 
-  // useEffect(() => {
-  //   const loadSettings = async () => {
-  //     try {
-  //       const res = await api.get("/settings");
-  //       setAcademySettings(res.data.settings);
-  //     } catch (err) {
-  //       console.error("Failed to load academy settings");
-  //     }
-  //   };
-
-  //   loadSettings();
-  // }, []);
-
+  /* =======================
+     LOAD PERMISSIONS
+  ======================== */
   useEffect(() => {
     const loadPermissions = async () => {
       try {
@@ -49,39 +39,20 @@ export default function StudentRegister() {
 
   /* =======================
      GENERATE STUDENT CODE
+     (subdomain based)
   ======================== */
   useEffect(() => {
-    if (!academyCode) return; // ✅ already in your logic
+    const academyCode = localStorage.getItem("academyCode");
+    if (!academyCode) return;
 
-    const generateCode = () => {
-      const random = Math.floor(1000 + Math.random() * 9000);
-      const prefix = academyCode.toUpperCase();
+    const random = Math.floor(1000 + Math.random() * 9000);
+    const prefix = academyCode.toUpperCase();
 
-      setForm((prev) => ({
-        ...prev,
-        studentCode: `${prefix}-${random}`,
-      }));
-    };
-
-    generateCode();
-  }, [academyCode]);
-
-  /* =======================
-     PERMISSION CHECK
-  ======================== */
-  useEffect(() => {
-    console.log("ROLE:", role);
-    console.log("ACADEMY SETTINGS:", academySettings);
-
-    if (
-      role === "teacher" &&
-      academySettings &&
-      !academySettings.allowTrainerStudentRegistration
-    ) {
-      alert("❌ You are not allowed to register students");
-      navigate(`/students`);
-    }
-  }, [academySettings, role, navigate]);
+    setForm((prev) => ({
+      ...prev,
+      studentCode: `${prefix}-${random}`,
+    }));
+  }, []);
 
   /* =======================
      AUTO AGE CALCULATION
@@ -90,7 +61,9 @@ export default function StudentRegister() {
     if (form.dateOfBirth) {
       const dob = new Date(form.dateOfBirth);
       const diff = Date.now() - dob.getTime();
-      const calculatedAge = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+      const calculatedAge = Math.floor(
+        diff / (1000 * 60 * 60 * 24 * 365.25)
+      );
       setAge(calculatedAge);
     }
   }, [form.dateOfBirth]);
@@ -116,6 +89,16 @@ export default function StudentRegister() {
      SUBMIT FORM
   ======================== */
   const submit = async () => {
+    // 🔐 Permission check (ONLY HERE)
+    if (
+      role === "teacher" &&
+      academySettings &&
+      !academySettings.allowTrainerStudentRegistration
+    ) {
+      alert("❌ You are not allowed to register students");
+      return;
+    }
+
     if (!form.name || !form.contactNumber || !form.practiceFor.length) {
       alert("Please fill all required fields");
       return;
@@ -137,13 +120,15 @@ export default function StudentRegister() {
         age,
       };
 
-      await api.post(`/students/create`, finalData);
+      console.log("➡️ CALLING API: /students/create", finalData);
+
+      await api.post("/students/create", finalData);
 
       alert("✅ Student Registered Successfully!");
-      navigate(`/students`);
+      navigate("/students");
     } catch (err) {
       console.error("BACKEND ERROR:", err.response?.data || err.message);
-      alert("❌ Error while registering student");
+      alert(err.response?.data?.message || "❌ Error while registering student");
     }
   };
 
@@ -265,7 +250,7 @@ export default function StudentRegister() {
 
               <button
                 className="add-student-btn"
-                onClick={() => navigate(`/students`)}
+                onClick={() => navigate("/students")}
               >
                 Cancel
               </button>

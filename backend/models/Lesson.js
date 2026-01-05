@@ -9,7 +9,7 @@ const LessonSchema = new mongoose.Schema({
   // ⭐ category added instead of folderId
   category: {
     type: String,
-    enum: ["army", "navy", "airforce"],
+    enum: ["police","army", "navy", "airforce"],
     required: true
   },
 

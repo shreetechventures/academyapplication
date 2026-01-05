@@ -125,13 +125,11 @@
 
 // start();
 
-
 console.log("🔥 SERVER FILE UPDATED AT", new Date().toISOString());
 
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-
 const path = require("path");
 
 const connectDB = require("./utils/db");
@@ -154,10 +152,28 @@ const feeRoutes = require("./routes/fee.routes");
 const settingsRoutes = require("./routes/settings.routes");
 const academyRoutes = require("./routes/academy.routes");
 
+// ✅ CREATE APP FIRST
 const app = express();
 
-app.use(cors());
-app.options("*", cors());   // ✅ ADD THIS
+/* ============================
+   🌐 CORS (EXPRESS 4 SAFE)
+============================ */
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+// ✅ Manual preflight handler (NO app.options("*"))
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.use(express.json());
 app.set("subdomain offset", 2);
@@ -168,7 +184,6 @@ app.set("subdomain offset", 2);
 app.use("/api/public", publicRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/superadmin", superAdminRoutes);
-
 
 /* ============================
    🏫 TENANT RESOLVER
@@ -190,10 +205,12 @@ app.use("/api/fees", feeRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/academy", academyRoutes);
 
-// STATIC
+// STATIC FILES
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// START
+/* ============================
+   🚀 START SERVER
+============================ */
 const start = async () => {
   await connectDB(process.env.MONGO_URI);
   console.log("✅ Mongo connected");

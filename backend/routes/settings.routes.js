@@ -1,39 +1,83 @@
 const express = require("express");
 const router = express.Router();
 
-const Academy = require("../models/Academy");
 const { authMiddleware, permit } = require("../middleware/auth");
+const Academy = require("../models/Academy");
 
-/* ============================================================
-   🔐 GET FULL SETTINGS (ADMIN ONLY)
+/* =====================================================
+   ⚙️ GET ACADEMY SETTINGS
    GET /api/settings
-============================================================ */
+===================================================== */
 router.get(
   "/",
   authMiddleware,
   permit("academyAdmin"),
   async (req, res) => {
     try {
-      const academy = await Academy.findOne({
-        academyCode: req.academyCode,
-      });
+      // const academyCode = req.academyCode;
+              const academyCode = req.params.academyCode || req.user.academyCode;
+
+
+      const academy = await Academy.findOne({ code: academyCode }).select(
+        "settings"
+      );
 
       if (!academy) {
         return res.status(404).json({ message: "Academy not found" });
       }
 
-      res.json({ settings: academy.settings });
+      res.json({
+        success: true,
+        settings: academy.settings || {},
+      });
     } catch (err) {
-      console.error("LOAD SETTINGS ERROR:", err);
-      res.status(500).json({ message: "Failed to load settings" });
+      console.error("GET SETTINGS ERROR:", err);
+      res.status(500).json({ message: "Server error" });
     }
   }
 );
 
-/* ============================================================
-   👀 GET PERMISSIONS (ADMIN + TEACHER)
-   GET /api/settings/permissions
-============================================================ */
+/* =====================================================
+   🔐 UPDATE ACADEMY PERMISSIONS
+   PUT /api/settings/permissions
+===================================================== */
+// router.put(
+//   "/permissions",
+//   authMiddleware,
+//   permit("academyAdmin"),
+//   async (req, res) => {
+//     try {
+//       const academyCode = req.academyCode;
+
+//       const {
+//         allowTrainerFeeManagement = false,
+//         allowTrainerStudentRegistration = false,
+//       } = req.body;
+
+//       await Academy.updateOne(
+//         { code: academyCode },
+//         {
+//           $set: {
+//             "settings.allowTrainerFeeManagement":
+//               Boolean(allowTrainerFeeManagement),
+//             "settings.allowTrainerStudentRegistration":
+//               Boolean(allowTrainerStudentRegistration),
+//           },
+//         }
+//       );
+
+//       res.json({
+//         success: true,
+//         message: "Permissions updated successfully",
+//       });
+//     } catch (err) {
+//       console.error("UPDATE SETTINGS ERROR:", err);
+//       res.status(500).json({ message: "Server error" });
+//     }
+//   }
+// );
+
+// ✅ GET PERMISSIONS FOR CURRENT USER (Admin / Teacher)
 router.get(
   "/permissions",
   authMiddleware,
@@ -56,45 +100,6 @@ router.get(
     } catch (err) {
       console.error("LOAD PERMISSIONS ERROR:", err);
       res.status(500).json({ message: "Failed to load permissions" });
-    }
-  }
-);
-
-/* ============================================================
-   ✏️ UPDATE PERMISSIONS (ADMIN ONLY)
-   PUT /api/settings/permissions
-============================================================ */
-router.put(
-  "/permissions",
-  authMiddleware,
-  permit("academyAdmin"),
-  async (req, res) => {
-    try {
-      const academy = await Academy.findOne({
-        academyCode: req.academyCode,
-      });
-
-      if (!academy) {
-        return res.status(404).json({ message: "Academy not found" });
-      }
-
-      academy.settings = {
-        ...academy.settings,
-        allowTrainerFeeManagement:
-          req.body.allowTrainerFeeManagement ?? false,
-        allowTrainerStudentRegistration:
-          req.body.allowTrainerStudentRegistration ?? false,
-      };
-
-      await academy.save();
-
-      res.json({
-        message: "Permissions updated successfully",
-        settings: academy.settings,
-      });
-    } catch (err) {
-      console.error("UPDATE PERMISSIONS ERROR:", err);
-      res.status(500).json({ message: "Failed to update permissions" });
     }
   }
 );

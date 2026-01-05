@@ -18,9 +18,7 @@ module.exports = async function tenantResolver(req, res, next) {
     return res.status(400).json({ message: "Academy subdomain missing" });
   }
 
-  // const academy = await Academy.findOne({ code: subdomain });
-  const academy = await Academy.findOne({ academyCode: subdomain });
-
+  const academy = await Academy.findOne({ code: subdomain });
   if (!academy) {
     return res.status(404).json({ message: "Academy not found" });
   }

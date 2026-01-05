@@ -39,38 +39,65 @@ router.get(
    🔐 UPDATE ACADEMY PERMISSIONS
    PUT /api/settings/permissions
 ===================================================== */
-router.put(
+// router.put(
+//   "/permissions",
+//   authMiddleware,
+//   permit("academyAdmin"),
+//   async (req, res) => {
+//     try {
+//       const academyCode = req.academyCode;
+
+//       const {
+//         allowTrainerFeeManagement = false,
+//         allowTrainerStudentRegistration = false,
+//       } = req.body;
+
+//       await Academy.updateOne(
+//         { code: academyCode },
+//         {
+//           $set: {
+//             "settings.allowTrainerFeeManagement":
+//               Boolean(allowTrainerFeeManagement),
+//             "settings.allowTrainerStudentRegistration":
+//               Boolean(allowTrainerStudentRegistration),
+//           },
+//         }
+//       );
+
+//       res.json({
+//         success: true,
+//         message: "Permissions updated successfully",
+//       });
+//     } catch (err) {
+//       console.error("UPDATE SETTINGS ERROR:", err);
+//       res.status(500).json({ message: "Server error" });
+//     }
+//   }
+// );
+
+// ✅ GET PERMISSIONS FOR CURRENT USER (Admin / Teacher)
+router.get(
   "/permissions",
   authMiddleware,
-  permit("academyAdmin"),
   async (req, res) => {
     try {
-      const academyCode = req.academyCode;
+      const academy = await Academy.findOne({
+        academyCode: req.academyCode,
+      }).select("settings");
 
-      const {
-        allowTrainerFeeManagement = false,
-        allowTrainerStudentRegistration = false,
-      } = req.body;
-
-      await Academy.updateOne(
-        { code: academyCode },
-        {
-          $set: {
-            "settings.allowTrainerFeeManagement":
-              Boolean(allowTrainerFeeManagement),
-            "settings.allowTrainerStudentRegistration":
-              Boolean(allowTrainerStudentRegistration),
-          },
-        }
-      );
+      if (!academy) {
+        return res.status(404).json({ message: "Academy not found" });
+      }
 
       res.json({
-        success: true,
-        message: "Permissions updated successfully",
+        allowTrainerFeeManagement:
+          academy.settings?.allowTrainerFeeManagement ?? false,
+        allowTrainerStudentRegistration:
+          academy.settings?.allowTrainerStudentRegistration ?? false,
       });
     } catch (err) {
-      console.error("UPDATE SETTINGS ERROR:", err);
-      res.status(500).json({ message: "Server error" });
+      console.error("LOAD PERMISSIONS ERROR:", err);
+      res.status(500).json({ message: "Failed to load permissions" });
     }
   }
 );

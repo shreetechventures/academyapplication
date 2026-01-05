@@ -21,18 +21,32 @@ export default function StudentRegister() {
 
   const [age, setAge] = useState("");
 
-  useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const res = await api.get("/settings");
-        setAcademySettings(res.data.settings);
-      } catch (err) {
-        console.error("Failed to load academy settings");
-      }
-    };
+  // useEffect(() => {
+  //   const loadSettings = async () => {
+  //     try {
+  //       const res = await api.get("/settings");
+  //       setAcademySettings(res.data.settings);
+  //     } catch (err) {
+  //       console.error("Failed to load academy settings");
+  //     }
+  //   };
 
-    loadSettings();
-  }, []);
+  //   loadSettings();
+  // }, []);
+
+  useEffect(() => {
+  const loadPermissions = async () => {
+    try {
+      const res = await api.get("/settings/permissions");
+      setAcademySettings(res.data);
+    } catch (err) {
+      console.error("Failed to load permissions");
+    }
+  };
+
+  loadPermissions();
+}, []);
+
 
   /* =======================
      GENERATE STUDENT CODE

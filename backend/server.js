@@ -124,11 +124,14 @@
 // };
 
 // start();
+
+
 console.log("🔥 SERVER FILE UPDATED AT", new Date().toISOString());
 
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+
 const path = require("path");
 
 const connectDB = require("./utils/db");
@@ -154,6 +157,8 @@ const academyRoutes = require("./routes/academy.routes");
 const app = express();
 
 app.use(cors());
+app.options("*", cors());   // ✅ ADD THIS
+
 app.use(express.json());
 app.set("subdomain offset", 2);
 

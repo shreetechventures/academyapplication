@@ -330,7 +330,7 @@ export default function DashboardSidebar({ open, close }) {
           <span
             className="social-icon"
             title="WhatsApp"
-            onClick={() => window.open("https://wa.me/7378705528", "_blank")}
+            onClick={() => window.open("https://wa.me/", "_blank")}
           >
             <FontAwesomeIcon icon={faWhatsapp} />
           </span>

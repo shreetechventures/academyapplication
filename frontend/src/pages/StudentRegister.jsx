@@ -21,6 +21,19 @@ export default function StudentRegister() {
 
   const [age, setAge] = useState("");
 
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const res = await api.get("/settings");
+        setAcademySettings(res.data.settings);
+      } catch (err) {
+        console.error("Failed to load academy settings");
+      }
+    };
+
+    loadSettings();
+  }, []);
+
   /* =======================
      GENERATE STUDENT CODE
   ======================== */
@@ -60,9 +73,7 @@ export default function StudentRegister() {
     if (form.dateOfBirth) {
       const dob = new Date(form.dateOfBirth);
       const diff = Date.now() - dob.getTime();
-      const calculatedAge = Math.floor(
-        diff / (1000 * 60 * 60 * 24 * 365.25)
-      );
+      const calculatedAge = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
       setAge(calculatedAge);
     }
   }, [form.dateOfBirth]);

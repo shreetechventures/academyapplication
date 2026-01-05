@@ -1,62 +1,109 @@
+// const Academy = require("../models/Academy");
+
+// const permissionMap = {
+//   studentRegistration: "allowTrainerStudentRegistration",
+//   fee: "allowTrainerFeeManagement",
+// };
+
+// const requirePermission = (permissionKey) => {
+//   return async (req, res, next) => {
+//     try {
+//       const { role } = req.user;
+
+//       // ✅ SUPERADMIN → always allowed
+//       if (role === "superadmin") {
+//         return next();
+//       }
+
+//       // ✅ ACADEMY ADMIN → always allowed
+//       if (role === "academyAdmin") {
+//         return next();
+//       }
+
+//       // ✅ TEACHER → permission-based
+//       if (role === "teacher") {
+//         const academyCode = req.params.academyCode || req.user.academyCode;
+
+//         if (!academyCode) {
+//           return res
+//             .status(400)
+//             .json({ message: "academyCode missing for permission check" });
+//         }
+
+//         const academy = await Academy.findOne({ code: academyCode });
+
+//         if (!academy) {
+//           return res.status(404).json({ message: "Academy not found" });
+//         }
+
+//         const settingKey = permissionMap[permissionKey];
+
+//         if (!settingKey) {
+//           return res.status(500).json({
+//             message: "Invalid permission key configuration",
+//           });
+//         }
+
+//         if (!academy.settings?.[settingKey]) {
+//           return res
+//             .status(403)
+//             .json({ message: "Permission denied by academy admin" });
+//         }
+
+//         return next();
+//       }
+
+//       // ❌ STUDENT or unknown roles
+//       return res.status(403).json({ message: "Access denied" });
+//     } catch (err) {
+//       console.error("Permission middleware error:", err);
+//       res.status(500).json({ message: "Permission check failed" });
+//     }
+//   };
+// };
+
+// module.exports = { requirePermission };
+
+
 const Academy = require("../models/Academy");
 
 const permissionMap = {
-  studentRegistration: "allowTrainerStudentRegistration",
   fee: "allowTrainerFeeManagement",
+  studentRegistration: "allowTrainerStudentRegistration",
 };
 
 const requirePermission = (permissionKey) => {
   return async (req, res, next) => {
     try {
-      const { role } = req.user;
+      const { role, academyCode } = req.user;
 
-      // ✅ SUPERADMIN → always allowed
-      if (role === "superadmin") {
-        return next();
-      }
-
-      // ✅ ACADEMY ADMIN → always allowed
+      // ✅ Admin ALWAYS allowed
       if (role === "academyAdmin") {
         return next();
       }
 
-      // ✅ TEACHER → permission-based
-      if (role === "teacher") {
-        const academyCode = req.params.academyCode || req.user.academyCode;
-
-        if (!academyCode) {
-          return res
-            .status(400)
-            .json({ message: "academyCode missing for permission check" });
-        }
-
-        const academy = await Academy.findOne({ code: academyCode });
-
-        if (!academy) {
-          return res.status(404).json({ message: "Academy not found" });
-        }
-
-        const settingKey = permissionMap[permissionKey];
-
-        if (!settingKey) {
-          return res.status(500).json({
-            message: "Invalid permission key configuration",
-          });
-        }
-
-        if (!academy.settings?.[settingKey]) {
-          return res
-            .status(403)
-            .json({ message: "Permission denied by academy admin" });
-        }
-
-        return next();
+      // ❌ Students never allowed
+      if (role === "student") {
+        return res.status(403).json({ message: "Permission denied" });
       }
 
-      // ❌ STUDENT or unknown roles
-      return res.status(403).json({ message: "Access denied" });
+      const academy = await Academy.findOne({ academyCode });
+
+      if (!academy || !academy.settings) {
+        return res.status(403).json({ message: "Academy settings missing" });
+      }
+
+      const settingKey = permissionMap[permissionKey];
+
+      if (!academy.settings[settingKey]) {
+        return res
+          .status(403)
+          .json({ message: "Trainer permission disabled by admin" });
+      }
+
+      next();
     } catch (err) {
-      console.error("Permission middleware error:", err);
+      console.error("PERMISSION ERROR:", err);
       res.status(500).json({ message: "Permission check failed" });
     }
   };

@@ -14,7 +14,9 @@ router.get(
   permit("academyAdmin"),
   async (req, res) => {
     try {
-      const academyCode = req.academyCode;
+      // const academyCode = req.academyCode;
+              const academyCode = req.params.academyCode || req.user.academyCode;
+
 
       const academy = await Academy.findOne({ code: academyCode }).select(
         "settings"

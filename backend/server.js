@@ -124,6 +124,7 @@
 // };
 
 // start();
+console.log("🔥 SERVER FILE UPDATED AT", new Date().toISOString());
 
 require("dotenv").config();
 const express = require("express");

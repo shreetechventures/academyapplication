@@ -5,7 +5,8 @@ const Academy = require("../models/Academy");
 const { authMiddleware, permit } = require("../middleware/auth");
 
 /* ============================================================
-   🔐 ADMIN SETTINGS (ADMIN ONLY)
+   🔐 GET FULL SETTINGS (ADMIN ONLY)
+   GET /api/settings
 ============================================================ */
 router.get(
   "/",
@@ -23,13 +24,15 @@ router.get(
 
       res.json({ settings: academy.settings });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      console.error("LOAD SETTINGS ERROR:", err);
+      res.status(500).json({ message: "Failed to load settings" });
     }
   }
 );
 
 /* ============================================================
-   ✅ PERMISSIONS (ADMIN + TEACHER)
+   👀 GET PERMISSIONS (ADMIN + TEACHER)
+   GET /api/settings/permissions
 ============================================================ */
 router.get(
   "/permissions",
@@ -46,13 +49,52 @@ router.get(
 
       res.json({
         allowTrainerFeeManagement:
-          academy.settings?.allowTrainerFeeManagement || false,
+          academy.settings?.allowTrainerFeeManagement ?? false,
         allowTrainerStudentRegistration:
-          academy.settings?.allowTrainerStudentRegistration || false,
+          academy.settings?.allowTrainerStudentRegistration ?? false,
       });
     } catch (err) {
-      console.error("PERMISSIONS ERROR:", err);
+      console.error("LOAD PERMISSIONS ERROR:", err);
       res.status(500).json({ message: "Failed to load permissions" });
+    }
+  }
+);
+
+/* ============================================================
+   ✏️ UPDATE PERMISSIONS (ADMIN ONLY)
+   PUT /api/settings/permissions
+============================================================ */
+router.put(
+  "/permissions",
+  authMiddleware,
+  permit("academyAdmin"),
+  async (req, res) => {
+    try {
+      const academy = await Academy.findOne({
+        academyCode: req.academyCode,
+      });
+
+      if (!academy) {
+        return res.status(404).json({ message: "Academy not found" });
+      }
+
+      academy.settings = {
+        ...academy.settings,
+        allowTrainerFeeManagement:
+          req.body.allowTrainerFeeManagement ?? false,
+        allowTrainerStudentRegistration:
+          req.body.allowTrainerStudentRegistration ?? false,
+      };
+
+      await academy.save();
+
+      res.json({
+        message: "Permissions updated successfully",
+        settings: academy.settings,
+      });
+    } catch (err) {
+      console.error("UPDATE PERMISSIONS ERROR:", err);
+      res.status(500).json({ message: "Failed to update permissions" });
     }
   }
 );

@@ -156,7 +156,7 @@ export default function Lessons() {
 
         {/* CATEGORY */}
         <div className="lesson-category-buttons">
-          {["army", "navy", "airforce"].map((c) => (
+          {["police","army", "navy", "airforce"].map((c) => (
             <button
               key={c}
               className={`lesson-cat-btn ${category === c ? "active" : ""}`}

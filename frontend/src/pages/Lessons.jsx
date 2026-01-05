@@ -22,6 +22,11 @@ export default function Lessons() {
   // ✅ ROLE (DO NOT lowercase)
   const role = localStorage.getItem("role") || "";
   const canManage = role === "academyAdmin" || role === "teacher";
+//   // later upgrade
+// const canManage =
+//   role === "academyAdmin" ||
+//   (role === "teacher" && permissions.allowTrainerLessonManagement);
+
 
   /* ======================
      LOAD LESSONS
@@ -195,7 +200,7 @@ export default function Lessons() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="army">police</option>
+              <option value="police">police</option>
 
               <option value="army">Army</option>
               <option value="navy">Navy</option>

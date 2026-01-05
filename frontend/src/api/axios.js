@@ -45,10 +45,21 @@
 
 import axios from "axios";
 
+// const api = axios.create({
+//   baseURL: "/api",
+//   withCredentials: false,
+// });
+
 const api = axios.create({
   baseURL: "/api",
   withCredentials: false,
+  headers: {
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+    Expires: "0",
+  },
 });
+
 
 api.interceptors.request.use(
   (config) => {

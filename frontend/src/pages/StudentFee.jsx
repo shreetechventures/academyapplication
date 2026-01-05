@@ -452,11 +452,21 @@ export default function StudentFee() {
   /* =======================
      LOAD STUDENTS
   ======================= */
+  // useEffect(() => {
+  //   api.get("/students").then((res) => {
+  //     setStudents(res.data || []);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    api.get("/students").then((res) => {
-      setStudents(res.data || []);
-    });
-  }, []);
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  api.get("/students").then((res) => {
+    setStudents(res.data || []);
+  });
+}, []);
+
 
   if (role === "student") {
     return <Navigate to="/fees/my" replace />;

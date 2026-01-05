@@ -35,18 +35,17 @@ export default function StudentRegister() {
   // }, []);
 
   useEffect(() => {
-  const loadPermissions = async () => {
-    try {
-      const res = await api.get("/settings/permissions");
-      setAcademySettings(res.data);
-    } catch (err) {
-      console.error("Failed to load permissions");
-    }
-  };
+    const loadPermissions = async () => {
+      try {
+        const res = await api.get("/settings/permissions");
+        setAcademySettings(res.data);
+      } catch (err) {
+        console.error("Failed to load permissions");
+      }
+    };
 
-  loadPermissions();
-}, []);
-
+    loadPermissions();
+  }, []);
 
   /* =======================
      GENERATE STUDENT CODE
@@ -70,20 +69,19 @@ export default function StudentRegister() {
   /* =======================
      PERMISSION CHECK
   ======================== */
-useEffect(() => {
-  console.log("ROLE:", role);
-  console.log("ACADEMY SETTINGS:", academySettings);
+  useEffect(() => {
+    console.log("ROLE:", role);
+    console.log("ACADEMY SETTINGS:", academySettings);
 
-  if (
-    role === "teacher" &&
-    academySettings &&
-    !academySettings.allowTrainerStudentRegistration
-  ) {
-    alert("❌ You are not allowed to register students");
-    navigate(`/students`);
-  }
-}, [academySettings, role, navigate]);
-
+    if (
+      role === "teacher" &&
+      academySettings &&
+      !academySettings.allowTrainerStudentRegistration
+    ) {
+      alert("❌ You are not allowed to register students");
+      navigate(`/students`);
+    }
+  }, [academySettings, role, navigate]);
 
   /* =======================
      AUTO AGE CALCULATION

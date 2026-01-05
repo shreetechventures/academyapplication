@@ -111,21 +111,40 @@ export default function Settings() {
   //   }
   // };
 
-  const togglePermission = async (key, value) => {
-  const updated = {
-    ...permissions,
-    [key]: value,
-  };
+//   const togglePermission = async (key, value) => {
+//   const updated = {
+//     ...permissions,
+//     [key]: value,
+//   };
 
+//   const previous = { ...permissions };
+
+//   try {
+//     setPermissions(updated);
+
+//     await api.put("/settings/permissions", updated);
+//   } catch (err) {
+//     alert("❌ Failed to update permission");
+//     setPermissions(previous); // rollback
+//   }
+// };
+
+
+const togglePermission = async (key, value) => {
+  const updated = { ...permissions, [key]: value };
   const previous = { ...permissions };
 
   try {
     setPermissions(updated);
 
     await api.put("/settings/permissions", updated);
+
+    // ✅ FORCE RELOAD FROM DB
+    const res = await api.get("/settings");
+    setPermissions(res.data.settings || {});
   } catch (err) {
     alert("❌ Failed to update permission");
-    setPermissions(previous); // rollback
+    setPermissions(previous);
   }
 };
 

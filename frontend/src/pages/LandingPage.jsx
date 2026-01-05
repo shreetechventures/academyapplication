@@ -92,22 +92,21 @@ export default function LandingPage() {
         ))}
       </section>
 
-<section className="contact-strip">
-  <div className="contact-content">
-    <span className="contact-label">
-      📞 To activate subscription, call or WhatsApp
-    </span>
+      <section className="contact-strip">
+        <div className="contact-content">
+          <span className="contact-label">
+            📞 To activate subscription, call or WhatsApp
+          </span>
 
-    <a href="tel:9359848300" className="contact-number">
-      9359848300
-    </a>
-  </div>
+          <a href="tel:9359848300" className="contact-number">
+            9359848300
+          </a>
+        </div>
 
-  <div className="copyright">
-    © 2026 Shree Group. All rights reserved.
-  </div>
-</section>
-
+        <div className="copyright">
+          © 2026 Shree Group. All rights reserved.
+        </div>
+      </section>
 
       {activePlan && (
         <EnquiryModal plan={activePlan} onClose={() => setActivePlan(null)} />

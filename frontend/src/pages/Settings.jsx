@@ -95,21 +95,39 @@ export default function Settings() {
   /* ============================
      UPDATE PERMISSIONS
   ============================ */
+  // const togglePermission = async (key, value) => {
+  //   const previous = { ...permissions };
+
+  //   try {
+  //     setPermissions((prev) => ({ ...prev, [key]: value }));
+
+  //     await api.put("/settings/permissions", {
+  //       ...permissions,
+  //       [key]: value,
+  //     });
+  //   } catch (err) {
+  //     alert("❌ Failed to update permission");
+  //     setPermissions(previous); // rollback
+  //   }
+  // };
+
   const togglePermission = async (key, value) => {
-    const previous = { ...permissions };
-
-    try {
-      setPermissions((prev) => ({ ...prev, [key]: value }));
-
-      await api.put("/settings/permissions", {
-        ...permissions,
-        [key]: value,
-      });
-    } catch (err) {
-      alert("❌ Failed to update permission");
-      setPermissions(previous); // rollback
-    }
+  const updated = {
+    ...permissions,
+    [key]: value,
   };
+
+  const previous = { ...permissions };
+
+  try {
+    setPermissions(updated);
+
+    await api.put("/settings/permissions", updated);
+  } catch (err) {
+    alert("❌ Failed to update permission");
+    setPermissions(previous); // rollback
+  }
+};
 
   return (
     <PageWrapper>

@@ -87,7 +87,7 @@ const requirePermission = (permissionKey) => {
         return res.status(403).json({ message: "Permission denied" });
       }
 
-      const academy = await Academy.findOne({ academyCode });
+      const academy = await Academy.findOne({ code: academyCode });
 
       if (!academy || !academy.settings) {
         return res.status(403).json({ message: "Academy settings missing" });

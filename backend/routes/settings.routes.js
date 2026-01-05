@@ -18,7 +18,7 @@ router.get(
               const academyCode = req.params.academyCode || req.user.academyCode;
 
 
-      const academy = await Academy.findOne({ code: academyCode }).select(
+      const academy = await Academy.findOne({ code: req.academyCode }).select(
         "settings"
       );
 

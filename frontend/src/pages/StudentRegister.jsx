@@ -70,15 +70,20 @@ export default function StudentRegister() {
   /* =======================
      PERMISSION CHECK
   ======================== */
-  useEffect(() => {
-    if (
-      role === "teacher" &&
-      !academySettings?.allowTrainerStudentRegistration
-    ) {
-      alert("❌ You are not allowed to register students");
-      navigate(`/students`);
-    }
-  }, [academySettings, role, navigate]);
+useEffect(() => {
+  console.log("ROLE:", role);
+  console.log("ACADEMY SETTINGS:", academySettings);
+
+  if (
+    role === "teacher" &&
+    academySettings &&
+    !academySettings.allowTrainerStudentRegistration
+  ) {
+    alert("❌ You are not allowed to register students");
+    navigate(`/students`);
+  }
+}, [academySettings, role, navigate]);
+
 
   /* =======================
      AUTO AGE CALCULATION

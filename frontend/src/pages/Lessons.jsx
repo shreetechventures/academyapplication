@@ -17,7 +17,7 @@ export default function Lessons() {
   const [description, setDescription] = useState("");
 
   // category
-  const [category, setCategory] = useState("army");
+  const [category, setCategory] = useState("police");
 
   // ✅ ROLE (DO NOT lowercase)
   const role = localStorage.getItem("role") || "";

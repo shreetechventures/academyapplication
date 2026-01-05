@@ -156,7 +156,7 @@ export default function Lessons() {
 
         {/* CATEGORY */}
         <div className="lesson-category-buttons">
-          {["police","army", "navy", "airforce"].map((c) => (
+          {["police", "army", "navy", "airforce"].map((c) => (
             <button
               key={c}
               className={`lesson-cat-btn ${category === c ? "active" : ""}`}
@@ -195,6 +195,8 @@ export default function Lessons() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
+              <option value="army">police</option>
+
               <option value="army">Army</option>
               <option value="navy">Navy</option>
               <option value="airforce">Airforce</option>

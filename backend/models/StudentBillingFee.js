@@ -37,7 +37,7 @@ const StudentBillingFeeSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["paid", "unpaid", "partial"],
+      enum: ["pending","paid", "unpaid", "partial"],
       default: "unpaid",
     },
 
